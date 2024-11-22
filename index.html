@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      background-color: #f3f4f6;
+    }
+    .piano {
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
+    .key {
+      width: 50px;
+      height: 200px;
+      margin: 0 2px;
+      background: white;
+      border: 1px solid black;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .key.black {
+      width: 30px;
+      height: 120px;
+      margin: 0 -15px;
+      background: black;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+  <script type="module" crossorigin src="/piano-simulator/assets/index-BtsWOusd.js"></script>
+</head>
+<body>
+  <p>Pressine qualquer tecla para tocar!</p>
+  <div class="piano">
+    <div class="key" data-note="C4"></div>
+    <div class="key black" data-note="C#4"></div>
+    <div class="key" data-note="D4"></div>
+    <div class="key black" data-note="D#4"></div>
+    <div class="key" data-note="E4"></div>
+    <div class="key" data-note="F4"></div>
+    <div class="key black" data-note="F#4"></div>
+    <div class="key" data-note="G4"></div>
+    <div class="key black" data-note="G#4"></div>
+    <div class="key" data-note="A4"></div>
+    <div class="key black" data-note="A#4"></div>
+    <div class="key" data-note="B4"></div>
+    <div class="key" data-note="C5"></div>
+  </div>
+</body>
+</html>
