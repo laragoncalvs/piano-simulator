@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
+  body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
-      background-color: #f3f4f6;
+      background-color: #fcfcfc;
+      height: 100vh; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      overflow: hidden;
     }
+    .container {
+      display: flex;
+      justify-content: center;
+    }
+
     .piano {
       display: flex;
       justify-content: center;
-      margin-top: 50px;
+      max-width: 1280px;
     }
+
     .key {
       width: 50px;
-      height: 200px;
+      height: 190px;
       margin: 0 2px;
       background: white;
       border: 1px solid black;
       display: inline-block;
-      cursor: pointer;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+
     }
+
     .key.black {
       width: 30px;
       height: 120px;
@@ -31,26 +48,146 @@
       background: black;
       position: relative;
       z-index: 1;
+      color: #f3f4f6;
     }
+
+    p{
+      margin-top: 40px;
+    }
+
+    ul {
+      display: flex;
+      list-style: none;
+      width: 90vw;
+      justify-content: space-around;
+    }
+
   </style>
-  <script type="module" crossorigin src="/piano-simulator/assets/index-BtsWOusd.js"></script>
+  <script type="module" crossorigin src="/piano-simulator/assets/index-CMsmOXQr.js"></script>
 </head>
+
 <body>
-  <p>Pressine qualquer tecla para tocar!</p>
+  <h2>Pressione as teclas abaixo para tocar!</h2>
   <div class="piano">
-    <div class="key" data-note="C4"></div>
-    <div class="key black" data-note="C#4"></div>
-    <div class="key" data-note="D4"></div>
-    <div class="key black" data-note="D#4"></div>
-    <div class="key" data-note="E4"></div>
-    <div class="key" data-note="F4"></div>
-    <div class="key black" data-note="F#4"></div>
-    <div class="key" data-note="G4"></div>
-    <div class="key black" data-note="G#4"></div>
-    <div class="key" data-note="A4"></div>
-    <div class="key black" data-note="A#4"></div>
-    <div class="key" data-note="B4"></div>
-    <div class="key" data-note="C5"></div>
+    <div class="key" >a</div>
+    <div class="key black" >w</div>
+    <div class="key" >s</div>
+    <div class="key black" >e</div>
+    <div class="key" >d</div>
+    <div class="key" >f</div>
+    <div class="key black" >t</div>
+    <div class="key" >g</div>
+    <div class="key black" >y</div>
+    <div class="key" >h</div>
+    <div class="key black" >u</div>
+    <div class="key" >j</div>
   </div>
+  <p>Pressione as teclas de 1 a 7 para mudar a oitava</p>
+  <div class="container">
+
+    <div class="piano">
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+      <div class="key black" ></div>
+      <div class="key" ></div>
+    </div>
+  </div>
+    <ul>
+      <li>1°</li>
+      <li>2°</li>
+      <li>3°</li>
+      <li>4°</li>
+      <li>5°</li>
+      <li>6°</li>
+      <li>7°</li>
+    </ul>
 </body>
+
 </html>
