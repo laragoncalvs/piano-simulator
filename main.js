@@ -1,10 +1,9 @@
-import * as Tone from 'tone';
+import Soundfont from "soundfont-player";
 
-const synth = new Tone.Synth().toDestination();
-
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const keyMap = {
-  a: 'C4',
-  s: 'D4',
+  a: "C4",
+  s: "D4",
   d: 'E4',
   f: 'F4',
   g: 'G4',
@@ -12,37 +11,40 @@ const keyMap = {
   j: 'B4',
   k: 'C5',
   l: 'A3',
-  q: 'B3',
-  w: 'C3',
-  e: 'D3',
-  r: 'E3',
-  t: 'F3',
-  y: 'G3',
-  u: 'A2',
+  q: 'C3',
+  w: 'D3',
+  e: 'E3',
+  r: 'F3',
+  t: 'G3',
+  y: 'A3',
+  u: 'B3',
   i: 'B2',
   o: 'C2',
   p: 'D2',
-  z: 'A5',
-  x: 'B5',
-  c: 'C5',
-  v: 'D5',
-  b: 'E5',
-  n: 'F5',
-  m: 'G5',
+  z: 'C5',
+  x: 'D5',
+  c: 'E5',
+  v: 'F5',
+  b: 'G5',
+  n: 'A5',
+  m: 'B5',
+  1: 'C2',
+  2: 'D2',
+  3: 'E2',
+  4: 'F2',
+  5: 'G2',
+  6: 'A2',
+  7: 'B2',
+
 };
 
-document.addEventListener('keydown', (e) => {
-  if (keyMap[e.key]) {
-    synth.triggerAttackRelease(keyMap[e.key], '8n');
-  }
-});
 
-document.querySelectorAll('.key').forEach((key) => {
-  key.addEventListener('click', () => {
-    const note = key.dataset.note;
+// Carregar o piano e configurar o evento de teclado
+Soundfont.instrument(audioContext, "acoustic_grand_piano" , { gain: 4 }).then((piano) => {
+  document.addEventListener("keydown", (e) => {
+    const note = keyMap[e.key];
     if (note) {
-      synth.triggerAttackRelease(note, '8n');
+      piano.play(note);
     }
   });
 });
-
