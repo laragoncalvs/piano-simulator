@@ -9,13 +9,15 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
-      background-color: #fcfcfc;
+      background-color: #000000;
       height: 100vh; 
       display: flex;
       flex-direction: column;
       justify-content: center; 
       align-items: center; 
       overflow: hidden;
+      padding: 200px;
+      height: 100vh;
     }
 
 
@@ -42,7 +44,7 @@
       width: 40px;
       height: 160px;
       margin: 0 -15px;
-      background: black;
+      background: rgb(0, 0, 0);
       position: relative;
       z-index: 1;
       color: #f3f4f6;
@@ -51,41 +53,17 @@
     p{
       margin: 12px;
     }
-
-
+ 
 
 
   </style>
-  <script type="module" crossorigin src="/piano-simulator/assets/index-mMAWZhgz.js"></script>
 </head>
 
 <body>
-  <h2>Pressione qualquer tecla para tocar!</h2>
-  <p>4° oitava: a s d f g h j k l ç ] Enter</p>
-  <p>5° oitava: q w e r t y u i o p = [</p>
-  <p>3° oitava: z x c v b n m , . ; / Shift</p>
-  <p>2° oitava: ' 1 2 3 4 5 6 7 8 9 0 -</p>
 
-  <h3>Parabéns pra você</h3>
-  <p>d d g d k j</p>
-  <p>d d g d l k k</p>
-  <p>] ] d ] k j g</p>
-  <p>a a ] k l k k</p>
-  <div class="piano">
-    <div class="key" ></div>
-    <div class="key black" ></div>
-    <div class="key" ></div>
-    <div class="key black" ></div>
-    <div class="key" ></div>
-    <div class="key" ></div>
-    <div class="key black" ></div>
-    <div class="key" ></div>
-    <div class="key black" ></div>
-    <div class="key" ></div>
-    <div class="key black" ></div>
-    <div class="key" ></div>
-  </div>
- 
+
+  <script type="module" src="/main.js">
+  </script>
 </body>
 
 </html>
