@@ -82,6 +82,7 @@ const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 cube.position.y = 0.5;  // Posicionar acima do plano
+cube.position.z= -8;  // Posicionar acima do plano
 scene.add(cube);
 
 // Luzes
