@@ -65,7 +65,7 @@ const texturedMaterial = new THREE.MeshBasicMaterial({
   map: texture,
 });
 
-const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 });
+const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800081 });
 
 const materials = [
   cubeMaterial, // Face 1
