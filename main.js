@@ -61,15 +61,12 @@ const loader = new THREE.TextureLoader();
 const texture = loader.load('a.png');
 texture.colorSpace = THREE.SRGBColorSpace;
 
-// Material para a face específica (com textura)
 const texturedMaterial = new THREE.MeshBasicMaterial({
   map: texture,
 });
 
-// Materiais para as outras faces (sem textura ou com cor sólida)
 const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 });
 
-// Array com os materiais para cada face
 const materials = [
   cubeMaterial, // Face 1
   cubeMaterial, // Face 2
@@ -79,17 +76,14 @@ const materials = [
   cubeMaterial, // Face 6
 ];
 
-// Configuração da câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 2, 7);
 camera.lookAt(0, 0, 0);
 
-// Renderizador
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Criar o plano (chão)
 const planeGeometry = new THREE.PlaneGeometry(10, 20);
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x606060, side: THREE.DoubleSide, transparent: true,  // Permite que a opacidade funcione
   opacity: 0.2    });
@@ -98,14 +92,12 @@ plane.rotation.x = -Math.PI / 2;  // Deixar o plano horizontal
 scene.add(plane);
 
 
-// Criar o cubo
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-cube.position.y = 0.5;  // Posicionar acima do plano
-cube.position.z= -8;  // Posicionar acima do plano
+cube.position.y = 0.5;  
+cube.position.z= -8;  
 scene.add(cube);
 
-// Luzes
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
 
@@ -113,12 +105,10 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.position.set(5, 10, 5);
 scene.add(directionalLight);
 
-// Animação para deslizar o cubo
 let direction = 1;
 function animate() {
     requestAnimationFrame(animate);
 
-    // Movimentação do cubo de um lado para o outro
     cube.position.z += 0.03 * direction;
 
     
@@ -127,7 +117,6 @@ function animate() {
 
 animate();
 
-// Ajustar tela quando redimensionada
 
 Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((piano) => {
   document.addEventListener("keydown", (e) => {
