@@ -55,10 +55,10 @@ const keyMap = {
   
 };
 
-
+import image from './assets/a.png';
 const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
-const texture = loader.load(`${import.meta.env.BASE_URL}a.png`);
+const texture = loader.load(image);
 
 texture.colorSpace = THREE.SRGBColorSpace;
 
