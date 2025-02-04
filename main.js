@@ -58,7 +58,8 @@ const keyMap = {
 
 const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
-const texture = loader.load('./a.png');
+const texture = loader.load(`${import.meta.env.BASE_URL}a.png`);
+
 texture.colorSpace = THREE.SRGBColorSpace;
 
 const texturedMaterial = new THREE.MeshBasicMaterial({
