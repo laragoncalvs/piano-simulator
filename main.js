@@ -57,6 +57,27 @@ const keyMap = {
 
 
 const scene = new THREE.Scene();
+const loader = new THREE.TextureLoader();
+const texture = loader.load('a.png');
+texture.colorSpace = THREE.SRGBColorSpace;
+
+// Material para a face específica (com textura)
+const texturedMaterial = new THREE.MeshBasicMaterial({
+  map: texture,
+});
+
+// Materiais para as outras faces (sem textura ou com cor sólida)
+const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 });
+
+// Array com os materiais para cada face
+const materials = [
+  cubeMaterial, // Face 1
+  cubeMaterial, // Face 2
+  cubeMaterial, // Face 3
+  cubeMaterial, // Face 4
+  texturedMaterial, // Face 5 (com textura)
+  cubeMaterial, // Face 6
+];
 
 // Configuração da câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -79,7 +100,6 @@ scene.add(plane);
 
 // Criar o cubo
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 cube.position.y = 0.5;  // Posicionar acima do plano
 cube.position.z= -8;  // Posicionar acima do plano
