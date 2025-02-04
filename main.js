@@ -58,7 +58,7 @@ const keyMap = {
 
 const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
-const texture = loader.load('a.png');
+const texture = loader.load('letra-a.png');
 texture.colorSpace = THREE.SRGBColorSpace;
 
 const texturedMaterial = new THREE.MeshBasicMaterial({
@@ -93,7 +93,7 @@ scene.add(plane);
 
 
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const cube = new THREE.Mesh(cubeGeometry, materials);
 cube.position.y = 0.5;  
 cube.position.z= -8;  
 scene.add(cube);
