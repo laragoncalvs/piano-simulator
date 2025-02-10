@@ -1,11 +1,45 @@
 import * as THREE from 'three';
 
+import aImg from './assets/letras/a.png';
+import bImg from './assets/letras/b.png';
+import cImg from './assets/letras/c.png';
+import dImg from './assets/letras/d.png';
+import eImg from './assets/letras/e.png';
+import fImg from './assets/letras/f.png';
+import gImg from './assets/letras/g.png';
+import hImg from './assets/letras/h.png';
+import iImg from './assets/letras/i.png';
+import jImg from './assets/letras/j.png';
+import kImg from './assets/letras/k.png';
+import lImg from './assets/letras/l.png';
+import mImg from './assets/letras/m.png';
+import nImg from './assets/letras/n.png';
+import oImg from './assets/letras/o.png';
+import pImg from './assets/letras/p.png';
+import qImg from './assets/letras/q.png';
+import rImg from './assets/letras/r.png';
+import sImg from './assets/letras/s.png';
+import tImg from './assets/letras/t.png';
+import uImg from './assets/letras/u.png';
+import vImg from './assets/letras/v.png';
+import wImg from './assets/letras/w.png';
+import xImg from './assets/letras/x.png';
+import yImg from './assets/letras/y.png';
+import zImg from './assets/letras/z.png';
+import çImg from './assets/letras/ç.png';
+
+const letterTextures = {
+    a: aImg, b: bImg, c: cImg, d: dImg, e: eImg, f: fImg, g: gImg, h: hImg, i: iImg,
+    j: jImg, k: kImg, l: lImg, m: mImg, n: nImg, o: oImg, p: pImg, q: qImg, r: rImg,
+    s: sImg, t: tImg, u: uImg, v: vImg, w: wImg, x: xImg, y: yImg, z: zImg, ç: çImg
+};
+
 const loader = new THREE.TextureLoader();
 const baseColor = 0x5C2569;
 const baseMaterial = new THREE.MeshStandardMaterial({ color: baseColor, transparent: true, opacity: 1 });
 
 const createCube = (letter) => {
-    const texture = loader.load(`assets/letras/${letter}.png`);
+    const texture = loader.load(letterTextures[letter]);
     texture.colorSpace = THREE.SRGBColorSpace;
     
     const texturedMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1 });
@@ -23,14 +57,12 @@ const createCube = (letter) => {
     return new THREE.Mesh(cubeGeometry, materials);
 };
 
-
 const cubes = {};
 const alphabet = 'acmwxyzçnstopqrudefghijbklv';
 
 for (const letter of alphabet) {
     cubes[letter] = createCube(letter);
 }
-
 
 export { cubes };
 
@@ -81,11 +113,7 @@ cubes.l.position.x = linha7;
 cubes.p.position.x = linha8;
 cubes.ç.position.x = linha8;
 
-
-
-
 Object.values(cubes).forEach((cube, index) => {
     cube.position.y = inity;
     cube.position.z = initz;
 });
-
