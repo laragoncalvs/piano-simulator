@@ -1,7 +1,7 @@
 import Soundfont from "soundfont-player";
 import * as THREE from 'three';
 import { keyMap } from "./keyMap";
-import { cubes } from './cubes.js';
+import { allCubes } from './cubes.js';
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const scene = new THREE.Scene();
@@ -14,8 +14,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const planeGeometry = new THREE.PlaneGeometry(10, 20);
-const planeGeometry2 = new THREE.PlaneGeometry(10, 2);
+const planeGeometry = new THREE.PlaneGeometry(13.5, 20);
+const planeGeometry2 = new THREE.PlaneGeometry(13.5, 2);
 const lineGeometry = new THREE.PlaneGeometry(0.04, 20);
 const lineMaterial = new THREE.MeshStandardMaterial({ color: 0x606060, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x606060, side: THREE.DoubleSide, transparent: true, opacity: 0.2 });
@@ -24,10 +24,10 @@ const planeMaterial2 = new THREE.MeshStandardMaterial({ color: 0x47BC8D, side: T
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
 
-const lines = Array.from({ length: 8 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
+const lines = Array.from({ length: 11 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
 lines.forEach((line, i) => {
     line.rotation.x = -Math.PI / 2;
-    line.position.x = [0.6, -0.6, 1.6, -1.6, 2.7, -2.7, 3.8, -3.8][i];
+    line.position.x = [0, 1.1 , -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5][i];
     line.position.z = -10;
     scene.add(line);
 });
@@ -47,68 +47,38 @@ directionalLight.position.set(5, 10, 5);
 scene.add(directionalLight);
 
 const activeCubes = [];
-const startTime = performance.now();
-const spawnDelays = Object.keys(cubes).map((_, i) => i * 1000);
+const spawnEvents = [];
 
-function spawnCube(letter) {
-    const cube = cubes[letter];
+function addCubeToScene(letter, delay, speed) {
+    spawnEvents.push({ letter, delay, speed, spawned: false });
+}
+
+function spawnCube(letter, speed) {
+    const cube = allCubes[letter]?.clone();
     if (!cube) return;
-    if (Array.isArray(cube.material)) {
-        cube.material.forEach(material => (material.opacity = 0));
-    } else {
-        cube.material.opacity = 0;
-    }
 
+    cube.userData = { speed };
     scene.add(cube);
     activeCubes.push(cube);
 }
-function disappear(cube) {
-  if (cube.position.z > 1.5) {
-      let fullyTransparent = true; 
-
-      if (Array.isArray(cube.material)) {
-          cube.material.forEach(material => {
-              material.transparent = true; 
-              material.opacity = Math.max(0, material.opacity - 0.05);
-
-              if (material.opacity > 0) {
-                  fullyTransparent = false; 
-              }
-          });
-      } else {
-          cube.material.transparent = true;
-          cube.material.opacity = Math.max(0, cube.material.opacity - 0.05);
-          fullyTransparent = cube.material.opacity === 0;
-      }
-
-      if (fullyTransparent) {
-          scene.remove(cube); 
-          activeCubes.splice(activeCubes.indexOf(cube), 1); 
-      }
-  }
-}
-
 
 function animate() {
     requestAnimationFrame(animate);
-    const elapsedTime = performance.now() - startTime;
+    const elapsedTime = performance.now();
 
-    Object.keys(cubes).forEach((letter, index) => {
-        if (elapsedTime > spawnDelays[index] && !activeCubes.includes(cubes[letter])) {
-            spawnCube(letter);
+    spawnEvents.forEach(event => {
+        if (elapsedTime > event.delay && !event.spawned) {
+            spawnCube(event.letter, event.speed);
+            event.spawned = true;
         }
     });
 
-    activeCubes.forEach(cube => {
-        cube.position.z += 0.04;
-
-        if (Array.isArray(cube.material)) {
-            cube.material.forEach(material => material.opacity = Math.min(1, material.opacity + 0.02));
-        } else {
-            cube.material.opacity = Math.min(1, cube.material.opacity + 0.02);
+    activeCubes.forEach((cube, index) => {
+        cube.position.z += cube.userData.speed;
+        if (cube.position.z > 1.5) {
+            scene.remove(cube);
+            activeCubes.splice(index, 1);
         }
-
-        disappear(cube);
     });
 
     renderer.render(scene, camera);
@@ -124,3 +94,35 @@ Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((pi
         }
     });
 });
+
+// Exemplo de uso:
+addCubeToScene("a", 1000, 0.05);
+addCubeToScene("a", 1500, 0.05);
+addCubeToScene("d", 2000, 0.05);
+addCubeToScene("a", 3000, 0.05);
+addCubeToScene("h", 3500, 0.05);
+addCubeToScene("g", 4000, 0.05);
+
+addCubeToScene("a", 6000, 0.05);
+addCubeToScene("a", 6500, 0.05);
+addCubeToScene("d", 7000, 0.05);
+addCubeToScene("a", 7500, 0.05);
+addCubeToScene("k", 8000, 0.05);
+addCubeToScene("h", 9000, 0.05);
+addCubeToScene("h", 9500, 0.05);
+
+addCubeToScene("a", 11000, 0.05);
+addCubeToScene("a", 11500, 0.05);
+addCubeToScene("q", 12000, 0.05);
+addCubeToScene("l", 13000, 0.05);
+addCubeToScene("h", 13700, 0.05);
+addCubeToScene("g", 14400, 0.05);
+addCubeToScene("d", 15100, 0.05);
+
+addCubeToScene("ç", 16500, 0.05);
+addCubeToScene("ç", 17000, 0.05);
+addCubeToScene("l", 17500, 0.05);
+addCubeToScene("h", 18500, 0.05);
+addCubeToScene("k", 19500, 0.05);
+addCubeToScene("h", 20500, 0.05);
+addCubeToScene("h", 21000, 0.05);
