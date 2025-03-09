@@ -66,9 +66,9 @@ const createCube = (key) => {
     texture.colorSpace = THREE.SRGBColorSpace;
     
     const materials = Array(6).fill(new THREE.MeshStandardMaterial({ color: baseColor, transparent: true, opacity: 1 }));
-    materials[4] = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    materials[2] = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
 
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), materials);
+    const cube = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.8), materials);
     return cube;
 };
 

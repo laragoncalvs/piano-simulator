@@ -7,7 +7,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 3, 6);
+camera.position.set(0, 7, 3);
 camera.lookAt(0, 1, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -28,22 +28,22 @@ const lines = Array.from({ length: 11 }, (_, i) => new THREE.Mesh(lineGeometry, 
 lines.forEach((line, i) => {
     line.rotation.x = -Math.PI / 2;
     line.position.x = [0, 1.1 , -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5][i];
-    line.position.z = -10;
+    line.position.z = -8;
     scene.add(line);
 });
 
 plane.rotation.x = -Math.PI / 2;
 plane2.rotation.x = -Math.PI / 2;
 scene.add(plane, plane2);
-plane.position.z = -10;
-plane2.position.z = 1;
+plane.position.z = -8;
+plane2.position.z = 3;
 scene.background = new THREE.Color(0x0B0912);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xF5F591, 2.7);
-directionalLight.position.set(5, 10, 5);
+const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
+directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
 
 const activeCubes = [];
