@@ -7,7 +7,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 7, 3);
+camera.position.set(0, 7, 2);
 camera.lookAt(0, 1, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -75,7 +75,7 @@ function animate() {
 
     activeCubes.forEach((cube, index) => {
         cube.position.z += cube.userData.speed;
-        if (cube.position.z > 1.5) {
+        if (cube.position.z > 2) {
             scene.remove(cube);
             activeCubes.splice(index, 1);
         }
@@ -95,34 +95,51 @@ Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((pi
     });
 });
 
+const sequence = [
+    "w", "u", "t", "q", "w", "u", "r", "q", 
+    "u", "w", "u", "t", "q", "w", "u", "r", "q"
+];
+
+const timings = [
+    1000, 1600, 2200, 2900, 3700, 4600, 5500, 6400,
+    7300, 8200, 9100, 10000, 10900, 11800, 12700, 13600, 14500
+];
+
+sequence.forEach((key, index) => {
+    const note = keyMap[key];
+    const time = timings[index];
+    addCubeToScene(key, time, 0.05);
+    console.log(`At ${time}ms: Play ${note}`);
+});
+
 // Exemplo de uso:
-addCubeToScene("a", 1000, 0.05);
-addCubeToScene("a", 1500, 0.05);
-addCubeToScene("d", 2000, 0.05);
-addCubeToScene("a", 3000, 0.05);
-addCubeToScene("h", 3500, 0.05);
-addCubeToScene("g", 4000, 0.05);
-
-addCubeToScene("a", 6000, 0.05);
-addCubeToScene("a", 6500, 0.05);
-addCubeToScene("d", 7000, 0.05);
-addCubeToScene("a", 7500, 0.05);
-addCubeToScene("k", 8000, 0.05);
-addCubeToScene("h", 9000, 0.05);
-addCubeToScene("h", 9500, 0.05);
-
-addCubeToScene("a", 11000, 0.05);
-addCubeToScene("a", 11500, 0.05);
-addCubeToScene("q", 12000, 0.05);
-addCubeToScene("l", 13000, 0.05);
-addCubeToScene("h", 13700, 0.05);
-addCubeToScene("g", 14400, 0.05);
-addCubeToScene("d", 15100, 0.05);
-
-addCubeToScene("ç", 16500, 0.05);
-addCubeToScene("ç", 17000, 0.05);
-addCubeToScene("l", 17500, 0.05);
-addCubeToScene("h", 18500, 0.05);
-addCubeToScene("k", 19500, 0.05);
-addCubeToScene("h", 20500, 0.05);
-addCubeToScene("h", 21000, 0.05);
+//addCubeToScene("a", 1000, 0.05);
+//addCubeToScene("a", 1500, 0.05);
+//addCubeToScene("d", 2000, 0.05);
+//addCubeToScene("a", 3000, 0.05);
+//addCubeToScene("h", 3500, 0.05);
+//addCubeToScene("g", 4000, 0.05);
+//
+//addCubeToScene("a", 6000, 0.05);
+//addCubeToScene("a", 6500, 0.05);
+//addCubeToScene("d", 7000, 0.05);
+//addCubeToScene("a", 7500, 0.05);
+//addCubeToScene("k", 8000, 0.05);
+//addCubeToScene("h", 9000, 0.05);
+//addCubeToScene("h", 9500, 0.05);
+//
+//addCubeToScene("a", 11000, 0.05);
+//addCubeToScene("a", 11500, 0.05);
+//addCubeToScene("q", 12000, 0.05);
+//addCubeToScene("l", 13000, 0.05);
+//addCubeToScene("h", 13700, 0.05);
+//addCubeToScene("g", 14400, 0.05);
+//addCubeToScene("d", 15100, 0.05);
+//
+//addCubeToScene("ç", 16500, 0.05);
+//addCubeToScene("ç", 17000, 0.05);
+//addCubeToScene("l", 17500, 0.05);
+//addCubeToScene("h", 18500, 0.05);
+//addCubeToScene("k", 19500, 0.05);
+//addCubeToScene("h", 20500, 0.05);
+//addCubeToScene("h", 21000, 0.05);
