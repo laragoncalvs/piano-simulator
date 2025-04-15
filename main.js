@@ -96,22 +96,25 @@ Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((pi
 });
 
 const sequence = [
-    "w", "u", "t", "q", "w", "u", "r", "q", 
-    "u", "w", "u", "t", "q", "w", "u", "r", "q"
-];
-
-const timings = [
-    1000, 1600, 2200, 2900, 3700, 4600, 5500, 6400,
-    7300, 8200, 9100, 10000, 10900, 11800, 12700, 13600, 14500
-];
-
-sequence.forEach((key, index) => {
-    const note = keyMap[key];
-    const time = timings[index];
-    addCubeToScene(key, time, 0.05);
-    console.log(`At ${time}ms: Play ${note}`);
-});
-
+    { time: 0, notes: ["d", "g"] },
+    { time: 500, notes: ["e", "a"] },
+    { time: 1000, notes: ["g", "d"] },
+    { time: 1500, notes: ["d", "g"] },
+    { time: 2000, notes: ["e", "a"] },
+    { time: 2500, notes: ["g", "d"] },
+    { time: 3000, notes: ["f", "a"] },
+    { time: 3500, notes: ["g", "b"] }
+  ];
+  
+  sequence.forEach((event) => {
+    event.notes.forEach((note) => {
+      const mappedNote = keyMap[note];
+      addCubeToScene(note, event.time, 0.05);
+      console.log(`At ${event.time}ms: Play ${mappedNote}`);
+    });
+  });
+  
+  
 // Exemplo de uso:
 //addCubeToScene("a", 1000, 0.05);
 //addCubeToScene("a", 1500, 0.05);
