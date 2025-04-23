@@ -146,125 +146,118 @@ Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((pi
 //addCubeToScene("k", 19500, 0.05);
 //addCubeToScene("h", 20500, 0.05);
 //addCubeToScene("h", 21000, 0.05);
+addCubeToScene("8", 0, 0.05);    // A2 (baixo)
+addCubeToScene("b", 250, 0.05);  // E3
+addCubeToScene("z", 500, 0.05);  // C3
+addCubeToScene("b", 750, 0.05);  // E3
 
-addCubeToScene("g", 0, 0.05);     // E4
-addCubeToScene("f", 250, 0.05);   // D#4
-addCubeToScene("g", 500, 0.05);   // E4
-addCubeToScene("f", 750, 0.05);   // D#4
-addCubeToScene("g", 1000, 0.05);  // E4
-addCubeToScene("]", 1250, 0.05);  // B4
-addCubeToScene("d", 1500, 0.05);  // D4
-addCubeToScene("a", 1750, 0.05);  // C4
-addCubeToScene("l", 2000, 0.05);  // A4
+// Segundo acorde (G)
+addCubeToScene("7", 1000, 0.05); // G2 (baixo)
+addCubeToScene("c", 1250, 0.05); // D3
+addCubeToScene("0", 1500, 0.05); // B2
+addCubeToScene("c", 1750, 0.05); // D3
 
-// Continuação do tema A
-addCubeToScene("z", 2250, 0.05);  // C3 (baixo)
-addCubeToScene("g", 2250, 0.05);  // E4 (simultâneo com o baixo)
-addCubeToScene("l", 2500, 0.05);  // A4
-addCubeToScene("]", 2750, 0.05);  // B4
+// Terceiro acorde (F)
+addCubeToScene("5", 2000, 0.05); // F2 (baixo)
+addCubeToScene("z", 2250, 0.05); // C3
+addCubeToScene("8", 2500, 0.05); // A2
+addCubeToScene("z", 2750, 0.05); // C3
 
-// Repetição do motivo principal
-addCubeToScene("g", 3000, 0.05);  // E4
-addCubeToScene("f", 3250, 0.05);  // D#4
-addCubeToScene("g", 3500, 0.05);  // E4
-addCubeToScene("f", 3750, 0.05);  // D#4
-addCubeToScene("g", 4000, 0.05);  // E4
-addCubeToScene("]", 4250, 0.05);  // B4
-addCubeToScene("d", 4500, 0.05);  // D4
-addCubeToScene("a", 4750, 0.05);  // C4
-addCubeToScene("l", 5000, 0.05);  // A4
+// Quarto acorde (E)
+addCubeToScene("4", 3000, 0.05); // E2 (baixo)
+addCubeToScene("0", 3250, 0.05); // B2
+addCubeToScene("7", 3500, 0.05); // G2
+addCubeToScene("0", 3750, 0.05); // B2
 
-// Continuação
-addCubeToScene("z", 5250, 0.05);  // C3 (baixo)
-addCubeToScene("g", 5250, 0.05);  // E4 (simultâneo com o baixo)
-addCubeToScene("l", 5500, 0.05);  // A4
-addCubeToScene("]", 5750, 0.05);  // B4
+// Melodia principal - Primeira frase "City of stars, are you shining just for me?"
+addCubeToScene("a", 4000, 0.05); // C4 (Dó)
+addCubeToScene("d", 4250, 0.05); // D4 (Ré)
+addCubeToScene("g", 4500, 0.05); // E4 (Mi)
+addCubeToScene("g", 4750, 0.05); // E4 (Mi)
+addCubeToScene("d", 5000, 0.05); // D4 (Ré)
+addCubeToScene("a", 5250, 0.05); // C4 (Dó)
+addCubeToScene("/", 5500, 0.05); // B3 (Si)
+addCubeToScene(".", 5750, 0.05); // A3 (Lá)
 
-// Transição para a parte B
-addCubeToScene("q", 6000, 0.05);  // C5
-addCubeToScene("g", 6250, 0.05);  // E4
-addCubeToScene("l", 6500, 0.05);  // A4
-addCubeToScene("g", 6750, 0.05);  // E4
+// Continuação da melodia com acompanhamento
+// Primeiro acorde (Am) com melodia
+addCubeToScene("8", 6000, 0.05); // A2 (baixo)
+addCubeToScene("a", 6000, 0.05); // C4 (melodia - simultâneo com o baixo)
+addCubeToScene("b", 6250, 0.05); // E3
+addCubeToScene("d", 6250, 0.05); // D4 (melodia)
+addCubeToScene("z", 6500, 0.05); // C3
+addCubeToScene("g", 6500, 0.05); // E4 (melodia)
+addCubeToScene("b", 6750, 0.05); // E3
+addCubeToScene("g", 6750, 0.05); // E4 (melodia)
 
-// Parte B - Desenvolvimento
-addCubeToScene("]", 7000, 0.05);  // B4
-addCubeToScene("g", 7250, 0.05);  // E4
-addCubeToScene("k", 7500, 0.05);  // G4
-addCubeToScene("g", 7750, 0.05);  // E4
+// Segundo acorde (G) com melodia
+addCubeToScene("7", 7000, 0.05); // G2 (baixo)
+addCubeToScene("d", 7000, 0.05); // D4 (melodia - simultâneo com o baixo)
+addCubeToScene("c", 7250, 0.05); // D3
+addCubeToScene("a", 7250, 0.05); // C4 (melodia)
+addCubeToScene("0", 7500, 0.05); // B2
+addCubeToScene("/", 7500, 0.05); // B3 (melodia)
+addCubeToScene("c", 7750, 0.05); // D3
+addCubeToScene(".", 7750, 0.05); // A3 (melodia)
 
-// Continuação da parte B
-addCubeToScene("d", 8000, 0.05);  // D4
-addCubeToScene("g", 8250, 0.05);  // E4
-addCubeToScene("l", 8500, 0.05);  // A4
-addCubeToScene("g", 8750, 0.05);  // E4
+// Segunda frase da melodia "City of stars, there's so much that I can't see"
+addCubeToScene("a", 8000, 0.05); // C4 (Dó)
+addCubeToScene("d", 8250, 0.05); // D4 (Ré)
+addCubeToScene("g", 8500, 0.05); // E4 (Mi)
+addCubeToScene("k", 8750, 0.05); // G4 (Sol)
+addCubeToScene("h", 9000, 0.05); // F4 (Fá)
+addCubeToScene("g", 9250, 0.05); // E4 (Mi)
+addCubeToScene("d", 9500, 0.05); // D4 (Ré)
+addCubeToScene("a", 9750, 0.05); // C4 (Dó)
 
-// Mais desenvolvimento
-addCubeToScene("]", 9000, 0.05);  // B4
-addCubeToScene("g", 9250, 0.05);  // E4
-addCubeToScene("q", 9500, 0.05);  // C5
-addCubeToScene("g", 9750, 0.05);  // E4
+// Terceiro acorde (F) com melodia
+addCubeToScene("5", 10000, 0.05); // F2 (baixo)
+addCubeToScene("a", 10000, 0.05); // C4 (melodia - simultâneo com o baixo)
+addCubeToScene("z", 10250, 0.05); // C3
+addCubeToScene("/", 10250, 0.05); // B3 (melodia)
+addCubeToScene("8", 10500, 0.05); // A2
+addCubeToScene(".", 10500, 0.05); // A3 (melodia)
+addCubeToScene("z", 10750, 0.05); // C3
 
-// Retorno ao tema A - Repetição do motivo principal
-addCubeToScene("g", 10000, 0.05); // E4
-addCubeToScene("f", 10250, 0.05); // D#4
-addCubeToScene("g", 10500, 0.05); // E4
-addCubeToScene("f", 10750, 0.05); // D#4
-addCubeToScene("g", 11000, 0.05); // E4
-addCubeToScene("]", 11250, 0.05); // B4
-addCubeToScene("d", 11500, 0.05); // D4
-addCubeToScene("a", 11750, 0.05); // C4
-addCubeToScene("l", 12000, 0.05); // A4
+// Quarto acorde (E) com melodia final da frase
+addCubeToScene("4", 11000, 0.05); // E2 (baixo)
+addCubeToScene("a", 11000, 0.05); // C4 (melodia - simultâneo com o baixo)
+addCubeToScene("0", 11250, 0.05); // B2
+addCubeToScene("/", 11250, 0.05); // B3 (melodia)
+addCubeToScene("7", 11500, 0.05); // G2
+addCubeToScene(".", 11500, 0.05); // A3 (melodia)
+addCubeToScene("0", 11750, 0.05); // B2
 
-// Continuação do tema A
-addCubeToScene("z", 12250, 0.05); // C3 (baixo)
-addCubeToScene("g", 12250, 0.05); // E4 (simultâneo com o baixo)
-addCubeToScene("l", 12500, 0.05); // A4
-addCubeToScene("]", 12750, 0.05); // B4
+// Ponte - "Who knows? Is this the start of something wonderful and new?"
+addCubeToScene("d", 12000, 0.05); // D4 (Ré)
+addCubeToScene("g", 12250, 0.05); // E4 (Mi)
+addCubeToScene("k", 12500, 0.05); // G4 (Sol)
+addCubeToScene("l", 12750, 0.05); // A4 (Lá)
+addCubeToScene("k", 13000, 0.05); // G4 (Sol)
+addCubeToScene("g", 13250, 0.05); // E4 (Mi)
+addCubeToScene("d", 13500, 0.05); // D4 (Ré)
+addCubeToScene("a", 13750, 0.05); // C4 (Dó)
 
-// Parte C - Seção mais rápida
-addCubeToScene("g", 13000, 0.05); // E4
-addCubeToScene("l", 13125, 0.05); // A4
-addCubeToScene("q", 13250, 0.05); // C5
-addCubeToScene("g", 13375, 0.05); // E4
-addCubeToScene("l", 13500, 0.05); // A4
-addCubeToScene("q", 13625, 0.05); // C5
-addCubeToScene("t", 13750, 0.05); // E5
-addCubeToScene("l", 13875, 0.05); // A4
+// Retorno à melodia principal com variação - "Or one more dream that I cannot make true"
+addCubeToScene("a", 14000, 0.05); // C4 (Dó)
+addCubeToScene("d", 14250, 0.05); // D4 (Ré)
+addCubeToScene("g", 14500, 0.05); // E4 (Mi)
+addCubeToScene("g", 14750, 0.05); // E4 (Mi)
+addCubeToScene("d", 15000, 0.05); // D4 (Ré)
+addCubeToScene("a", 15250, 0.05); // C4 (Dó)
+addCubeToScene("/", 15500, 0.05); // B3 (Si)
+addCubeToScene(".", 15750, 0.05); // A3 (Lá)
 
-// Continuação da parte C
-addCubeToScene("g", 14000, 0.05); // E4
-addCubeToScene("l", 14125, 0.05); // A4
-addCubeToScene("q", 14250, 0.05); // C5
-addCubeToScene("g", 14375, 0.05); // E4
-addCubeToScene("l", 14500, 0.05); // A4
-addCubeToScene("q", 14625, 0.05); // C5
-addCubeToScene("t", 14750, 0.05); // E5
-addCubeToScene("l", 14875, 0.05); // A4
+// Finalização - Arpejos finais com notas sustentadas
+// Primeiro acorde (Am)
+addCubeToScene("8", 16000, 0.05);    // A2 (baixo)
+addCubeToScene("b", 16250, 0.05);    // E3
+addCubeToScene("z", 16500, 0.05);    // C3
+addCubeToScene("b", 16750, 0.05);    // E3
+addCubeToScene("a", 17000, 0.05);    // C4 (nota final da melodia)
 
-// Transição de volta para o tema A
-addCubeToScene("f", 15000, 0.05); // D#4
-addCubeToScene("g", 15250, 0.05); // E4
-addCubeToScene("f", 15500, 0.05); // D#4
-addCubeToScene("g", 15750, 0.05); // E4
-
-// Repetição final do tema A
-addCubeToScene("g", 16000, 0.05); // E4
-addCubeToScene("f", 16250, 0.05); // D#4
-addCubeToScene("g", 16500, 0.05); // E4
-addCubeToScene("f", 16750, 0.05); // D#4
-addCubeToScene("g", 17000, 0.05); // E4
-addCubeToScene("]", 17250, 0.05); // B4
-addCubeToScene("d", 17500, 0.05); // D4
-addCubeToScene("a", 17750, 0.05); // C4
-addCubeToScene("l", 18000, 0.05); // A4
-
-// Finalização
-addCubeToScene("z", 18250, 0.05); // C3 (baixo)
-addCubeToScene("g", 18250, 0.05); // E4 (simultâneo com o baixo)
-addCubeToScene("l", 18500, 0.05); // A4
-addCubeToScene("]", 18750, 0.05); // B4
-addCubeToScene("g", 19000, 0.05); // E4
-addCubeToScene("l", 19250, 0.05); // A4
-addCubeToScene("]", 19500, 0.05); // B4
-addCubeToScene("q", 19750, 0.05); // C5
-addCubeToScene("l", 20000, 0.05); // A4 (nota final)
+// Acorde final (Am) sustentado
+addCubeToScene("8", 17500, 0.05);    // A2 (baixo)
+addCubeToScene("z", 17500, 0.05);    // C3 (simultâneo)
+addCubeToScene("b", 17500, 0.05);    // E3 (simultâneo)
+addCubeToScene("a", 17500, 0.05);    // C4 (simultâneo - nota final)
