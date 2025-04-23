@@ -86,14 +86,14 @@ function animate() {
 
 animate();
 
-//Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((piano) => {
+Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((piano) => {
     document.addEventListener("keydown", (e) => {
         const note = keyMap[e.key];
         if (note) {
             piano.play(note);
         }
     });
-//});
+});
 //
 //const sequence = [
 //    { time: 0, notes: ["d", "g"] },
