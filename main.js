@@ -86,178 +86,509 @@ function animate() {
 
 animate();
 
-Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((piano) => {
-    document.addEventListener("keydown", (e) => {
-        const note = keyMap[e.key];
-        if (note) {
-            piano.play(note);
-        }
-    });
-});
-//
-//const sequence = [
-//    { time: 0, notes: ["d", "g"] },
-//    { time: 500, notes: ["e", "a"] },
-//    { time: 1000, notes: ["g", "d"] },
-//    { time: 1500, notes: ["d", "g"] },
-//    { time: 2000, notes: ["e", "a"] },
-//    { time: 2500, notes: ["g", "d"] },
-//    { time: 3000, notes: ["f", "a"] },
-//    { time: 3500, notes: ["g", "b"] }
-//  ];
-//  
-//  sequence.forEach((event) => {
-//    event.notes.forEach((note) => {
-//      const mappedNote = keyMap[note];
-//      addCubeToScene(note, event.time, 0.05);
-//      console.log(`At ${event.time}ms: Play ${mappedNote}`);
-//    });
-//  });
-//  
-//  
-// Exemplo de uso:
-//addCubeToScene("a", 1000, 0.05);
-//addCubeToScene("a", 1500, 0.05);
-//addCubeToScene("d", 2000, 0.05);
-//addCubeToScene("a", 3000, 0.05);
-//addCubeToScene("h", 3500, 0.05);
-//addCubeToScene("g", 4000, 0.05);
-//
-//addCubeToScene("a", 6000, 0.05);
-//addCubeToScene("a", 6500, 0.05);
-//addCubeToScene("d", 7000, 0.05);
-//addCubeToScene("a", 7500, 0.05);
-//addCubeToScene("k", 8000, 0.05);
-//addCubeToScene("h", 9000, 0.05);
-//addCubeToScene("h", 9500, 0.05);
-//
-//addCubeToScene("a", 11000, 0.05);
-//addCubeToScene("a", 11500, 0.05);
-//addCubeToScene("q", 12000, 0.05);
-//addCubeToScene("l", 13000, 0.05);
-//addCubeToScene("h", 13700, 0.05);
-//addCubeToScene("g", 14400, 0.05);
-//addCubeToScene("d", 15100, 0.05);
-//
-//addCubeToScene("ç", 16500, 0.05);
-//addCubeToScene("ç", 17000, 0.05);
-//addCubeToScene("l", 17500, 0.05);
-//addCubeToScene("h", 18500, 0.05);
-//addCubeToScene("k", 19500, 0.05);
-//addCubeToScene("h", 20500, 0.05);
-//addCubeToScene("h", 21000, 0.05);
-addCubeToScene("8", 0, 0.05);    // A2 (baixo)
-addCubeToScene("b", 250, 0.05);  // E3
-addCubeToScene("z", 500, 0.05);  // C3
-addCubeToScene("b", 750, 0.05);  // E3
+// Seu keyMap (certifique-se de que esteja acessível neste escopo)
 
-// Segundo acorde (G)
-addCubeToScene("7", 1000, 0.05); // G2 (baixo)
-addCubeToScene("c", 1250, 0.05); // D3
-addCubeToScene("0", 1500, 0.05); // B2
-addCubeToScene("c", 1750, 0.05); // D3
-
-// Terceiro acorde (F)
-addCubeToScene("5", 2000, 0.05); // F2 (baixo)
-addCubeToScene("z", 2250, 0.05); // C3
-addCubeToScene("8", 2500, 0.05); // A2
-addCubeToScene("z", 2750, 0.05); // C3
-
-// Quarto acorde (E)
-addCubeToScene("4", 3000, 0.05); // E2 (baixo)
-addCubeToScene("0", 3250, 0.05); // B2
-addCubeToScene("7", 3500, 0.05); // G2
-addCubeToScene("0", 3750, 0.05); // B2
-
-// Melodia principal - Primeira frase "City of stars, are you shining just for me?"
-addCubeToScene("a", 4000, 0.05); // C4 (Dó)
-addCubeToScene("d", 4250, 0.05); // D4 (Ré)
-addCubeToScene("g", 4500, 0.05); // E4 (Mi)
-addCubeToScene("g", 4750, 0.05); // E4 (Mi)
-addCubeToScene("d", 5000, 0.05); // D4 (Ré)
-addCubeToScene("a", 5250, 0.05); // C4 (Dó)
-addCubeToScene("/", 5500, 0.05); // B3 (Si)
-addCubeToScene(".", 5750, 0.05); // A3 (Lá)
-
-// Continuação da melodia com acompanhamento
-// Primeiro acorde (Am) com melodia
-addCubeToScene("8", 6000, 0.05); // A2 (baixo)
-addCubeToScene("a", 6000, 0.05); // C4 (melodia - simultâneo com o baixo)
-addCubeToScene("b", 6250, 0.05); // E3
-addCubeToScene("d", 6250, 0.05); // D4 (melodia)
-addCubeToScene("z", 6500, 0.05); // C3
-addCubeToScene("g", 6500, 0.05); // E4 (melodia)
-addCubeToScene("b", 6750, 0.05); // E3
-addCubeToScene("g", 6750, 0.05); // E4 (melodia)
-
-// Segundo acorde (G) com melodia
-addCubeToScene("7", 7000, 0.05); // G2 (baixo)
-addCubeToScene("d", 7000, 0.05); // D4 (melodia - simultâneo com o baixo)
-addCubeToScene("c", 7250, 0.05); // D3
-addCubeToScene("a", 7250, 0.05); // C4 (melodia)
-addCubeToScene("0", 7500, 0.05); // B2
-addCubeToScene("/", 7500, 0.05); // B3 (melodia)
-addCubeToScene("c", 7750, 0.05); // D3
-addCubeToScene(".", 7750, 0.05); // A3 (melodia)
-
-// Segunda frase da melodia "City of stars, there's so much that I can't see"
-addCubeToScene("a", 8000, 0.05); // C4 (Dó)
-addCubeToScene("d", 8250, 0.05); // D4 (Ré)
-addCubeToScene("g", 8500, 0.05); // E4 (Mi)
-addCubeToScene("k", 8750, 0.05); // G4 (Sol)
-addCubeToScene("h", 9000, 0.05); // F4 (Fá)
-addCubeToScene("g", 9250, 0.05); // E4 (Mi)
-addCubeToScene("d", 9500, 0.05); // D4 (Ré)
-addCubeToScene("a", 9750, 0.05); // C4 (Dó)
-
-// Terceiro acorde (F) com melodia
-addCubeToScene("5", 10000, 0.05); // F2 (baixo)
-addCubeToScene("a", 10000, 0.05); // C4 (melodia - simultâneo com o baixo)
-addCubeToScene("z", 10250, 0.05); // C3
-addCubeToScene("/", 10250, 0.05); // B3 (melodia)
-addCubeToScene("8", 10500, 0.05); // A2
-addCubeToScene(".", 10500, 0.05); // A3 (melodia)
-addCubeToScene("z", 10750, 0.05); // C3
-
-// Quarto acorde (E) com melodia final da frase
-addCubeToScene("4", 11000, 0.05); // E2 (baixo)
-addCubeToScene("a", 11000, 0.05); // C4 (melodia - simultâneo com o baixo)
-addCubeToScene("0", 11250, 0.05); // B2
-addCubeToScene("/", 11250, 0.05); // B3 (melodia)
-addCubeToScene("7", 11500, 0.05); // G2
-addCubeToScene(".", 11500, 0.05); // A3 (melodia)
-addCubeToScene("0", 11750, 0.05); // B2
-
-// Ponte - "Who knows? Is this the start of something wonderful and new?"
-addCubeToScene("d", 12000, 0.05); // D4 (Ré)
-addCubeToScene("g", 12250, 0.05); // E4 (Mi)
-addCubeToScene("k", 12500, 0.05); // G4 (Sol)
-addCubeToScene("l", 12750, 0.05); // A4 (Lá)
-addCubeToScene("k", 13000, 0.05); // G4 (Sol)
-addCubeToScene("g", 13250, 0.05); // E4 (Mi)
-addCubeToScene("d", 13500, 0.05); // D4 (Ré)
-addCubeToScene("a", 13750, 0.05); // C4 (Dó)
-
-// Retorno à melodia principal com variação - "Or one more dream that I cannot make true"
-addCubeToScene("a", 14000, 0.05); // C4 (Dó)
-addCubeToScene("d", 14250, 0.05); // D4 (Ré)
-addCubeToScene("g", 14500, 0.05); // E4 (Mi)
-addCubeToScene("g", 14750, 0.05); // E4 (Mi)
-addCubeToScene("d", 15000, 0.05); // D4 (Ré)
-addCubeToScene("a", 15250, 0.05); // C4 (Dó)
-addCubeToScene("/", 15500, 0.05); // B3 (Si)
-addCubeToScene(".", 15750, 0.05); // A3 (Lá)
-
-// Finalização - Arpejos finais com notas sustentadas
-// Primeiro acorde (Am)
-addCubeToScene("8", 16000, 0.05);    // A2 (baixo)
-addCubeToScene("b", 16250, 0.05);    // E3
-addCubeToScene("z", 16500, 0.05);    // C3
-addCubeToScene("b", 16750, 0.05);    // E3
-addCubeToScene("a", 17000, 0.05);    // C4 (nota final da melodia)
-
-// Acorde final (Am) sustentado
-addCubeToScene("8", 17500, 0.05);    // A2 (baixo)
-addCubeToScene("z", 17500, 0.05);    // C3 (simultâneo)
-addCubeToScene("b", 17500, 0.05);    // E3 (simultâneo)
-addCubeToScene("a", 17500, 0.05);    // C4 (simultâneo - nota final)
+  // Sua função addCubeToScene (para o visual)
+  // function addCubeToScene(letter, delay, speed) {
+  //    spawnEvents.push({ letter, delay, speed, spawned: false });
+  // }
+  // Certifique-se de que ela esteja definida e funcionando no seu projeto.
+  
+  const cityOfStarsSequence = [
+    {
+      "key": "t",
+      "time": 0,
+      "duration": 0.05
+    },
+    {
+      "key": "r",
+      "time": 400,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 600,
+      "duration": 0.05
+    },
+    {
+      "key": "r",
+      "time": 1000,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 1200,
+      "duration": 0.05
+    },
+    {
+      "key": "]",
+      "time": 1600,
+      "duration": 0.05
+    },
+    {
+      "key": "e",
+      "time": 1800,
+      "duration": 0.05
+    },
+    {
+      "key": "q",
+      "time": 2200,
+      "duration": 0.05
+    },
+    {
+      "key": "8",
+      "time": 600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 800,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 1000,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 1200,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 1400,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 1600,
+      "duration": 0.05
+    },
+    {
+      "key": "l",
+      "time": 2400,
+      "duration": 0.05
+    },
+    {
+      "key": "4",
+      "time": 2400,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 2600,
+      "duration": 0.05
+    },
+    {
+      "key": "0",
+      "time": 2800,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 3000,
+      "duration": 0.05
+    },
+    {
+      "key": "0",
+      "time": 3200,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 3400,
+      "duration": 0.05
+    },
+    {
+      "key": "a",
+      "time": 3600,
+      "duration": 0.05
+    },
+    {
+      "key": "g",
+      "time": 4000,
+      "duration": 0.05
+    },
+    {
+      "key": "l",
+      "time": 4200,
+      "duration": 0.05
+    },
+    {
+      "key": "]",
+      "time": 4600,
+      "duration": 0.05
+    },
+    {
+      "key": "8",
+      "time": 3600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 3800,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 4000,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 4200,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 4400,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 4600,
+      "duration": 0.05
+    },
+    {
+      "key": "g",
+      "time": 4800,
+      "duration": 0.05
+    },
+    {
+      "key": "z",
+      "time": 4800,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 5000,
+      "duration": 0.05
+    },
+    {
+      "key": ",",
+      "time": 5200,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 5400,
+      "duration": 0.05
+    },
+    {
+      "key": ",",
+      "time": 5600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 5800,
+      "duration": 0.05
+    },
+    {
+      "key": "l",
+      "time": 6000,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 6200,
+      "duration": 0.05
+    },
+    {
+      "key": "r",
+      "time": 6600,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 6800,
+      "duration": 0.05
+    },
+    {
+      "key": "]",
+      "time": 7200,
+      "duration": 0.05
+    },
+    {
+      "key": "e",
+      "time": 7400,
+      "duration": 0.05
+    },
+    {
+      "key": "q",
+      "time": 7800,
+      "duration": 0.05
+    },
+    {
+      "key": "8",
+      "time": 6200,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 6400,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 6600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 6800,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 7000,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 7200,
+      "duration": 0.05
+    },
+    {
+      "key": "l",
+      "time": 8000,
+      "duration": 0.05
+    },
+    {
+      "key": "4",
+      "time": 8000,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 8200,
+      "duration": 0.05
+    },
+    {
+      "key": "0",
+      "time": 8400,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 8600,
+      "duration": 0.05
+    },
+    {
+      "key": "0",
+      "time": 8800,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 9000,
+      "duration": 0.05
+    },
+    {
+      "key": "a",
+      "time": 9200,
+      "duration": 0.05
+    },
+    {
+      "key": "g",
+      "time": 9600,
+      "duration": 0.05
+    },
+    {
+      "key": "l",
+      "time": 9800,
+      "duration": 0.05
+    },
+    {
+      "key": "]",
+      "time": 10200,
+      "duration": 0.05
+    },
+    {
+      "key": "8",
+      "time": 9200,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 9400,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 9600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 9800,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 10000,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 10200,
+      "duration": 0.05
+    },
+    {
+      "key": "g",
+      "time": 10400,
+      "duration": 0.05
+    },
+    {
+      "key": "k",
+      "time": 10800,
+      "duration": 0.05
+    },
+    {
+      "key": "]",
+      "time": 11000,
+      "duration": 0.05
+    },
+    {
+      "key": "q",
+      "time": 11400,
+      "duration": 0.05
+    },
+    {
+      "key": "4",
+      "time": 10400,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 10600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 10800,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 11000,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 11200,
+      "duration": 0.05
+    },
+    {
+      "key": "7",
+      "time": 11400,
+      "duration": 0.05
+    },
+    {
+      "key": "e",
+      "time": 11600,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 11800,
+      "duration": 0.05
+    },
+    {
+      "key": "r",
+      "time": 12400,
+      "duration": 0.05
+    },
+    {
+      "key": "t",
+      "time": 12600,
+      "duration": 0.05
+    },
+    {
+      "key": "8",
+      "time": 11800,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 12000,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 12200,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 12400,
+      "duration": 0.05
+    },
+    {
+      "key": ".",
+      "time": 12600,
+      "duration": 0.05
+    },
+    {
+      "key": "b",
+      "time": 12800,
+      "duration": 0.05
+    }
+  ];  
+  
+  // Supondo que 'audioContext' já esteja definido no seu projeto
+  // e Soundfont já esteja carregado/importado.
+  Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((piano) => {
+      // O código do keydown original para referência (não é usado pelo autoplay)
+      /*
+      document.addEventListener("keydown", (e) => {
+          const note = keyMap[e.key];
+          if (note) {
+              piano.play(note);
+          }
+      });
+      */
+  
+      const autoplayButton = document.getElementById("autoplayButton");
+  
+      if (autoplayButton) {
+          autoplayButton.addEventListener("click", function() {
+              console.log("Botão Autoplay clicado");
+              this.disabled = true;
+              let accumulatedTime = 0;
+  
+              cityOfStarsSequence.forEach(noteInSequence => {
+                  setTimeout(() => {
+                      // Para o visual (sua função)
+                      addCubeToScene(noteInSequence.key, noteInSequence.time, noteInSequence.duration);
+                      
+                      // Para o som
+                      const notaMusicalParaTocar = keyMap[noteInSequence.key];
+                      if (notaMusicalParaTocar) {
+                          piano.play(notaMusicalParaTocar);
+                          console.log(`Tocando som: ${notaMusicalParaTocar} para tecla ${noteInSequence.key} no tempo ${noteInSequence.time}`);
+                      } else {
+                          console.warn(`Tecla ${noteInSequence.key} não encontrada no keyMap para tocar som.`);
+                      }
+  
+                  }, noteInSequence.time);
+                  
+                  if (noteInSequence.time > accumulatedTime) {
+                      accumulatedTime = noteInSequence.time;
+                  }
+              });
+  
+              setTimeout(() => {
+                  this.disabled = false;
+                  console.log("Reprodução concluída, botão reabilitado.");
+              }, accumulatedTime + 500);
+          });
+      } else {
+          console.error("Botão com id 'autoplayButton' não encontrado no DOM.");
+      }
+  }).catch(function(err){
+      console.error("Erro ao carregar o instrumento Soundfont:", err);
+  });
+  
+  
