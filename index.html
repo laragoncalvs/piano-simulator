@@ -18,24 +18,50 @@
       position: fixed;
       top: calc(100vh - 50px);
       z-index: 800;
-      border: 1px solid #aaa;
-      background-color:transparent;
+      background-color:blue;
       padding: 10px 60px;
       color: #ccc;
       border-radius: 5px;
       cursor: pointer;
       transition: 0.3s;
+      margin-left: 180px;
+    }
+    #jogarButton{
+      position: fixed;
+      top: calc(100vh - 50px);
+      z-index: 800;
+      background-color:indigo;
+      padding: 10px 60px;
+      color: #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+      left: 350px
     }
     #autoplayButton:hover{
       background-color: #555;
       color: white;
     }
+    #jogarButton:hover{
+      background-color: #555;
+      color: white;
+    }
+    .ativo {
+  background-color: #555 !important;  /* força a cor */
+  color: black !important;
+  font-weight: bold !important;
+}
+
   </style>
-  <script type="module" crossorigin src="/piano-simulator/assets/index-BJFSfmng.js"></script>
+  <script type="module" crossorigin src="/piano-simulator/assets/index-DH8ME_vF.js"></script>
 </head>
 
 <body>
-  <button id="autoplayButton">Tocar</button>
-</body>
+  <div class="container">
+
+    <button id="jogarButton">Jogar</button>
+    <button id="autoplayButton">AutoPlay</button>
+  </div>
+  </body>
 
 </html>
