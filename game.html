@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+  body {
+    display: flex;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      background-color: #0B0912;
+      overflow: hidden;
+    }
+#jogarButton, #autoplayButton {
+  padding: 12px 40px;
+  color: #0e0e0e;
+  border-radius: 28px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 0.8em;
+  font-weight: 400;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-family: 'Press Start 2P', monospace;
+
+}
+
+
+.telaInicial h1 {
+  font-size: 1em;
+  margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
+         text-shadow:
+    -1px -1px 0 #B664FE,
+     1px -1px 0 #B664FE,
+    -1px  1px 0 #B664FE,
+     1px  1px 0 #B664FE;
+}
+
+#telaInicial {
+  margin-top: 50vh ;
+}
+#jogarButton {
+  background-color: #19C583;
+}
+
+#autoplayButton {
+
+  background-color: blue;
+}
+
+.container {
+  width: 100vw;
+
+}
+#autoplayButton:hover, #jogarButton:hover {
+  background-color: #555;
+  color: white;
+}
+
+.ativo {
+  background-color: transparent !important;
+  border: 2px solid #64fedd !important;
+  color: #64fedd !important;
+  font-weight: bold !important;
+  box-shadow: 0px 0px 10px 5px rgba(48, 228, 204, 0.8) !important;
+  margin-bottom: 12px;
+}
+
+#fimDaCena{
+  color: white;
+  display: none;
+  margin-top: 50vh;
+}
+#fimDaCena h2{
+  font-size: 2em;
+}
+
+
+#containerButton{
+
+  display: flex;
+  gap: 20px; /* Espaço entre os botões */
+  z-index: 1000;
+    animation: moverCimaBaixo 2s ease-in-out infinite alternate;
+}
+
+
+  </style>
+</head>
+
+<body>
+<div id="telaInicial" class="telaInicial">
+    <h1>Ode á Alegria - Bethoven</h1>
+  
+      <button id="jogarButton">JOGAR</button>
+      <button id="autoplayButton">AUTOPLAY</button>
+    </div>
+    <div id="fimDaCena">A música chegou ao fim 🎵 <h2> Mas você pode continuar tocando! </h2>
+    <button id="jogarButton" onclick="window.location.href='game.html'">JOGAR NOVAMENTE</button>
+    <button id="autoplayButton" onclick="window.location.href='indx.html'">VOLTAR</button>
+    </div>
+
+  <script type="module" src="/src/main.js">
+  </script>
+  </body>
+
+</html>

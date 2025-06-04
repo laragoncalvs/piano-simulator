@@ -2,6 +2,8 @@
 <html lang="pt-br">
 
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -13,55 +15,189 @@
       flex-direction: column;
       justify-content: center; 
       align-items: center; 
+      background-color: #0B0912;
+      overflow: hidden;
     }
-    #autoplayButton{
-      position: fixed;
-      top: calc(100vh - 50px);
-      z-index: 800;
-      background-color:blue;
-      padding: 10px 60px;
-      color: #ccc;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-left: 180px;
-    }
-    #jogarButton{
-      position: fixed;
-      top: calc(100vh - 50px);
-      z-index: 800;
-      background-color:indigo;
-      padding: 10px 60px;
-      color: #ccc;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-      left: 350px
-    }
-    #autoplayButton:hover{
-      background-color: #555;
-      color: white;
-    }
-    #jogarButton:hover{
-      background-color: #555;
-      color: white;
-    }
-    .ativo {
-  background-color: #555 !important;  /* força a cor */
+#jogarButton, #autoplayButton {
+  padding: 12px 40px;
+  color: #0e0e0e;
+  border-radius: 28px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 1.1em;
+  font-weight: 400;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-family: 'Press Start 2P', monospace;
+
+}
+
+#jogarButton {
+  background-color: #19C583;
+}
+
+#autoplayButton {
+  left: 50%;
+  transform: translateX(20%);
+
+  background-color: blue;
+}
+
+.container {
+  width: 100vw;
+
+}
+#autoplayButton:hover, #jogarButton:hover {
+  background-color: #555;
+  color: white;
+}
+
+.ativo {
+  background-color: #555 !important;
   color: black !important;
   font-weight: bold !important;
+}
+
+#telaInicial {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+    font-size: 0.9rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 70vh;
+  width: 45vw;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 50px 30px;
+  color: white;
+  border: 3px solid #B664FE;
+ 
+  border-radius: 62px;
+  z-index: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+}
+img{
+  width: 85px;
+}
+
+#telaInicial h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  margin-top: 50px;
+      font-family: 'Press Start 2P', monospace;
+         text-shadow:
+    -1px -1px 0 #B664FE,
+     1px -1px 0 #B664FE,
+    -1px  1px 0 #B664FE,
+     1px  1px 0 #B664FE;
+}
+
+#telaInicial p {
+  font-size: 1.2em;
+  color: #BAAEAE
+}
+#degrade{
+
+background: linear-gradient(
+  rgba(11, 9, 18, 0.06) 0%,
+  rgba(11, 9, 18, 0.06) 60%,
+  rgba(73,60,120, 0.6) 89%
+);
+height: 70vh;
+width: 100vw;
+}
+#grade{
+  background-color: rgba(227,35,202,0.71);
+  height: 10px;
+  box-shadow: 0px 0px 100px 20px  rgba(227,35,202,0.51);
+}
+
+.nota {
+  position: absolute;
+  width: 32px;
+  bottom: 50vh;
+  z-index: -1; /* Notas atrás do piano */
+  opacity: 0.9;
+  animation: flutuar 4s linear infinite;
+}
+#containerButton{
+    position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px; /* Espaço entre os botões */
+  z-index: 1000;
+    animation: moverCimaBaixo 2s ease-in-out infinite alternate;
+}
+
+.nota1 { left: 54%; top:10%; animation-delay: 0s; }
+.nota2 { left: 45%; top:20%; animation-delay: 1s; }
+
+.img-grade{
+  width: 150vw;
+  opacity: 0.5;
+  transform: translateY(-5%);
+}
+#imgContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes flutuar {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-100px) scale(1.2) rotate(15deg);
+  }
+  100% {
+    transform: translateY(-200px) scale(1) rotate(-15deg);
+    opacity: 0;
+  }
+  
+}
+@keyframes moverCimaBaixo {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-10px); } /* sobe 10px */
 }
 
   </style>
 </head>
 
 <body>
+
   <script type="module" src="/main.js">
   </script>
-  <div class="container">
 
-    <button id="jogarButton">Jogar</button>
-    <button id="autoplayButton">AutoPlay</button>
+  <div class="container">
+    <div id="telaInicial">
+      
+       <img src="/assets/som-1.png" class="nota nota1">
+  <img src="/assets/som-2.png" class="nota nota2">
+
+      <img src="/assets/piano.png">
+      <h1>MUSA</h1>
+      <p>Música Universal Simples e Acessível</p>
+      <button id="jogarButton" onclick="window.location.href='game.html'">INCIAR</button>
+    </div>
+    <div id="degrade"></div>
+    <div id="grade"></div>
+    <div id="imgContainer">
+
+      <img class="img-grade" src="/assets/grade.svg">
+    </div>
+
+  </div>
+  <div id="containerButton">
+
   </div>
   </body>
 
