@@ -1,12 +1,14 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
+  base: '/piano-simulator/',
   build: {
     rollupOptions: {
       input: {
-        main: 'index.html',
-        game: 'game.html',
-      }
-    }
-  }
-})
+        index: resolve(__dirname, 'index.html'),
+        game: resolve(__dirname, 'game.html'),
+      },
+    },
+  },
+});
