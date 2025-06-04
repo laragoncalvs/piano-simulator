@@ -1,5 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: '/piano-simulator/', // Nome do repositório GitHub
-});
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        game: 'game.html',
+      }
+    }
+  }
+})
