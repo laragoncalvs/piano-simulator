@@ -13,6 +13,11 @@ let startTime = null;
 let fimTimeout = null;
 let musica = null;
 
+let duracaoTotal = 0; // duração total da música (em ms)
+const progressContainer = document.getElementById("progressContainer");
+const progressBar = document.getElementById("progressBar");
+
+
 function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
     const size = 256;
     const canvas = document.createElement('canvas');
@@ -177,6 +182,16 @@ function animate() {
             event.spawned = true;
         }
     });
+if (startTime && duracaoTotal > 0) {
+    const tempoAtual = performance.now() - startTime;
+    const progresso = Math.min(tempoAtual / duracaoTotal, 1); // de 0 a 1
+    progressBar.style.width = (progresso * 100) + "%";
+
+    // Se terminar a música, esconder a barra
+    if (progresso >= 1) {
+        progressContainer.style.display = "none";
+    }
+}
 
     for (let i = activeCubes.length - 1; i >= 0; i--) {
         const cube = activeCubes[i];
@@ -234,6 +249,7 @@ function resetarCena() {
     spawnEvents.length = 0;
     startTime = null; // <- reinicia o tempo
 }
+const canvas = renderer.domElement;
 
 
 
@@ -245,12 +261,44 @@ const bethovenMusic = document.getElementById("bethoven");
 const tchaiMusic = document.getElementById("tchai");
 
 const resetar = document.getElementById("resetarButton");
+const voltar = document.getElementById("voltarButton");
 
 if (animationId !== null) {
     cancelAnimationFrame(animationId);
     animationId = null;
 }
 
+
+voltar.addEventListener("click", () => {
+    // Limpa cubos, eventos e para animação
+
+            playElvis.style.display = "inline"
+            playTchai.style.display = "inline"
+            playBethoven.style.display = "inline"
+    modoAtual = null;
+    jogarButton.disabled = false;
+    autoplayButton.disabled = false;
+progressContainer.style.display = "none";
+telaInicial.style.marginTop = "10vh"
+    // Desmarcar destaque visual
+    jogarButton.classList.remove("ativo");
+    autoplayButton.classList.remove("ativo");
+
+    // Restaurar interface inicial
+    titulo.style.display = "inline";
+    resetarButton.style.display = "none";
+    voltarButton.style.display = "none";
+    pianoImg.style.display = "inline";
+
+    // Reexibir seleção de música
+    elvis.style.display = "inline";
+    bethoven.style.display = "inline";
+    tchai.style.display = "inline";
+
+canvas.style.display = "none";
+
+    telaInicial.style.display = 'flex'; // ou 'block', depende da sua config
+});
 
 elvisMusic.addEventListener("click", () => {
     musica = "elvis"
@@ -280,18 +328,25 @@ tchaiMusic.addEventListener("click", () => {
 
 })
 
-console.log(musica)
 
 autoplayButton.addEventListener("click", () => {
     if (modoAtual === "autoplay") return;
 telaInicial.style.setProperty("margin-top", "0vh", "important");
 telaInicial.style.setProperty("margin-top", "0vh", "important");
+progressBar.style.width = "0%";
+progressContainer.style.display = "block";
+
+            playElvis.style.display = "none"
+            playTchai.style.display = "none"
+            playBethoven.style.display = "none"
 titulo.style.display = "none";
 resetarButton.style.display = "inline";
+voltarButton.style.display = "inline";
 pianoImg.style.display = "none";
 //grade.style.display = "none";
 //imgContainer.style.display = "none";
      // containerButton.style.transform = 'translateY(150px)';
+canvas.style.display = "inline";
 
 
     modoAtual = "autoplay";
@@ -304,12 +359,14 @@ pianoImg.style.display = "none";
       carregarPartituraCisne();
       bethoven.style.display = "none"
       elvis.style.display = "none"
+
   }
   else{
    
              carregarPartituraLove();
       bethoven.style.display = "none"
       tchai.style.display = "none"
+
 
   }
   startTime = performance.now();
@@ -347,6 +404,14 @@ jogarButton.addEventListener("click", () => {
 telaInicial.style.setProperty("margin-top", "0vh", "important");
 titulo.style.display = "none";
 resetarButton.style.display = "inline";
+voltarButton.style.display = "inline";
+canvas.style.display = "inline";
+progressBar.style.width = "0%";
+progressContainer.style.display = "block";
+
+            playElvis.style.display = "none"
+            playTchai.style.display = "none"
+            playBethoven.style.display = "none"
 pianoImg.style.display = "none";
 
 //degrade.style.display = "none";
@@ -556,6 +621,7 @@ addCubeToScene("d", 36246, 0.05);
 addCubeToScene("a", 37198, 0.05);
 addCubeToScene("a", 37550, 0.05);
 
+duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; // tempo da última nota + folga
 
     
 }
@@ -634,6 +700,7 @@ addCubeToScene("k", 29747, 0.05);  // G4
 addCubeToScene("j", 30015, 0.05);  // F#4
 addCubeToScene("g", 30287, 0.05);  // E4
 addCubeToScene("d", 30556, 0.05);  // D4
+duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; // tempo da última nota + folga
 
 }
 
@@ -736,6 +803,8 @@ addCubeToScene("h", 91923, 0.05);   // F4 (93442 - 1519 = 91923)
 addCubeToScene("g", 92512, 0.05);   // E4 (94031 - 1519 = 92512)
 addCubeToScene("d", 94347, 0.05);   // D4 (95866 - 1519 = 94347)
 addCubeToScene("a", 96113, 0.05);   // C4 (97632 - 1519 = 96113)
+duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; // tempo da última nota + folga
+
 }
 
 function carregarPartituraMozart(){
@@ -888,6 +957,8 @@ addCubeToScene("p", 74555, 0.05);  // B4 (78383 - 3828 = 74555)
 addCubeToScene("l", 74988, 0.05);  // A4 (78816 - 3828 = 74988)
 addCubeToScene("p", 75376, 0.05);  // B4 (79204 - 3828 = 75376)
 addCubeToScene("l", 75679, 0.05);  // A4 (79507 - 3828 = 75679)
+duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; // tempo da última nota + folga
+
 }
 
 function carregarPartituraCisne(){
@@ -1000,5 +1071,6 @@ addCubeToScene("3", 80034, 0.05);
 addCubeToScene("i", 80601, 0.05);
 addCubeToScene("7", 81085, 0.05);
 addCubeToScene("3", 81668, 0.05);
+duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; // tempo da última nota + folga
 
 }
