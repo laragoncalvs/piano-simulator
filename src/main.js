@@ -83,7 +83,7 @@ function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
                     scene.background = new THREE.Color(0x0B0912);
                     
                     const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-                    camera.position.set(0, 6, 2);
+                    camera.position.set(0, 7, 2);
                     camera.lookAt(0, 1, 0);
                     
                     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -109,7 +109,7 @@ const planeMaterial2 = new THREE.MeshStandardMaterial({
     side: THREE.DoubleSide,
     transparent: true,
 opacity: 0.5,     
-        map: gradientTexture2
+     
 
 });
 
