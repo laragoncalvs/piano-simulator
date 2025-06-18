@@ -7,205 +7,232 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-  body {
-    display: flex;
+    body {
+      display: flex;
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center; 
-      align-items: center; 
+      justify-content: center;
+      align-items: center;
       background-color: #0B0912;
       overflow: hidden;
     }
-#jogarButton, #autoplayButton, #resetarButton, #voltarButton {
-  padding: 12px 40px;
-  color: #0e0e0e;
-  border-radius: 28px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  font-size: 0.8em;
-  font-weight: 400;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  font-family: 'Press Start 2P', monospace;
 
-}
-
-
-.telaInicial h1 {
-  font-size: 1em;
+    #jogarButton,
+    #autoplayButton,
+    #resetarButton,
+    #voltarButton {
+      padding: 12px 40px;
+      color: #0e0e0e;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 0.8em;
+      font-weight: 400;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       font-family: 'Press Start 2P', monospace;
-         text-shadow:
-    -1px -1px 0 #6473fe,
-     1px -1px 0 #B664FE,
-    -1px  1px 0 #fe64e9,
-     1px  1px 0 #B664FE;
-     display: inline;
-     margin: 0 !important;
-}
 
-.telaInicial span {
-  font-size: 1em;
-  margin-bottom: 20px;
+    }
+
+
+    .telaInicial h1 {
+      font-size: 1em;
       font-family: 'Press Start 2P', monospace;
-         text-shadow:
-    -1px -1px 0 #faad48,
-     1px -1px 0 #fff0dc,
-    -1px  1px 0 #faad48,
-     1px  1px 0 #faad48;
-}
+      text-shadow:
+        -1px -1px 0 #6473fe,
+        1px -1px 0 #B664FE,
+        -1px 1px 0 #fe64e9,
+        1px 1px 0 #B664FE;
+      display: inline;
+      margin: 0 !important;
+    }
+
+    .telaInicial span {
+      font-size: 1em;
+      margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow:
+        -1px -1px 0 #faad48,
+        1px -1px 0 #fff0dc,
+        -1px 1px 0 #faad48,
+        1px 1px 0 #faad48;
+    }
 
 
-#telaInicial {
-  margin-top: 10vh ;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    #telaInicial {
+      margin-top: 10vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-}
-#jogarButton {
-  background-color: #19C583;
-}
+    }
 
-#autoplayButton {
+    #jogarButton {
+      background-color: #19C583;
+    }
 
-  background-color: rgb(62, 62, 240);
-}
-#resetarButton {
-  background-color: rgb(241, 132, 29);
-  display: none;
-}
-#voltarButton {
-  background-color: rgb(241, 49, 106);
-  display: none;
-}
+    #autoplayButton {
 
-.container {
-  width: 100vw;
+      background-color: rgb(62, 62, 240);
+    }
 
-}
-#autoplayButton:hover, #jogarButton:hover {
-  background-color: #555;
-  color: white;
-}
+    #resetarButton {
+      background-color: rgb(241, 132, 29);
+      display: none;
+    }
 
-#elvis{
-  margin-top: 15px;
-}
+    #voltarButton {
+      background-color: rgb(241, 49, 106);
+      display: none;
+    }
 
-.ativo {
-  background-color: transparent !important;
-  border: 2px solid #64fedd !important;
-  color: #64fedd !important;
-  font-weight: bold !important;
-  margin-bottom: 12px;
-}
-.musicaEscolhida {
-  background-color: transparent !important;
-  color: #09179b !important;
-  text-shadow: none !important;
-}
-#fimDaCena{
-  color: white;
-  display: none;
-  margin-top: 40vh;
-}
-#fimDaCena h2{
-  font-size: 2em;
-}
+    .container {
+      width: 100vw;
 
-.titulo{
-  font-family: 'Courier New', Courier, monospace !important;
-  font-size: 3rem !important;
-  text-shadow: none !important;
-  color: white;
-}
+    }
 
-#containerButton{
+    #autoplayButton:hover,
+    #jogarButton:hover {
+      background-color: #555;
+      color: white;
+    }
 
-  display: flex;
-  gap: 20px; /* Espaço entre os botões */
-  z-index: 1000;
-    animation: moverCimaBaixo 2s ease-in-out infinite alternate;
-}
+    #elvis {
+      margin-top: 15px;
+    }
 
-button{
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-h5{
-  color: #8a888b
-}
+    .ativo {
+      background-color: transparent !important;
+      border: 2px solid #64fedd !important;
+      color: #64fedd !important;
+      font-weight: bold !important;
+      margin-bottom: 12px;
+    }
 
-#area{
-  position: fixed;
-  background-color: #09179b;
-  z-index: 500;
-  height: 100px;
-  width: 200px;
-  opacity: 0.5;
-  margin-left: 350px;
-  transition: margin-left 0.5s ease; 
-}
-#pianoImg{
-  margin-bottom: 30px;
-}
+    .musicaEscolhida {
+      background-color: transparent !important;
+      color: #09179b !important;
+      text-shadow: none !important;
+    }
 
-a{
-  display: inline;
-}
-#buttons{
-  display: flex;
-  align-items: center;
-}
+    #fimDaCena {
+      color: white;
+      display: none;
+      margin-top: 40vh;
+    }
 
+    #fimDaCena h2 {
+      font-size: 2em;
+    }
+
+    .titulo {
+      font-family: 'Courier New', Courier, monospace !important;
+      font-size: 3rem !important;
+      text-shadow: none !important;
+      color: white;
+    }
+
+    #containerButton {
+
+      display: flex;
+      gap: 20px;
+      z-index: 1000;
+      animation: moverCimaBaixo 2s ease-in-out infinite alternate;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    h5 {
+      color: #8a888b
+    }
+
+    #area {
+      position: fixed;
+      background-color: #09179b;
+      z-index: 500;
+      height: 100px;
+      width: 200px;
+      opacity: 0.5;
+      margin-left: 350px;
+      transition: margin-left 0.5s ease;
+    }
+
+    #pianoImg {
+      margin-bottom: 30px;
+    }
+
+    a {
+      display: inline;
+    }
+
+    #buttons {
+      display: flex;
+      align-items: center;
+    }
   </style>
   <script>
 
-</script>
+  </script>
 
 </head>
 
 <body>
   <div id="telaInicial" class="telaInicial">
- <div id="titulo" style="margin-bottom: 20px;">
+    <div id="titulo" style="margin-bottom: 20px;">
 
-   <h1  class="titulo"> Selecione uma música </h1> <br>
-   <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
-  </div>
-  <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida"> <h1>Elvis Presley - Can't help falling in love </h1>  <span>Fácil</span> </button> <a id="playElvis" href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D" target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
-     <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven"> <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>  </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img style="width: 20px;"  src="./assets/play.png"></a> </div>
-   <div id="buttons"> <button style="margin: 10px 0px;" id="tchai"> <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>  </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img style="width: 20px;"  src="./assets/play.png"></a> </div>
+      <h1 class="titulo"> Selecione uma música </h1> <br>
+      <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
+    </div>
+    <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida">
+        <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
+      </button> <a id="playElvis"
+        href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
+        target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
+    <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven">
+        <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
+      </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
+        target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
+    <div id="buttons"> <button style="margin: 10px 0px;" id="tchai">
+        <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
+      </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
+          style="width: 20px;" src="./assets/play.png"></a> </div>
 
- <div id="pianoImg">
-  <h5>Área do piano que vai ser tocada:</h5>
-  <div id="area"></div>
-   <img  src="./assets/piano-completo.png"/>
-  </div>
+    <div id="pianoImg">
+      <h5>Área do piano que vai ser tocada:</h5>
+      <div id="area"></div>
+      <img src="./assets/piano-completo.png" />
+    </div>
     <div>
-      
+
       <button id="jogarButton">JOGAR</button>
       <button id="autoplayButton">AUTOPLAY</button>
       <button id="resetarButton">RESETAR</button>
       <button id="voltarButton">VOLTAR</button>
     </div>
-    <div id="progressContainer" style="margin-bottom: 10px; width: 100%; background: #202020; height: 5px; margin-top: 8px; display: none; border-radius: 50px;">
-      <div id="progressBar" style=" box-shadow: 0px 0px 5px 5px rgba(48, 228, 204, 0.5); width: 0%; height: 100%; background: #64fedd; border-radius: 50px;"></div>
+    <div id="progressContainer"
+      style="margin-bottom: 10px; width: 100%; background: #202020; height: 5px; margin-top: 8px; display: none; border-radius: 50px;">
+      <div id="progressBar"
+        style=" box-shadow: 0px 0px 5px 5px rgba(48, 228, 204, 0.5); width: 0%; height: 100%; background: #64fedd; border-radius: 50px;">
+      </div>
     </div>
-    </div>
-    <div id="fimDaCena">A música chegou ao fim 🎵 <h2> Mas você pode continuar tocando! </h2>
-    
-      <button id="jogarButton" onclick="window.location.href='game.html'">JOGAR NOVAMENTE</button>
+  </div>
+  <div id="fimDaCena">A música chegou ao fim 🎵 <h2> Mas você pode continuar tocando! </h2>
+
+    <button id="jogarButton" onclick="window.location.href='game.html'">JOGAR NOVAMENTE</button>
     <button id="autoplayButton" onclick="window.location.href='index.html'">VOLTAR</button>
-    </div>
+  </div>
 
- 
 
-  <script  type="module" src="/src/main.js">
+
+  <script type="module" src="/src/main.js">
   </script>
-  </body>
+</body>
 
 </html>
