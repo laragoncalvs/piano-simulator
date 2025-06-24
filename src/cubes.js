@@ -77,7 +77,6 @@ Object.keys(letterTextures).forEach((key) => {
     allCubes[key] = createCube(key);
 });
 
-// Define posições iniciais
 const linhas = [-6, -4.9, -3.8, -2.7, -1.6, -0.55, 0.55, 1.6, 2.7, 3.8, 4.9, 6];
 const initz = -11;
 const inity = 0.4;
