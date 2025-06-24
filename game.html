@@ -1,210 +1,282 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 
+
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-  body {
-    display: flex;
+    body {
+      display: flex;
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center; 
-      align-items: center; 
+      justify-content: center;
+      align-items: center;
       background-color: #0B0912;
       overflow: hidden;
     }
-#jogarButton, #autoplayButton, #resetarButton, #voltarButton {
-  padding: 12px 40px;
-  color: #0e0e0e;
-  border-radius: 28px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  font-size: 0.8em;
-  font-weight: 400;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  font-family: 'Press Start 2P', monospace;
-
-}
 
 
-.telaInicial h1 {
-  font-size: 1em;
+    #jogarButton,
+    #autoplayButton,
+    #resetarButton,
+    #voltarButton {
+      padding: 12px 40px;
+      color: #0e0e0e;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 0.8em;
+      font-weight: 400;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       font-family: 'Press Start 2P', monospace;
-         text-shadow:
-    -1px -1px 0 #6473fe,
-     1px -1px 0 #B664FE,
-    -1px  1px 0 #fe64e9,
-     1px  1px 0 #B664FE;
-     display: inline;
-     margin: 0 !important;
-}
 
-.telaInicial span {
-  font-size: 1em;
-  margin-bottom: 20px;
+
+    }
+
+
+
+
+    .telaInicial h1 {
+      font-size: 1em;
       font-family: 'Press Start 2P', monospace;
-         text-shadow:
-    -1px -1px 0 #faad48,
-     1px -1px 0 #fff0dc,
-    -1px  1px 0 #faad48,
-     1px  1px 0 #faad48;
-}
+      text-shadow:
+        -1px -1px 0 #6473fe,
+        1px -1px 0 #B664FE,
+        -1px 1px 0 #fe64e9,
+        1px 1px 0 #B664FE;
+      display: inline;
+      margin: 0 !important;
+    }
 
 
-#telaInicial {
-  margin-top: 10vh ;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    .telaInicial span {
+      font-size: 1em;
+      margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow:
+        -1px -1px 0 #faad48,
+        1px -1px 0 #fff0dc,
+        -1px 1px 0 #faad48,
+        1px 1px 0 #faad48;
+    }
 
-}
-#jogarButton {
-  background-color: #19C583;
-}
 
-#autoplayButton {
 
-  background-color: rgb(62, 62, 240);
-}
-#resetarButton {
-  background-color: rgb(241, 132, 29);
-  display: none;
-}
-#voltarButton {
-  background-color: rgb(241, 49, 106);
-  display: none;
-}
 
-.container {
-  width: 100vw;
+    #telaInicial {
+      margin-top: 10vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-}
-#autoplayButton:hover, #jogarButton:hover {
-  background-color: #555;
-  color: white;
-}
 
-#elvis{
-  margin-top: 15px;
-}
+    }
 
-.ativo {
-  background-color: transparent !important;
-  border: 2px solid #64fedd !important;
-  color: #64fedd !important;
-  font-weight: bold !important;
-  margin-bottom: 12px;
-}
-.musicaEscolhida {
-  background-color: transparent !important;
-  color: #09179b !important;
-  text-shadow: none !important;
-}
-#fimDaCena{
-  color: white;
-  display: none;
-  margin-top: 40vh;
-}
-#fimDaCena h2{
-  font-size: 2em;
-}
 
-.titulo{
-  font-family: 'Courier New', Courier, monospace !important;
-  font-size: 3rem !important;
-  text-shadow: none !important;
-  color: white;
-}
+    #jogarButton {
+      background-color: #19C583;
+    }
 
-#containerButton{
 
-  display: flex;
-  gap: 20px; /* Espaço entre os botões */
-  z-index: 1000;
-    animation: moverCimaBaixo 2s ease-in-out infinite alternate;
-}
+    #autoplayButton {
 
-button{
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-h5{
-  color: #8a888b
-}
 
-#area{
-  position: fixed;
-  background-color: #09179b;
-  z-index: 500;
-  height: 100px;
-  width: 200px;
-  opacity: 0.5;
-  margin-left: 350px;
-  transition: margin-left 0.5s ease; 
-}
-#pianoImg{
-  margin-bottom: 30px;
-}
+      background-color: rgb(62, 62, 240);
+    }
 
-a{
-  display: inline;
-}
-#buttons{
-  display: flex;
-  align-items: center;
-}
 
+    #resetarButton {
+      background-color: rgb(241, 132, 29);
+      display: none;
+    }
+
+
+    #voltarButton {
+      background-color: rgb(241, 49, 106);
+      display: none;
+    }
+
+
+    .container {
+      width: 100vw;
+
+
+    }
+
+
+    #autoplayButton:hover,
+    #jogarButton:hover {
+      background-color: #555;
+      color: white;
+    }
+
+
+    #elvis {
+      margin-top: 15px;
+    }
+
+
+    .ativo {
+      background-color: transparent !important;
+      border: 2px solid #64fedd !important;
+      color: #64fedd !important;
+      font-weight: bold !important;
+      margin-bottom: 12px;
+    }
+
+
+    .musicaEscolhida {
+      background-color: transparent !important;
+      color: #09179b !important;
+      text-shadow: none !important;
+    }
+
+
+    #fimDaCena {
+      color: white;
+      display: none;
+      margin-top: 40vh;
+    }
+
+
+    #fimDaCena h2 {
+      font-size: 2em;
+    }
+
+
+    .titulo {
+      font-family: 'Courier New', Courier, monospace !important;
+      font-size: 3rem !important;
+      text-shadow: none !important;
+      color: white;
+    }
+
+
+    #containerButton {
+
+
+      display: flex;
+      gap: 20px;
+      z-index: 1000;
+      animation: moverCimaBaixo 2s ease-in-out infinite alternate;
+    }
+
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+
+    h5 {
+      color: #8a888b
+    }
+
+
+    #area {
+      position: fixed;
+      background-color: #09179b;
+      z-index: 500;
+      height: 100px;
+      width: 323px;
+      opacity: 0.5;
+      margin-left: 380px;
+      transition: margin-left 0.5s ease;
+      transition: width 0.5s ease;
+    }
+
+
+    #pianoImg {
+      margin-bottom: 30px;
+      z-index: 0;
+    }
+
+
+    a {
+      display: inline;
+    }
+
+
+    #buttons {
+      display: flex;
+      align-items: center;
+    }
   </style>
   <script>
 
-</script>
 
-  <script type="module" crossorigin src="/piano-simulator/assets/game-C4aO_e_a.js"></script>
+  </script>
+
+
+  <script type="module" crossorigin src="/piano-simulator/assets/game-DiM28TGh.js"></script>
 </head>
+
 
 <body>
   <div id="telaInicial" class="telaInicial">
- <div id="titulo" style="margin-bottom: 20px;">
+    <div id="titulo" style="margin-bottom: 20px;">
 
-   <h1  class="titulo"> Selecione uma música </h1> <br>
-   <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
-  </div>
-  <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida"> <h1>Elvis Presley - Can't help falling in love </h1>  <span>Fácil</span> </button> <a id="playElvis" href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D" target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-     <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven"> <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>  </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img style="width: 20px;"  src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-   <div id="buttons"> <button style="margin: 10px 0px;" id="tchai"> <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>  </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img style="width: 20px;"  src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
 
- <div id="pianoImg">
-  <h5>Área do piano que vai ser tocada:</h5>
-  <div id="area"></div>
-   <img  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA0EAAABkCAYAAABAdDvBAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAKYSURBVHgB7dmxccJAFEVR4SK2HIpXK5ttEzg1ihjL8sDcc2L7zcKP7nCbcz7GGNur7vf7y3+77/tlG0drre1TP8c7fB9/9Q63vWbnJ7c99wa3vWbjyG2fue25N7jtNRtHbvvMbc+94d1v+7UBAACEiCAAACBFBAEAACkiCAAASBFBAABAiggCAABSRBAAAJAiggAAgBQRBAAApIggAAAgRQQBAAApIggAAEgRQQAAQIoIAgAAUkQQAACQIoIAAIAUEQQAAKSIIAAAIEUEAQAAKSIIAABIEUEAAECKCAIAAFJEEAAAkCKCAACAFBEEAACkiCAAACBFBAEAACkiCAAASBFBAABAiggCAABSRBAAAJAiggAAgBQRBAAApIggAAAgRQQBAAApIggAAEgRQQAAQIoIAgAAUkQQAACQIoIAAIAUEQQAAKSIIAAAIEUEAQAAKSIIAABIEUEAAECKCAIAAFJEEAAAkCKCAACAFBEEAACkiCAAACBFBAEAACkiCAAASBFBAABAiggCAABSRBAAAJAiggAAgBQRBAAApIggAAAg5TbnfIwxtt9aa21n/t+GDRs2bNiwYcOGDRs2/nPDL0EAAECKCAIAAFJEEAAAkCKCAACAFBEEAACkiCAAACBFBAEAACkiCAAASBFBAABAiggCAABSRBAAAJAiggAAgBQRBAAApIggAAAgRQQBAAApIggAAEgRQQAAQIoIAgAAUkQQAACQIoIAAIAUEQQAAKSIIAAAIEUEAQAAKSIIAABIEUEAAECKCAIAAFJEEAAAkCKCAACAFBEEAACkiCAAACBFBAEAACkiCAAASBFBAABAiggCAABSRBAAAJAiggAAgBQRBAAApIggAAAgRQQBAAApIggAAEj5Bjv7Lia09MrjAAAAAElFTkSuQmCC"/>
-  </div>
+      <h1 class="titulo"> Selecione uma música </h1> <br>
+      <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
+    </div>
+    <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida">
+        <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
+      </button> <a id="playElvis"
+        href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
+        target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+    <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven">
+        <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
+      </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
+        target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+    <div id="buttons"> <button style="margin: 10px 0px;" id="tchai">
+        <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
+      </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
+          style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+
+
+    <div id="pianoImg">
+      <h5>Área do piano que vai ser tocada:</h5>
+      <div id="area"></div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA9wAAABkCAYAAAB0ITiYAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQ7SURBVHgB7dnNbeJcGIbhk09fFyy8Zx86YE8HYR06oAAqgD10wJ4OYE8H1JHRQRppJiEz2PiZ8SjXJZFIiB/bee3jW3lqmuatAAAAAL36v/44n893vXg8Hpcu7v3899917/um02m5XC6lrdVqVWaz2YfnN5vN9dHWaDQqh8Ph7tfX7d5ut9f33WO5XJb9fl/aen5+Lrvd7qfn6vGq399F3ccft3k+n5fj8VjaWiwW18c96vbW77n3+Had1a8yE3Uf677+6HQ6lZeXl9LF35iJur3r9frDbH9mKDNx63z8lTbXwqrrsU/PRNfr9BBnop6jk8nkw/N9XqN/5V+diffb3PfafUubmXhkXfwqM3HrfKz7V/ezi78xE3V7676/n+1bhjQTt87Hz7S9Z6qGOhN9r923/KmZeL8uftfnNfozXWaiz3W760zcuo8e2kz8Tt3e/woAAADQO8ENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABDw1DTN2/l8Ln0Yj8dlaJ81n8/L6+trmUwm5VH7/b4cj8eyWq1KH6bTadlut2U0GpVHbDab6+/FYlH60NexXy6X1+M+m83Koy6Xy/VveTgcyqPMRHtDnInT6VTW63XZ7XblUX0d96rvmejr2Pc5E0M9H81EO1/hGj3UmbButzPUdbvP+96hXqOt2+18hZmwbrdTZ8J/uAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAwFPTNG8FAAAA6NU3+Bnn6zN49gQAAAAASUVORK5CYII=" />
+    </div>
     <div>
-      
+
+
       <button id="jogarButton">JOGAR</button>
       <button id="autoplayButton">AUTOPLAY</button>
       <button id="resetarButton">RESETAR</button>
       <button id="voltarButton">VOLTAR</button>
     </div>
-    <div id="progressContainer" style="margin-bottom: 10px; width: 100%; background: #202020; height: 5px; margin-top: 8px; display: none; border-radius: 50px;">
-      <div id="progressBar" style=" box-shadow: 0px 0px 5px 5px rgba(48, 228, 204, 0.5); width: 0%; height: 100%; background: #64fedd; border-radius: 50px;"></div>
+    <div id="progressContainer"
+      style="margin-bottom: 10px; width: 100%; background: #202020; height: 5px; margin-top: 8px; display: none; border-radius: 50px;">
+      <div id="progressBar"
+        style=" box-shadow: 0px 0px 5px 5px rgba(48, 228, 204, 0.5); width: 0%; height: 100%; background: #64fedd; border-radius: 50px;">
+      </div>
     </div>
-    </div>
-    <div id="fimDaCena">A música chegou ao fim 🎵 <h2> Mas você pode continuar tocando! </h2>
-    
-      <button id="jogarButton" onclick="window.location.href='game.html'">JOGAR NOVAMENTE</button>
-    <button id="autoplayButton" onclick="window.location.href='index.html'">VOLTAR</button>
-    </div>
+  </div>
+  <div id="fimDaCena">A música chegou ao fim 🎵 <h2> Mas você pode continuar tocando! </h2>
 
- 
+
+    <button id="jogarButton" onclick="window.location.href='game.html'">JOGAR NOVAMENTE</button>
+    <button id="autoplayButton" onclick="window.location.href='index.html'">VOLTAR</button>
+  </div>
+
+
+
+
+
 
-  </body>
+</body>
+
 
 </html>
