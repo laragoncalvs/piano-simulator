@@ -47,6 +47,57 @@ import pontoVirgulaImg from '../assets/letras/pontoVirgula.png';
 import tilImg from '../assets/letras/til.png';
 import virgulaImg from '../assets/letras/virgula.png';
 
+
+import aImg2 from '../assets/letras2/a.png';
+import bImg2 from '../assets/letras2/b.png';
+import cImg2 from '../assets/letras2/c.png';
+import dImg2 from '../assets/letras2/d.png';
+import eImg2 from '../assets/letras2/e.png';
+import fImg2 from '../assets/letras2/f.png';
+import gImg2 from '../assets/letras2/g.png';
+import hImg2 from '../assets/letras2/h.png';
+import iImg2 from '../assets/letras2/i.png';
+import jImg2 from '../assets/letras2/j.png';
+import kImg2 from '../assets/letras2/k.png';
+import lImg2 from '../assets/letras2/l.png';
+import mImg2 from '../assets/letras2/m.png';
+import nImg2 from '../assets/letras2/n.png';
+import oImg2 from '../assets/letras2/o.png';
+import pImg2 from '../assets/letras2/p.png';
+import qImg2 from '../assets/letras2/q.png';
+import rImg2 from '../assets/letras2/r.png';
+import sImg2 from '../assets/letras2/s.png';
+import tImg2 from '../assets/letras2/t.png';
+import uImg2 from '../assets/letras2/u.png';
+import vImg2 from '../assets/letras2/v.png';
+import wImg2 from '../assets/letras2/w.png';
+import xImg2 from '../assets/letras2/x.png';
+import yImg2 from '../assets/letras2/y.png';
+import zImg2 from '../assets/letras2/z.png';
+import çImg2 from '../assets/letras2/ç.png';
+import zeroImg2 from '../assets/letras2/0.png';
+import umImg2 from '../assets/letras2/1.png';
+import doisImg2 from '../assets/letras2/2.png';
+import tresImg2 from '../assets/letras2/3.png';
+import quatroImg2 from '../assets/letras2/4.png';
+import cincoImg2 from '../assets/letras2/5.png';
+import seisImg2 from '../assets/letras2/6.png';
+import seteImg2 from '../assets/letras2/7.png';
+import oitoImg2 from '../assets/letras2/8.png';
+import noveImg2 from '../assets/letras2/9.png';
+import agudoImg2 from '../assets/letras2/agudo.png';
+import aspaImg2 from '../assets/letras2/aspa.png';
+import chaveDirImg2 from '../assets/letras2/chave dir.png';
+import chaveEsqImg2 from '../assets/letras2/chave esq.png';
+import hifenImg2 from '../assets/letras2/hifen.png';
+import igualImg2 from '../assets/letras2/igual.png';
+import pontoVirgulaImg2 from '../assets/letras2/pontoVirgula.png';
+import tilImg2 from '../assets/letras2/til.png';
+import virgulaImg2 from '../assets/letras2/virgula.png';
+
+
+
+
 const textureLoader = new THREE.TextureLoader();
 const baseColor = 0x5C2569;
 
@@ -61,16 +112,52 @@ const letterTextures = {
     til: tilImg, virgula: virgulaImg
 };
 
-const createCube = (key) => {
-    const texture = textureLoader.load(letterTextures[key]);
+const letterTexturesAlt = {
+    a: aImg2, b: bImg2, c: cImg2, d: dImg2, e: eImg2, f: fImg2, g: gImg2, h: hImg2, i: iImg2,
+    j: jImg2, k: kImg2, l: lImg2, m: mImg2, n: nImg2, o: oImg2, p: pImg2, q: qImg2, r: rImg2,
+    s: sImg2, t: tImg2, u: uImg2, v: vImg2, w: wImg2, x: xImg2, y: yImg2, z: zImg2, ç: çImg2,
+    "0": zeroImg2, "1": umImg2, "2": doisImg2, "3": tresImg2, "4": quatroImg2,
+    "5": cincoImg2, "6": seisImg2, "7": seteImg2, "8": oitoImg2, "9": noveImg2,
+    agudo: agudoImg2, aspa: aspaImg2, chave_direita: chaveDirImg2, chave_esquerda: chaveEsqImg2,
+    hifen: hifenImg2, igual: igualImg2, ponto_virgula: pontoVirgulaImg2,
+    til: tilImg2, virgula: virgulaImg2
+};
+
+const loadedTextures = {};
+const loadedTexturesAlt = {};
+
+for (const [letra, imgPath] of Object.entries(letterTextures)) {
+    const texture = textureLoader.load(imgPath);
     texture.colorSpace = THREE.SRGBColorSpace;
-    
-    const materials = Array(6).fill(new THREE.MeshStandardMaterial({ color: baseColor, transparent: true, opacity: 1 }));
-    materials[2] = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    loadedTextures[letra] = texture;
+}
+
+for (const [letra, imgPath] of Object.entries(letterTexturesAlt)) {
+    const texture = textureLoader.load(imgPath);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    loadedTexturesAlt[letra] = texture;
+}
+
+const createCube = (key) => {
+    const texture = loadedTextures[key];
+    const materials = [];
+
+    for (let i = 0; i < 6; i++) {
+        if (i === 2) {
+            materials.push(new THREE.MeshBasicMaterial({ map: texture, transparent: true }));
+        } else {
+            materials.push(new THREE.MeshStandardMaterial({
+                color: baseColor,
+                transparent: true,
+                opacity: 1
+            }));
+        }
+    }
 
     const cube = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.8), materials);
     return cube;
 };
+
 
 const allCubes = {};
 Object.keys(letterTextures).forEach((key) => {
@@ -82,8 +169,8 @@ const initz = -11;
 const inity = 0.4;
 
 const posicoes = [
-    ["a", "q", "z", "1", "aspa"], ["s", "w", "x", "2"], ["c", "d", "e", "3"], ["r", "f", "v", "4" ], ["g", "t", "b", "5"],
-    ["h", "y", "n", "6"], ["u", "j", "m", "7"], ["k", "i", "8"], ["o", "l", "9", "virgula"], ["p", "ç", "0"], ["hifen", "agudo", "til", "ponto_virgula"], 
+    ["a", "q", "z", "1", "aspa"], ["s", "w", "x", "2"], ["c", "d", "e", "3"], ["r", "f", "v", "4"], ["g", "t", "b", "5"],
+    ["h", "y", "n", "6"], ["u", "j", "m", "7"], ["k", "i", "8"], ["o", "l", "9", "virgula"], ["p", "ç", "0"], ["hifen", "agudo", "til", "ponto_virgula"],
     ["igual", "chave_esquerda", "chave_direita"]
 ];
 
@@ -99,4 +186,4 @@ Object.values(allCubes).forEach((cube) => {
     cube.position.z = initz;
 });
 
-export { allCubes };
+export { allCubes, loadedTexturesAlt };

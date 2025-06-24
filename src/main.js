@@ -2,6 +2,8 @@ import Soundfont from "soundfont-player";
 import * as THREE from 'three';
 import { keyMap } from "./keyMap.js";
 import { allCubes } from "./cubes.js";
+import { loadedTexturesAlt } from './cubes.js'; // ajuste o caminho conforme seu projeto
+
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let piano = null;
@@ -82,25 +84,15 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0B0912);
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 7, 2);
+camera.position.set(0, 6, 2);
 camera.lookAt(0, 1, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const planeGeometry = new THREE.PlaneGeometry(13.5, 20);
 const planeGeometry2 = new THREE.PlaneGeometry(13.5, 2);
 
-const planeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x0B0912,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0,
-    shadowSide: THREE.DoubleSide,
-    metalness: 0.5,
-    roughness: 0.1
-});
 
 
 const planeMaterial2 = new THREE.MeshStandardMaterial({
@@ -112,15 +104,12 @@ const planeMaterial2 = new THREE.MeshStandardMaterial({
 
 });
 
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
 
-plane.rotation.x = -Math.PI / 2;
 plane2.rotation.x = -Math.PI / 2;
-plane.position.z = -8;
 plane2.position.z = 2;
 
-scene.add(plane, plane2);
+scene.add(plane2);
 
 
 
@@ -158,12 +147,22 @@ const spawnEvents = [];
 function addCubeToScene(letter, delay, speed) {
     spawnEvents.push({ letter, delay, speed, spawned: false });
 }
-
 function spawnCube(letter, speed) {
     const baseCube = allCubes[letter];
     if (!baseCube) return;
 
-    const cube = baseCube.clone();
+    // Clona a geometria
+    const geometry = baseCube.geometry.clone();
+
+    // Clona materiais corretamente
+    let newMaterials;
+    if (Array.isArray(baseCube.material)) {
+        newMaterials = baseCube.material.map(mat => mat.clone());
+    } else {
+        newMaterials = baseCube.material.clone();
+    }
+
+    const cube = new THREE.Mesh(geometry, newMaterials);
     cube.position.copy(baseCube.position);
     cube.userData = { speed, letter, hit: false };
 
@@ -175,12 +174,15 @@ function animate() {
     animationId = requestAnimationFrame(animate);
     const elapsedTime = performance.now() - startTime;
 
+    // Spawna cubos
     spawnEvents.forEach(event => {
         if (elapsedTime > event.delay && !event.spawned) {
             spawnCube(event.letter, event.speed);
             event.spawned = true;
         }
     });
+
+    // Atualiza a barra de progresso
     if (startTime && duracaoTotal > 0) {
         const tempoAtual = performance.now() - startTime;
         const progresso = Math.min(tempoAtual / duracaoTotal, 1);
@@ -191,12 +193,41 @@ function animate() {
         }
     }
 
+    // Atualiza posição dos cubos
     for (let i = activeCubes.length - 1; i >= 0; i--) {
         const cube = activeCubes[i];
         cube.position.z += cube.userData.speed;
 
-        if (!cube.userData.hit && cube.position.z >= plane2.position.z) {
+        const zAlvo = plane2.position.z;
+        const offset = 0.8;
+
+        if (!cube.userData.hit && cube.position.z >= (zAlvo - offset)) {
             cube.userData.hit = true;
+
+            const letra = cube.userData.letter;
+
+            // Muda a cor das outras faces (exceto a face 2 com textura)
+
+
+            if (Array.isArray(cube.material)) {
+                cube.material.forEach((mat, idx) => {
+                    if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
+                        mat.color.set(0x51B79F);
+                    }
+
+                    if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                        const novaTextura = loadedTexturesAlt[letra];
+                        if (novaTextura) {
+                            mat.map = novaTextura;
+                            mat.needsUpdate = true;
+                        } else {
+                            console.warn(`Textura alternativa não encontrada para: ${letra}`);
+                        }
+                    }
+                });
+            }
+
+
 
             if (modoAtual === "autoplay") {
                 const note = keyMap[cube.userData.letter];
@@ -205,13 +236,19 @@ function animate() {
                 }
             }
 
-            scene.remove(cube);
-            activeCubes.splice(i, 1);
+            // Aguarda 200ms antes de remover o cubo
+            setTimeout(() => {
+                if (scene.children.includes(cube)) scene.remove(cube);
+                const index = activeCubes.indexOf(cube);
+                if (index !== -1) activeCubes.splice(index, 1);
+            }, 400);
         }
-
     }
 
+
     renderer.render(scene, camera);
+
+    // Finalização da animação
     if (activeCubes.length === 0 && spawnEvents.every(e => e.spawned)) {
         if (!fimTimeout) {
             fimTimeout = setTimeout(() => {
@@ -225,6 +262,7 @@ function animate() {
 
                 telaInicial.style.display = 'none';
 
+                console.log("Animação finalizada.");
             }, 1000);
         }
     }
@@ -243,10 +281,10 @@ function resetarCena() {
 
     spawnEvents.length = 0;
     startTime = null;
-    const canvas = renderer.domElement;
 
 }
 
+const canvas = renderer.domElement;
 const autoplayButton = document.getElementById("autoplayButton");
 const jogarButton = document.getElementById("jogarButton");
 
@@ -295,7 +333,8 @@ elvisMusic.addEventListener("click", () => {
     bethovenMusic.classList.remove("musicaEscolhida")
     tchaiMusic.classList.remove("musicaEscolhida")
     elvisMusic.classList.add("musicaEscolhida");
-    area.style.setProperty("margin-left", "350px", "important");
+    area.style.setProperty("margin-left", "380px", "important");
+    area.style.setProperty("width", "323px", "important");
 
 
 })
@@ -305,7 +344,9 @@ bethovenMusic.addEventListener("click", () => {
     bethovenMusic.classList.add("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
     tchaiMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "300px", "important");
+    area.style.setProperty("margin-left", "380px", "important");
+    area.style.setProperty("width", "152px", "important");
+
 
 })
 
@@ -314,7 +355,9 @@ tchaiMusic.addEventListener("click", () => {
     tchaiMusic.classList.add("musicaEscolhida")
     bethovenMusic.classList.remove("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "500px", "important");
+    area.style.setProperty("margin-left", "513px", "important");
+        area.style.setProperty("width", "274px", "important");
+
 
 })
 
@@ -475,11 +518,11 @@ jogarButton.addEventListener("click", () => {
             animate();
         });
     } else {
-        animate(); 
+        animate();
     }
 });
 resetar.addEventListener("click", () => {
-    resetarCena(); 
+    resetarCena();
 
     if (animationId !== null) {
         cancelAnimationFrame(animationId);
@@ -587,7 +630,7 @@ function carregarPartituraOde() {
     addCubeToScene("d", 26191, 0.05);
     addCubeToScene("a", 26790, 0.05);
     addCubeToScene("d", 27344, 0.05);
-    addCubeToScene("a", 27934, 0.05);
+    addCubeToScene("m", 27934, 0.05);
     addCubeToScene("g", 29246, 0.05);
     addCubeToScene("g", 29758, 0.05);
     addCubeToScene("h", 30351, 0.05);
@@ -604,7 +647,7 @@ function carregarPartituraOde() {
     addCubeToScene("a", 37198, 0.05);
     addCubeToScene("a", 37550, 0.05);
 
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; 
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 
 }
@@ -683,7 +726,7 @@ function carregarPartituraClair() {
     addCubeToScene("j", 30015, 0.05);  // F#4
     addCubeToScene("g", 30287, 0.05);  // E4
     addCubeToScene("d", 30556, 0.05);  // D4
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; 
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
 
@@ -940,14 +983,14 @@ function carregarPartituraMozart() {
     addCubeToScene("l", 74988, 0.05);  // A4 (78816 - 3828 = 74988)
     addCubeToScene("p", 75376, 0.05);  // B4 (79204 - 3828 = 75376)
     addCubeToScene("l", 75679, 0.05);  // A4 (79507 - 3828 = 75679)
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; 
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
 
 function carregarPartituraCisne() {
     addCubeToScene("u", 0, 0.05);
     addCubeToScene("p", 2610, 0.05);
-    addCubeToScene("r", 3022, 0.05);
+    addCubeToScene("w", 3022, 0.05);
     addCubeToScene("e", 3477, 0.05);
     addCubeToScene("t", 3948, 0.05);
     addCubeToScene("u", 4398, 0.05);
@@ -963,14 +1006,14 @@ function carregarPartituraCisne() {
     addCubeToScene("e", 13120, 0.05);
     addCubeToScene("p", 13660, 0.05);
 
-    addCubeToScene("r", 15871, 0.05);
+    addCubeToScene("w", 15871, 0.05);
     addCubeToScene("t", 16277, 0.05);
     addCubeToScene("e", 16726, 0.05);
-    addCubeToScene("r", 17125, 0.05);
+    addCubeToScene("w", 17125, 0.05);
     addCubeToScene("u", 17791, 0.05);
 
     addCubeToScene("p", 19891, 0.05);
-    addCubeToScene("r", 20310, 0.05);
+    addCubeToScene("w", 20310, 0.05);
     addCubeToScene("e", 20774, 0.05);
     addCubeToScene("t", 21229, 0.05);
     addCubeToScene("u", 21759, 0.05);
@@ -987,7 +1030,7 @@ function carregarPartituraCisne() {
     addCubeToScene("p", 29679, 0.05);
 
     addCubeToScene("p", 33898, 0.05);
-    addCubeToScene("r", 34428, 0.05);
+    addCubeToScene("w", 34428, 0.05);
     addCubeToScene("e", 35325, 0.05);
     addCubeToScene("t", 36418, 0.05);
     addCubeToScene("u", 37402, 0.05);
@@ -1003,13 +1046,13 @@ function carregarPartituraCisne() {
     addCubeToScene("i", 44138, 0.05);
     addCubeToScene("o", 45152, 0.05);
     addCubeToScene("3", 45586, 0.05);
-    addCubeToScene("6", 46122, 0.05);
+    addCubeToScene("1", 46122, 0.05);
 
     addCubeToScene("3", 47893, 0.05);
-    addCubeToScene("4", 48221, 0.05);
+    addCubeToScene("o", 48221, 0.05);
     addCubeToScene("i", 49145, 0.05);
     addCubeToScene("u", 49669, 0.05);
-    addCubeToScene("r", 50211, 0.05);
+    addCubeToScene("w", 50211, 0.05);
     addCubeToScene("e", 51255, 0.05);
     addCubeToScene("t", 52143, 0.05);
     addCubeToScene("u", 53161, 0.05);
@@ -1032,14 +1075,14 @@ function carregarPartituraCisne() {
     addCubeToScene("t", 63683, 0.05);
     addCubeToScene("i", 64532, 0.05);
     addCubeToScene("5", 65018, 0.05);
-    addCubeToScene("6", 65521, 0.05);
+    addCubeToScene("1", 65521, 0.05);
     addCubeToScene("i", 67456, 0.05);
-    addCubeToScene("6", 68459, 0.05);
+    addCubeToScene("1", 68459, 0.05);
     addCubeToScene("u", 68802, 0.05);
     addCubeToScene("9", 69299, 0.05);
 
     addCubeToScene("3", 71755, 0.05);
-    addCubeToScene("6", 72276, 0.05);
+    addCubeToScene("1", 72276, 0.05);
     addCubeToScene("7", 72765, 0.05);
     addCubeToScene("8", 73296, 0.05);
     addCubeToScene("9", 73795, 0.05);
@@ -1054,6 +1097,6 @@ function carregarPartituraCisne() {
     addCubeToScene("i", 80601, 0.05);
     addCubeToScene("7", 81085, 0.05);
     addCubeToScene("3", 81668, 0.05);
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000; 
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
