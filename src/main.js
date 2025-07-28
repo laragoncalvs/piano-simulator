@@ -333,8 +333,8 @@ elvisMusic.addEventListener("click", () => {
     bethovenMusic.classList.remove("musicaEscolhida")
     tchaiMusic.classList.remove("musicaEscolhida")
     elvisMusic.classList.add("musicaEscolhida");
-    area.style.setProperty("margin-left", "380px", "important");
-    area.style.setProperty("width", "323px", "important");
+    area.style.setProperty("margin-left", "308px", "important");
+    area.style.setProperty("width", "153px", "important");
 
 
 })
@@ -344,8 +344,8 @@ bethovenMusic.addEventListener("click", () => {
     bethovenMusic.classList.add("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
     tchaiMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "380px", "important");
-    area.style.setProperty("width", "152px", "important");
+    area.style.setProperty("margin-left", "308px", "important");
+    area.style.setProperty("width", "125px", "important");
 
 
 })
@@ -355,8 +355,8 @@ tchaiMusic.addEventListener("click", () => {
     tchaiMusic.classList.add("musicaEscolhida")
     bethovenMusic.classList.remove("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "513px", "important");
-        area.style.setProperty("width", "274px", "important");
+    area.style.setProperty("margin-left", "416px", "important");
+        area.style.setProperty("width", "190px", "important");
 
 
 })
@@ -365,10 +365,10 @@ tchaiMusic.addEventListener("click", () => {
 autoplayButton.addEventListener("click", () => {
     if (modoAtual === "autoplay") return;
     telaInicial.style.setProperty("margin-top", "0vh", "important");
-    telaInicial.style.setProperty("margin-top", "0vh", "important");
+    telaInicial.style.setProperty("padding", "0px", "important");
+    telaInicial.style.setProperty("background-color", "transparent", "important");
     progressBar.style.width = "0%";
     progressContainer.style.display = "block";
-
     playElvis.style.display = "none"
     playTchai.style.display = "none"
     playBethoven.style.display = "none"

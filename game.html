@@ -29,7 +29,7 @@
     #voltarButton {
       padding: 12px 40px;
       color: #0e0e0e;
-      border-radius: 28px;
+      border-radius: 18px;
       cursor: pointer;
       transition: background-color 0.3s, color 0.3s;
       font-size: 0.8em;
@@ -42,16 +42,16 @@
     }
 
 
-
+    .telaInicial {}
 
     .telaInicial h1 {
-      font-size: 1em;
+      font-size: 1rem;
       font-family: 'Press Start 2P', monospace;
       text-shadow:
-        -1px -1px 0 #6473fe,
-        1px -1px 0 #B664FE,
-        -1px 1px 0 #fe64e9,
-        1px 1px 0 #B664FE;
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
       display: inline;
       margin: 0 !important;
     }
@@ -59,37 +59,38 @@
 
     .telaInicial span {
       font-size: 1em;
-      margin-bottom: 20px;
       font-family: 'Press Start 2P', monospace;
       text-shadow:
-        -1px -1px 0 #faad48,
-        1px -1px 0 #fff0dc,
-        -1px 1px 0 #faad48,
-        1px 1px 0 #faad48;
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
     }
 
 
 
 
     #telaInicial {
-      margin-top: 10vh;
+      margin-top: 5vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 50px;
+      border-radius: 20px;
+      width: 60%;
 
     }
 
 
     #jogarButton {
-      background-color: #19C583;
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
     }
 
 
     #autoplayButton {
 
-
-      background-color: rgb(62, 62, 240);
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
     }
 
 
@@ -153,8 +154,8 @@
 
 
     .titulo {
-      font-family: 'Courier New', Courier, monospace !important;
-      font-size: 3rem !important;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 2.5rem !important;
       text-shadow: none !important;
       color: white;
     }
@@ -187,9 +188,9 @@
       background-color: #09179b;
       z-index: 500;
       height: 100px;
-      width: 323px;
+      width: 153px;
       opacity: 0.5;
-      margin-left: 380px;
+      margin-left: 308px;
       transition: margin-left 0.5s ease;
       transition: width 0.5s ease;
     }
@@ -209,6 +210,18 @@
     #buttons {
       display: flex;
       align-items: center;
+      width: 100%;
+      margin-top: 10px;
+
+    }
+
+    #elvis,
+    #tchai,
+    #bethoven {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   </style>
   <script>
@@ -225,30 +238,31 @@
     <div id="titulo" style="margin-bottom: 20px;">
 
 
-      <h1 class="titulo"> Selecione uma música </h1> <br>
+      <h1 class="titulo"> SELECIONE UMA MÚSICA</h1> <br>
       <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
     </div>
-    <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida">
-        <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
-      </button> <a id="playElvis"
-        href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
-        target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
-    <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven">
-        <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
-      </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
-        target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
-    <div id="buttons"> <button style="margin: 10px 0px;" id="tchai">
-        <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
-      </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
-          style="width: 20px;" src="./assets/play.png"></a> </div>
+      <div id="buttons" id="elvis"> <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
+          <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
+        </button> <a id="playElvis"
+          href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
+          target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
+      <div id="buttons"> <button style="margin: 0px 10px;" id="bethoven">
+          <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
+        </button> <a id="playBethoven"
+          href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img
+            style="width: 20px;" src="./assets/play.png"></a> </div>
+      <div id="buttons"> <button style="margin:  0px 10px;" id="tchai">
+          <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
+        </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
+            style="width: 20px;" src="./assets/play.png"></a> </div>
 
 
     <div id="pianoImg">
       <h5>Área do piano que vai ser tocada:</h5>
       <div id="area"></div>
-      <img src="./assets/piano-completo.png" />
+      <img src="./assets/piano-completo-test.png" />
     </div>
-    <div>
+    <div style="margin-top: 10px;">
 
 
       <button id="jogarButton">JOGAR</button>
