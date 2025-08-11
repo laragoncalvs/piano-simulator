@@ -29,7 +29,7 @@
     #voltarButton {
       padding: 12px 40px;
       color: #0e0e0e;
-      border-radius: 28px;
+      border-radius: 18px;
       cursor: pointer;
       transition: background-color 0.3s, color 0.3s;
       font-size: 0.8em;
@@ -42,16 +42,16 @@
     }
 
 
-
+    .telaInicial {}
 
     .telaInicial h1 {
-      font-size: 1em;
+      font-size: 1rem;
       font-family: 'Press Start 2P', monospace;
       text-shadow:
-        -1px -1px 0 #6473fe,
-        1px -1px 0 #B664FE,
-        -1px 1px 0 #fe64e9,
-        1px 1px 0 #B664FE;
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
       display: inline;
       margin: 0 !important;
     }
@@ -59,37 +59,38 @@
 
     .telaInicial span {
       font-size: 1em;
-      margin-bottom: 20px;
       font-family: 'Press Start 2P', monospace;
       text-shadow:
-        -1px -1px 0 #faad48,
-        1px -1px 0 #fff0dc,
-        -1px 1px 0 #faad48,
-        1px 1px 0 #faad48;
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
     }
 
 
 
 
     #telaInicial {
-      margin-top: 10vh;
+      margin-top: 5vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 50px;
+      border-radius: 20px;
+      width: 60%;
 
     }
 
 
     #jogarButton {
-      background-color: #19C583;
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
     }
 
 
     #autoplayButton {
 
-
-      background-color: rgb(62, 62, 240);
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
     }
 
 
@@ -153,8 +154,8 @@
 
 
     .titulo {
-      font-family: 'Courier New', Courier, monospace !important;
-      font-size: 3rem !important;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 2.5rem !important;
       text-shadow: none !important;
       color: white;
     }
@@ -187,9 +188,9 @@
       background-color: #09179b;
       z-index: 500;
       height: 100px;
-      width: 323px;
+      width: 153px;
       opacity: 0.5;
-      margin-left: 380px;
+      margin-left: 308px;
       transition: margin-left 0.5s ease;
       transition: width 0.5s ease;
     }
@@ -209,6 +210,18 @@
     #buttons {
       display: flex;
       align-items: center;
+      width: 100%;
+      margin-top: 10px;
+
+    }
+
+    #elvis,
+    #tchai,
+    #bethoven {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   </style>
   <script>
@@ -217,7 +230,7 @@
   </script>
 
 
-  <script type="module" crossorigin src="/piano-simulator/assets/game-DiM28TGh.js"></script>
+  <script type="module" crossorigin src="/piano-simulator/assets/game-oE1SCefW.js"></script>
 </head>
 
 
@@ -226,30 +239,31 @@
     <div id="titulo" style="margin-bottom: 20px;">
 
 
-      <h1 class="titulo"> Selecione uma música </h1> <br>
+      <h1 class="titulo"> SELECIONE UMA MÚSICA</h1> <br>
       <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
     </div>
-    <div id="buttons" id="elvis"> <button style="margin: 10px 0px;" id="elvis" class="musicaEscolhida">
-        <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
-      </button> <a id="playElvis"
-        href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
-        target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-    <div id="buttons"> <button style="margin: 10px 0px;" id="bethoven">
-        <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
-      </button> <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
-        target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-    <div id="buttons"> <button style="margin: 10px 0px;" id="tchai">
-        <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
-      </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
-          style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+      <div id="buttons" id="elvis"> <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
+          <h1>Elvis Presley - Can't help falling in love </h1> <span>Fácil</span>
+        </button> <a id="playElvis"
+          href="https://www.youtube.com/watch?v=vGJTaP6anOU&pp=ygUoZWx2aXMgcHJlc2xleSBjYW4ndCBoZWxwIGZhbGxpbmcgaW4gbG92ZQ%3D%3D"
+          target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+      <div id="buttons"> <button style="margin: 0px 10px;" id="bethoven">
+          <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
+        </button> <a id="playBethoven"
+          href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img
+            style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
+      <div id="buttons"> <button style="margin:  0px 10px;" id="tchai">
+          <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
+        </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
+            style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
 
 
     <div id="pianoImg">
       <h5>Área do piano que vai ser tocada:</h5>
       <div id="area"></div>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA9wAAABkCAYAAAB0ITiYAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQ7SURBVHgB7dnNbeJcGIbhk09fFyy8Zx86YE8HYR06oAAqgD10wJ4OYE8H1JHRQRppJiEz2PiZ8SjXJZFIiB/bee3jW3lqmuatAAAAAL36v/44n893vXg8Hpcu7v3899917/um02m5XC6lrdVqVWaz2YfnN5vN9dHWaDQqh8Ph7tfX7d5ut9f33WO5XJb9fl/aen5+Lrvd7qfn6vGq399F3ccft3k+n5fj8VjaWiwW18c96vbW77n3+Had1a8yE3Uf677+6HQ6lZeXl9LF35iJur3r9frDbH9mKDNx63z8lTbXwqrrsU/PRNfr9BBnop6jk8nkw/N9XqN/5V+diffb3PfafUubmXhkXfwqM3HrfKz7V/ezi78xE3V7676/n+1bhjQTt87Hz7S9Z6qGOhN9r923/KmZeL8uftfnNfozXWaiz3W760zcuo8e2kz8Tt3e/woAAADQO8ENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABDw1DTN2/l8Ln0Yj8dlaJ81n8/L6+trmUwm5VH7/b4cj8eyWq1KH6bTadlut2U0GpVHbDab6+/FYlH60NexXy6X1+M+m83Koy6Xy/VveTgcyqPMRHtDnInT6VTW63XZ7XblUX0d96rvmejr2Pc5E0M9H81EO1/hGj3UmbButzPUdbvP+96hXqOt2+18hZmwbrdTZ8J/uAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAgOAGAACAAMENAAAAAYIbAAAAAgQ3AAAABAhuAAAACBDcAAAAECC4AQAAIEBwAwAAQIDgBgAAgADBDQAAAAGCGwAAAAIENwAAAAQIbgAAAAgQ3AAAABAguAEAACBAcAMAAECA4AYAAIAAwQ0AAAABghsAAAACBDcAAAAECG4AAAAIENwAAAAQILgBAAAgQHADAABAwFPTNG8FAAAA6NU3+Bnn6zN49gQAAAAASUVORK5CYII=" />
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" />
     </div>
-    <div>
+    <div style="margin-top: 10px;">
 
 
       <button id="jogarButton">JOGAR</button>
