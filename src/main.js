@@ -302,6 +302,9 @@ if (animationId !== null) {
 
 
 voltar.addEventListener("click", () => {
+     telaInicial.style.setProperty("margin-top", "0vh", "important");
+    telaInicial.style.setProperty("padding", "0px", "important");
+    telaInicial.style.setProperty("background-color", "transparent", "important");
 
     playElvis.style.display = "inline"
     playTchai.style.display = "inline"
@@ -433,8 +436,9 @@ autoplayButton.addEventListener("click", () => {
 
 jogarButton.addEventListener("click", () => {
     if (modoAtual === "jogar") return;
-    telaInicial.style.setProperty("margin-top", "0vh", "important");
-    titulo.style.display = "none";
+ telaInicial.style.setProperty("margin-top", "0vh", "important");
+    telaInicial.style.setProperty("padding", "0px", "important");
+    telaInicial.style.setProperty("background-color", "transparent", "important");    titulo.style.display = "none";
     resetarButton.style.display = "inline";
     voltarButton.style.display = "inline";
     canvas.style.display = "inline";
