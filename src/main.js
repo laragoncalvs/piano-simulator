@@ -388,7 +388,7 @@ autoplayButton.addEventListener("click", () => {
     modoAtual = "autoplay";
     resetarCena();
     if (musica === "bethoven") {
-        carregarPartituraOde();
+        carregarPartituraOdeToJoy();
         elvis.style.display = "none"
         tchai.style.display = "none"
     } else if (musica == "tchai") {
@@ -734,21 +734,352 @@ function carregarPartituraClair() {
 
 }
 
+function carregarPartituraOdeToJoy() {
+    addCubeToScene("j", 0, 0.05);      // F#4
+
+    addCubeToScene("j", 545, 0.05);      // F#4
+    addCubeToScene("k", 1091, 0.05);      // G4
+    addCubeToScene("l", 1636, 0.05);      // A4
+    addCubeToScene("l", 2182, 0.05);      // A4
+    addCubeToScene("k", 2727, 0.05);      // G4
+    addCubeToScene("j", 3273, 0.05);      // F#4
+    addCubeToScene("g", 3818, 0.05);      // E4
+    addCubeToScene("d", 4364, 0.05);      // D4
+    addCubeToScene("d", 4909, 0.05);      // D4
+    addCubeToScene("g", 5455, 0.05);      // E4
+    addCubeToScene("j", 6000, 0.05);      // F#4
+    addCubeToScene("j", 6545, 0.05);      // F#4
+    addCubeToScene("g", 7364, 0.05);      // E4
+    addCubeToScene("g", 7636, 0.05);      // E4
+    addCubeToScene("j", 8727, 0.05);      // F#4
+    addCubeToScene("j", 9273, 0.05);      // F#4
+    addCubeToScene("k", 9818, 0.05);      // G4
+    addCubeToScene("l", 10364, 0.05);      // A4
+    addCubeToScene("l", 10909, 0.05);      // A4
+    addCubeToScene("k", 11455, 0.05);      // G4
+    addCubeToScene("j", 12000, 0.05);      // F#4
+    addCubeToScene("g", 12545, 0.05);      // E4
+    addCubeToScene("d", 13091, 0.05);      // D4
+    addCubeToScene("d", 14286, 0.05);      // D4
+    addCubeToScene("g", 15600, 0.05);      // E4
+    addCubeToScene("d", 17700, 0.05);      // D4
+    addCubeToScene("k", 18000, 0.05);      // G4
+    addCubeToScene("k", 18500, 0.05);      // G4
+    addCubeToScene("2", 19000, 0.05);      // G#4
+    addCubeToScene("ç", 19500, 0.05);      // A#4
+    addCubeToScene("ç", 20000, 0.05);      // A#4
+    addCubeToScene("2", 20500, 0.05);      // G#4
+    addCubeToScene("k", 21000, 0.05);      // G4
+    addCubeToScene("h", 21500, 0.05);      // F4
+    addCubeToScene("f", 22000, 0.05);      // D#4
+    addCubeToScene("f", 22500, 0.05);      // D#4
+    addCubeToScene("h", 23000, 0.05);      // F4
+    addCubeToScene("k", 23500, 0.05);      // G4
+    addCubeToScene("k", 24000, 0.05);      // G4
+    addCubeToScene("h", 24750, 0.05);      // F4
+    addCubeToScene("h", 25000, 0.05);      // F4
+    addCubeToScene("k", 26000, 0.05);      // G4
+    addCubeToScene("k", 26500, 0.05);      // G4
+    addCubeToScene("2", 27000, 0.05);      // G#4
+    addCubeToScene("ç", 27500, 0.05);      // A#4
+    addCubeToScene("ç", 28000, 0.05);      // A#4
+    addCubeToScene("2", 28500, 0.05);      // G#4
+    addCubeToScene("k", 29000, 0.05);      // G4
+    addCubeToScene("h", 29500, 0.05);      // F4
+    addCubeToScene("f", 30000, 0.05);      // D#4
+    addCubeToScene("f", 30500, 0.05);      // D#4
+    addCubeToScene("h", 31000, 0.05);      // F4
+    addCubeToScene("k", 31500, 0.05);      // G4
+    addCubeToScene("h", 32000, 0.05);      // F4
+    addCubeToScene("f", 32750, 0.05);      // D#4
+    addCubeToScene("f", 33000, 0.05);      // D#4
+    addCubeToScene("h", 34000, 0.05);      // F4
+    addCubeToScene("h", 34500, 0.05);      // F4
+    addCubeToScene("k", 35000, 0.05);      // G4
+    addCubeToScene("f", 35500, 0.05);      // D#4
+    addCubeToScene("h", 36000, 0.05);      // F4
+    addCubeToScene("k", 36500, 0.05);      // G4
+    addCubeToScene("2", 36750, 0.05);      // G#4
+    addCubeToScene("k", 37000, 0.05);      // G4
+    addCubeToScene("f", 37500, 0.05);      // D#4
+    addCubeToScene("h", 38000, 0.05);      // F4
+    addCubeToScene("k", 38500, 0.05);      // G4
+    addCubeToScene("2", 38750, 0.05);      // G#4
+    addCubeToScene("k", 39000, 0.05);      // G4
+    addCubeToScene("h", 39500, 0.05);      // F4
+    addCubeToScene("f", 40000, 0.05);      // D#4
+    addCubeToScene("h", 40500, 0.05);      // F4
+    addCubeToScene("ç", 41000, 0.05);      // A#4
+    addCubeToScene("k", 42000, 0.05);      // G4
+    addCubeToScene("k", 42500, 0.05);      // G4
+    addCubeToScene("2", 43000, 0.05);      // G#4
+    addCubeToScene("ç", 43500, 0.05);      // A#4
+    addCubeToScene("ç", 44000, 0.05);      // A#4
+    addCubeToScene("2", 44500, 0.05);      // G#4
+    addCubeToScene("k", 45000, 0.05);      // G4
+    addCubeToScene("h", 45500, 0.05);      // F4
+    addCubeToScene("f", 46000, 0.05);      // D#4
+    addCubeToScene("f", 46500, 0.05);      // D#4
+    addCubeToScene("h", 47000, 0.05);      // F4
+    addCubeToScene("k", 47500, 0.05);      // G4
+    addCubeToScene("h", 48000, 0.05);      // F4
+    addCubeToScene("f", 48750, 0.05);      // D#4
+    addCubeToScene("f", 49000, 0.05);      // D#4
+    addCubeToScene("i", 50000, 0.05);      // G5
+    addCubeToScene("i", 50500, 0.05);      // G5
+    addCubeToScene("r", 51000, 0.05);      // D#5
+    addCubeToScene("chave_direita", 51500, 0.05);      // A#5
+    addCubeToScene("chave_direita", 52000, 0.05);      // A#5
+    addCubeToScene("e", 52500, 0.05);      // D5
+    addCubeToScene("i", 53000, 0.05);      // G5
+    addCubeToScene("y", 53500, 0.05);      // F5
+    addCubeToScene("r", 54000, 0.05);      // D#5
+    addCubeToScene("r", 54500, 0.05);      // D#5
+    addCubeToScene("y", 55000, 0.05);      // F5
+    addCubeToScene("i", 55500, 0.05);      // G5
+    addCubeToScene("i", 56000, 0.05);      // G5
+    addCubeToScene("y", 56750, 0.05);      // F5
+    addCubeToScene("y", 57000, 0.05);      // F5
+    addCubeToScene("i", 58000, 0.05);      // G5
+    addCubeToScene("r", 58500, 0.05);      // D#5
+    addCubeToScene("i", 58750, 0.05);      // G5
+    addCubeToScene("r", 59500, 0.05);      // D#5
+    addCubeToScene("chave_direita", 59750, 0.05);      // A#5
+    addCubeToScene("chave_direita", 60250, 0.05);      // A#5
+    addCubeToScene("e", 60500, 0.05);      // D5
+    addCubeToScene("2", 60750, 0.05);      // G#4
+    addCubeToScene("i", 61250, 0.05);      // G5
+    addCubeToScene("y", 61500, 0.05);      // F5
+    addCubeToScene("r", 62000, 0.05);      // D#5
+    addCubeToScene("q", 62500, 0.05);      // C5
+    addCubeToScene("r", 62750, 0.05);      // D#5
+    addCubeToScene("y", 63500, 0.05);      // F5
+    addCubeToScene("i", 63750, 0.05);      // G5
+    addCubeToScene("y", 64000, 0.05);      // F5
+    addCubeToScene("ç", 64500, 0.05);      // A#4
+    addCubeToScene("r", 64750, 0.05);      // D#5
+    addCubeToScene("ç", 65250, 0.05);      // A#4
+    addCubeToScene("e", 65500, 0.05);      // D5
+    addCubeToScene("r", 66000, 0.05);      // D#5
+    addCubeToScene("h", 66500, 0.05);      // F4
+    addCubeToScene("k", 66750, 0.05);      // G4
+    addCubeToScene("ç", 67000, 0.05);      // A#4
+    addCubeToScene("r", 67250, 0.05);      // D#5
+    addCubeToScene("i", 67500, 0.05);      // G5
+    addCubeToScene("chave_direita", 67750, 0.05);      // A#5
+    addCubeToScene("y", 68000, 0.05);      // F5
+    addCubeToScene("e", 68500, 0.05);      // D5
+    addCubeToScene("i", 68750, 0.05);      // G5
+    addCubeToScene("ç", 69250, 0.05);      // A#4
+    addCubeToScene("r", 69500, 0.05);      // D#5
+    addCubeToScene("ç", 69750, 0.05);      // A#4
+    addCubeToScene("y", 70000, 0.05);      // F5
+    addCubeToScene("e", 70500, 0.05);      // D5
+    addCubeToScene("2", 70750, 0.05);      // G#4
+    addCubeToScene("i", 71000, 0.05);      // G5
+    addCubeToScene("y", 71250, 0.05);      // F5
+    addCubeToScene("r", 71500, 0.05);      // D#5
+    addCubeToScene("y", 72000, 0.05);      // F5
+    addCubeToScene("e", 72500, 0.05);      // D5
+    addCubeToScene("2", 72750, 0.05);      // G#4
+    addCubeToScene("i", 73000, 0.05);      // G5
+    addCubeToScene("y", 73250, 0.05);      // F5
+    addCubeToScene("r", 73500, 0.05);      // D#5
+    addCubeToScene("y", 74000, 0.05);      // F5
+    addCubeToScene("q", 74500, 0.05);      // C5
+    addCubeToScene("r", 74750, 0.05);      // D#5
+    addCubeToScene("2", 75250, 0.05);      // G#4
+    addCubeToScene("y", 75500, 0.05);      // F5
+    addCubeToScene("chave_direita", 75750, 0.05);      // A#5
+    addCubeToScene("i", 76000, 0.05);      // G5
+    addCubeToScene("r", 76500, 0.05);      // D#5
+    addCubeToScene("i", 76750, 0.05);      // G5
+    addCubeToScene("r", 77500, 0.05);      // D#5
+    addCubeToScene("chave_direita", 77750, 0.05);      // A#5
+    addCubeToScene("chave_direita", 78250, 0.05);      // A#5
+    addCubeToScene("e", 78500, 0.05);      // D5
+    addCubeToScene("2", 78750, 0.05);      // G#4
+    addCubeToScene("i", 79250, 0.05);      // G5
+    addCubeToScene("y", 79500, 0.05);      // F5
+    addCubeToScene("r", 80000, 0.05);      // D#5
+    addCubeToScene("q", 80500, 0.05);      // C5
+    addCubeToScene("r", 80750, 0.05);      // D#5
+    addCubeToScene("y", 81500, 0.05);      // F5
+    addCubeToScene("i", 81750, 0.05);      // G5
+    addCubeToScene("y", 82000, 0.05);      // F5
+    addCubeToScene("ç", 82500, 0.05);      // A#4
+    addCubeToScene("r", 82750, 0.05);      // D#5
+    addCubeToScene("ç", 83250, 0.05);      // A#4
+    addCubeToScene("e", 83500, 0.05);      // D5
+    addCubeToScene("r", 84000, 0.05);      // D#5
+    addCubeToScene("h", 84500, 0.05);      // F4
+    addCubeToScene("k", 84750, 0.05);      // G4
+    addCubeToScene("ç", 88696, 0.05);      // A#4
+    addCubeToScene("q", 88957, 0.05);      // C5
+    addCubeToScene("r", 89217, 0.05);      // D#5
+    addCubeToScene("y", 89478, 0.05);      // F5
+    addCubeToScene("6", 91846, 0.05);      // D#6
+    addCubeToScene("6", 92308, 0.05);      // D#6
+    addCubeToScene("6", 92769, 0.05);      // D#6
+    addCubeToScene("6", 93231, 0.05);      // D#6
+    addCubeToScene("7", 93692, 0.05);      // D6
+    addCubeToScene("7", 94154, 0.05);      // D6
+    addCubeToScene("i", 94364, 0.05);      // G5
+    addCubeToScene("7", 94615, 0.05);      // D6
+    addCubeToScene("2", 94909, 0.05);      // G#4
+    addCubeToScene("7", 95077, 0.05);      // D6
+    addCubeToScene("chave_direita", 95455, 0.05);      // A#5
+    addCubeToScene("6", 96000, 0.05);      // D#6
+    addCubeToScene("5", 96462, 0.05);      // C6
+    addCubeToScene("y", 96818, 0.05);      // F5
+    addCubeToScene("r", 97091, 0.05);      // D#5
+    addCubeToScene("6", 97385, 0.05);      // D#6
+    addCubeToScene("r", 97636, 0.05);      // D#5
+    addCubeToScene("r", 98000, 0.05);      // D#5
+    addCubeToScene("y", 98182, 0.05);      // F5
+    addCubeToScene("i", 98455, 0.05);      // G5
+    addCubeToScene("i", 98727, 0.05);      // G5
+    addCubeToScene("6", 99231, 0.05);      // D#6
+    addCubeToScene("6", 99692, 0.05);      // D#6
+    addCubeToScene("6", 100154, 0.05);      // D#6
+    addCubeToScene("i", 100364, 0.05);      // G5
+    addCubeToScene("6", 100615, 0.05);      // D#6
+    addCubeToScene("i", 100909, 0.05);      // G5
+    addCubeToScene("7", 101077, 0.05);      // D6
+    addCubeToScene("2", 101455, 0.05);      // G#4
+    addCubeToScene("chave_direita", 101727, 0.05);      // A#5
+    addCubeToScene("7", 102000, 0.05);      // D6
+    addCubeToScene("7", 102462, 0.05);      // D6
+    addCubeToScene("6", 102923, 0.05);      // D#6
+    addCubeToScene("i", 103091, 0.05);      // G5
+    addCubeToScene("y", 103364, 0.05);      // F5
+    addCubeToScene("r", 103636, 0.05);      // D#5
+    addCubeToScene("5", 103846, 0.05);      // C6
+    addCubeToScene("r", 104182, 0.05);      // D#5
+    addCubeToScene("y", 104727, 0.05);      // F5
+    addCubeToScene("i", 105000, 0.05);      // G5
+    addCubeToScene("chave_direita", 105231, 0.05);      // A#5
+    addCubeToScene("6", 105462, 0.05);      // D#6
+    addCubeToScene("r", 105818, 0.05);      // D#5
+    addCubeToScene("7", 106154, 0.05);      // D6
+    addCubeToScene("e", 106364, 0.05);      // D5
+    addCubeToScene("6", 106615, 0.05);      // D#6
+    addCubeToScene("6", 107538, 0.05);      // D#6
+    addCubeToScene("i", 107769, 0.05);      // G5
+    addCubeToScene("chave_direita", 108000, 0.05);      // A#5
+    addCubeToScene("r", 108231, 0.05);      // D#5
+    addCubeToScene("y", 108462, 0.05);      // F5
+    addCubeToScene("e", 108923, 0.05);      // D5
+    addCubeToScene("i", 109154, 0.05);      // G5
+    addCubeToScene("ç", 109615, 0.05);      // A#4
+    addCubeToScene("r", 109846, 0.05);      // D#5
+    addCubeToScene("ç", 110077, 0.05);      // A#4
+    addCubeToScene("y", 110308, 0.05);      // F5
+    addCubeToScene("e", 110769, 0.05);      // D5
+    addCubeToScene("2", 111000, 0.05);      // G#4
+    addCubeToScene("i", 111231, 0.05);      // G5
+    addCubeToScene("y", 111462, 0.05);      // F5
+    addCubeToScene("r", 111692, 0.05);      // D#5
+    addCubeToScene("y", 112154, 0.05);      // F5
+    addCubeToScene("e", 112615, 0.05);      // D5
+    addCubeToScene("2", 112846, 0.05);      // G#4
+    addCubeToScene("i", 113077, 0.05);      // G5
+    addCubeToScene("y", 113308, 0.05);      // F5
+    addCubeToScene("r", 113538, 0.05);      // D#5
+    addCubeToScene("y", 114000, 0.05);      // F5
+    addCubeToScene("q", 114462, 0.05);      // C5
+    addCubeToScene("r", 114692, 0.05);      // D#5
+    addCubeToScene("2", 115154, 0.05);      // G#4
+    addCubeToScene("y", 115385, 0.05);      // F5
+    addCubeToScene("chave_direita", 115615, 0.05);      // A#5
+    addCubeToScene("6", 115846, 0.05);      // D#6
+    addCubeToScene("6", 116308, 0.05);      // D#6
+    addCubeToScene("i", 116538, 0.05);      // G5
+    addCubeToScene("6", 117231, 0.05);      // D#6
+    addCubeToScene("chave_direita", 117462, 0.05);      // A#5
+    addCubeToScene("chave_direita", 117692, 0.05);      // A#5
+    addCubeToScene("chave_direita", 117923, 0.05);      // A#5
+    addCubeToScene("7", 118154, 0.05);      // D6
+    addCubeToScene("2", 118385, 0.05);      // G#4
+    addCubeToScene("i", 118846, 0.05);      // G5
+    addCubeToScene("7", 119077, 0.05);      // D6
+    addCubeToScene("6", 119538, 0.05);      // D#6
+    addCubeToScene("5", 120000, 0.05);      // C6
+    addCubeToScene("6", 120231, 0.05);      // D#6
+    addCubeToScene("5", 120923, 0.05);      // C6
+    addCubeToScene("i", 121154, 0.05);      // G5
+    addCubeToScene("7", 121385, 0.05);      // D6
+    addCubeToScene("chave_direita", 121846, 0.05);      // A#5
+    addCubeToScene("6", 122077, 0.05);      // D#6
+    addCubeToScene("chave_direita", 122538, 0.05);      // A#5
+    addCubeToScene("7", 122769, 0.05);      // D6
+    addCubeToScene("6", 123231, 0.05);      // D#6
+    addCubeToScene("6", 128640, 0.05);      // D#6
+    addCubeToScene("i", 128880, 0.05);      // G5
+    addCubeToScene("chave_direita", 134500, 0.05);      // A#5
+    addCubeToScene("r", 134750, 0.05);      // D#5
+    addCubeToScene("i", 140870, 0.05);      // G5
+    addCubeToScene("ç", 141130, 0.05);      // A#4
+    addCubeToScene("f", 147818, 0.05);      // D#4
+    addCubeToScene("l", 163800, 0.05);      // A4
+    addCubeToScene("d", 203000, 0.05);      // D4
+    addCubeToScene("s", 229501, 0.05);      // C#4
+    addCubeToScene("d", 263142, 0.05);      // D4
+    addCubeToScene("l", 285232, 0.05);      // A4
+    addCubeToScene("e", 285462, 0.05);      // D5
+    addCubeToScene("i", 371400, 0.05);      // G5
+    addCubeToScene("o", 371700, 0.05);      // A5
+    addCubeToScene("7", 373200, 0.05);      // D6
+    addCubeToScene("7", 413333, 0.05);      // D6
+    addCubeToScene("j", 1500000, 0.05);      // F#4
+    addCubeToScene("j", 1508182, 0.05);      // F#4
+    addCubeToScene("k", 1516364, 0.05);      // G4
+    addCubeToScene("l", 1519091, 0.05);      // A4
+    addCubeToScene("l", 1524545, 0.05);      // A4
+    addCubeToScene("k", 1530000, 0.05);      // G4
+    addCubeToScene("j", 1535455, 0.05);      // F#4
+    addCubeToScene("g", 1538182, 0.05);      // E4
+    addCubeToScene("d", 1543636, 0.05);      // D4
+    addCubeToScene("d", 1551818, 0.05);      // D4
+    addCubeToScene("g", 1560000, 0.05);      // E4
+    addCubeToScene("j", 1562727, 0.05);      // F#4
+    addCubeToScene("j", 1565455, 0.05);      // F#4
+    addCubeToScene("g", 1573636, 0.05);      // E4
+    addCubeToScene("g", 1581818, 0.05);      // E4
+    addCubeToScene("j", 1587273, 0.05);      // F#4
+    addCubeToScene("j", 1595455, 0.05);      // F#4
+    addCubeToScene("k", 1603636, 0.05);      // G4
+    addCubeToScene("l", 1606364, 0.05);      // A4
+    addCubeToScene("l", 1609091, 0.05);      // A4
+    addCubeToScene("p", 1611818, 0.05);      // B4
+    addCubeToScene("l", 1617273, 0.05);      // A4
+    addCubeToScene("k", 1622727, 0.05);      // G4
+    addCubeToScene("j", 1625455, 0.05);      // F#4
+    addCubeToScene("g", 1628182, 0.05);      // E4
+    addCubeToScene("d", 1630909, 0.05);      // D4
+    addCubeToScene("d", 1639091, 0.05);      // D4
+    addCubeToScene("g", 1647273, 0.05);      // E4
+    addCubeToScene("j", 1650000, 0.05);      // F#4
+    addCubeToScene("g", 1652727, 0.05);      // E4
+
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
+
+}
 
 function carregarPartituraLove() {
-    // Tempos normalizados (cada tempo - 1519 ms) e teclas mapeadas com NOVO keyMap:
-    addCubeToScene("a", 0, 0.05);      // C4 (1519 - 1519 = 0)
-    addCubeToScene("k", 1832, 0.05);   // G4 (3351 - 1519 = 1832)
-    addCubeToScene("a", 3471, 0.05);   // C4 (4990 - 1519 = 3471)
+    // Tempos normalizados (cada tempo -  com NOVO keyMap:
+    addCubeToScene("a", 0, 0.05);      //
+    addCubeToScene("k", 1832, 0.05);   //
+    addCubeToScene("a", 3471, 0.05);   //
 
-    addCubeToScene("d", 6292, 0.05);   // D4 (7811 - 1519 = 6292)
-    addCubeToScene("g", 6739, 0.05);   // E4 (8258 - 1519 = 6739)
-    addCubeToScene("h", 7048, 0.05);   // F4 (8567 - 1519 = 7048)
-    addCubeToScene("g", 8592, 0.05);   // E4 (10111 - 1519 = 8592)
-    addCubeToScene("d", 10358, 0.05);  // D4 (11877 - 1519 = 10358)
+    addCubeToScene("d", 6292, 0.05);   //
+    addCubeToScene("g", 6739, 0.05);   //
+    addCubeToScene("h", 7048, 0.05);   //
+    addCubeToScene("g", 8592, 0.05);   //
+    addCubeToScene("d", 10358, 0.05);  //
 
-    addCubeToScene("m", 13584, 0.05);  // G3 (15103 - 1519 = 13584) - Tecla 'm' no novo keyMap
-    addCubeToScene("n", 13835, 0.05);  // A3 (15354 - 1519 = 13835) - Tecla 'n' no novo keyMap
+    addCubeToScene("m", 13584, 0.05);  // - Tecla 'm' no novo keyMap
+    addCubeToScene("n", 13835, 0.05);  // - Tecla 'n' no novo keyMap
     addCubeToScene("b", 15364, 0.05);  // B3 (16883 - 1519 = 15364) - Tecla 'b' no novo keyMap
 
     addCubeToScene("a", 17246, 0.05);  // C4 (18765 - 1519 = 17246)
@@ -857,7 +1188,7 @@ function carregarPartituraMozart() {
     addCubeToScene("t", 5824, 0.05);   // E5 (9652 - 3828 = 5824)
     addCubeToScene("[", 6193, 0.05);   // B5 (10021 - 3828 = 6193)
     addCubeToScene("o", 6506, 0.05);   // A5 (10334 - 3828 = 6506)
-    addCubeToScene("]", 6794, 0.05);   // A#5 (10622 - 3828 = 6794)
+    addCubeToScene("chave_direita", 6794, 0.05);   // A#5 (10622 - 3828 = 6794)
     addCubeToScene("o", 7113, 0.05);   // A5 (10941 - 3828 = 7113)
     addCubeToScene("[", 7735, 0.05);   // B5 (11570 - 3828 = 7735)
 
