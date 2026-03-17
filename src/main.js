@@ -1109,115 +1109,178 @@ function carregarPartituraMozart() {
 }
 
 function carregarPartituraCisne() {
-    addCubeToScene("u", 0, 0.05);
-    addCubeToScene("p", 2610, 0.05);
-    addCubeToScene("w", 3022, 0.05);
-    addCubeToScene("e", 3477, 0.05);
-    addCubeToScene("t", 3948, 0.05);
-    addCubeToScene("u", 4398, 0.05);
-    addCubeToScene("e", 5966, 0.05);
-    addCubeToScene("u", 6420, 0.05);
-    addCubeToScene("e", 8006, 0.05);
-    addCubeToScene("u", 8544, 0.05);
-
-    addCubeToScene("p", 11274, 0.05);
-    addCubeToScene("e", 11726, 0.05);
-    addCubeToScene("p", 12177, 0.05);
-    addCubeToScene("k", 12632, 0.05);
-    addCubeToScene("e", 13120, 0.05);
-    addCubeToScene("p", 13660, 0.05);
-
-    addCubeToScene("w", 15871, 0.05);
-    addCubeToScene("t", 16277, 0.05);
-    addCubeToScene("e", 16726, 0.05);
-    addCubeToScene("w", 17125, 0.05);
-    addCubeToScene("u", 17791, 0.05);
-
-    addCubeToScene("p", 19891, 0.05);
-    addCubeToScene("w", 20310, 0.05);
-    addCubeToScene("e", 20774, 0.05);
-    addCubeToScene("t", 21229, 0.05);
-    addCubeToScene("u", 21759, 0.05);
-    addCubeToScene("e", 23254, 0.05);
-    addCubeToScene("u", 23697, 0.05);
-    addCubeToScene("e", 25095, 0.05);
-    addCubeToScene("u", 25558, 0.05);
-
-    addCubeToScene("p", 27196, 0.05);
-    addCubeToScene("e", 27598, 0.05);
-    addCubeToScene("p", 28073, 0.05);
-    addCubeToScene("k", 28638, 0.05);
-    addCubeToScene("e", 29163, 0.05);
-    addCubeToScene("p", 29679, 0.05);
-
-    addCubeToScene("p", 33898, 0.05);
-    addCubeToScene("w", 34428, 0.05);
-    addCubeToScene("e", 35325, 0.05);
-    addCubeToScene("t", 36418, 0.05);
-    addCubeToScene("u", 37402, 0.05);
-    addCubeToScene("i", 38151, 0.05);
-    addCubeToScene("o", 38526, 0.05);
-
-    addCubeToScene("i", 39853, 0.05);
-    addCubeToScene("u", 40411, 0.05);
-    addCubeToScene("i", 41354, 0.05);
-    addCubeToScene("o", 41818, 0.05);
-    addCubeToScene("3", 42336, 0.05);
-    addCubeToScene("o", 43719, 0.05);
-    addCubeToScene("i", 44138, 0.05);
-    addCubeToScene("o", 45152, 0.05);
-    addCubeToScene("3", 45586, 0.05);
-    addCubeToScene("1", 46122, 0.05);
-
-    addCubeToScene("3", 47893, 0.05);
-    addCubeToScene("o", 48221, 0.05);
-    addCubeToScene("i", 49145, 0.05);
-    addCubeToScene("u", 49669, 0.05);
-    addCubeToScene("w", 50211, 0.05);
-    addCubeToScene("e", 51255, 0.05);
-    addCubeToScene("t", 52143, 0.05);
-    addCubeToScene("u", 53161, 0.05);
-    addCubeToScene("i", 53717, 0.05);
-    addCubeToScene("o", 54169, 0.05);
-
-    addCubeToScene("i", 55695, 0.05);
-    addCubeToScene("u", 56104, 0.05);
-    addCubeToScene("i", 57133, 0.05);
-    addCubeToScene("o", 57589, 0.05);
-    addCubeToScene("3", 58037, 0.05);
-    addCubeToScene("o", 59494, 0.05);
-    addCubeToScene("i", 59935, 0.05);
-    addCubeToScene("o", 60885, 0.05);
-    addCubeToScene("3", 61262, 0.05);
-    addCubeToScene("t", 61737, 0.05);
-    addCubeToScene("5", 61737, 0.05);
-
-    addCubeToScene("i", 63232, 0.05);
-    addCubeToScene("t", 63683, 0.05);
-    addCubeToScene("i", 64532, 0.05);
-    addCubeToScene("5", 65018, 0.05);
-    addCubeToScene("1", 65521, 0.05);
-    addCubeToScene("i", 67456, 0.05);
-    addCubeToScene("1", 68459, 0.05);
-    addCubeToScene("u", 68802, 0.05);
-    addCubeToScene("9", 69299, 0.05);
-
-    addCubeToScene("3", 71755, 0.05);
-    addCubeToScene("1", 72276, 0.05);
-    addCubeToScene("7", 72765, 0.05);
-    addCubeToScene("8", 73296, 0.05);
-    addCubeToScene("9", 73795, 0.05);
-    addCubeToScene("7", 75166, 0.05);
-    addCubeToScene("9", 75586, 0.05);
-    addCubeToScene("7", 77142, 0.05);
-    addCubeToScene("9", 77596, 0.05);
-
-    addCubeToScene("3", 79211, 0.05);
-    addCubeToScene("7", 79632, 0.05);
-    addCubeToScene("3", 80034, 0.05);
-    addCubeToScene("i", 80601, 0.05);
-    addCubeToScene("7", 81085, 0.05);
-    addCubeToScene("3", 81668, 0.05);
+    addCubeToScene("u", 0, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 0, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 1690, 0.05);      // B4 (staff 1)
+    addCubeToScene("chave_direita", 1690, 0.05);      // E3 (staff 2)
+    addCubeToScene("w", 2113, 0.05);      // C#5 (staff 1)
+    addCubeToScene("e", 2535, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 2958, 0.05);      // E5 (staff 1)
+    addCubeToScene("u", 3380, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 3380, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 4648, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 5070, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 5070, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 6338, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 6761, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 6761, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 8028, 0.05);      // B4 (staff 1)
+    addCubeToScene("e", 8451, 0.05);      // D5 (staff 1)
+    addCubeToScene("2", 8451, 0.05);      // G#2 (staff 2)
+    addCubeToScene("p", 8873, 0.05);      // B4 (staff 1)
+    addCubeToScene("k", 9296, 0.05);      // G4 (staff 1)
+    addCubeToScene("m", 9296, 0.05);      // G2 (staff 2)
+    addCubeToScene("e", 9718, 0.05);      // D5 (staff 1)
+    addCubeToScene("p", 10141, 0.05);      // B4 (staff 1)
+    addCubeToScene("0", 10141, 0.05);      // B2 (staff 2)
+    addCubeToScene("/", 11831, 0.05);      // E3 (staff 2)
+    addCubeToScene("t", 12254, 0.05);      // E5 (staff 1)
+    addCubeToScene("e", 12676, 0.05);      // D5 (staff 1)
+    addCubeToScene("w", 13099, 0.05);      // C#5 (staff 1)
+    addCubeToScene("u", 13521, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 13521, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 15211, 0.05);      // B4 (staff 1)
+    addCubeToScene("/", 15211, 0.05);      // E3 (staff 2)
+    addCubeToScene("w", 15634, 0.05);      // C#5 (staff 1)
+    addCubeToScene("e", 16056, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 16479, 0.05);      // E5 (staff 1)
+    addCubeToScene("u", 16901, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 16901, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 18169, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 18592, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 18592, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 19859, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 20282, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 20282, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 21549, 0.05);      // B4 (staff 1)
+    addCubeToScene("e", 21972, 0.05);      // D5 (staff 1)
+    addCubeToScene("2", 21972, 0.05);      // G#2 (staff 2)
+    addCubeToScene("p", 22394, 0.05);      // B4 (staff 1)
+    addCubeToScene("k", 22817, 0.05);      // G4 (staff 1)
+    addCubeToScene("m", 22817, 0.05);      // G2 (staff 2)
+    addCubeToScene("e", 23240, 0.05);      // D5 (staff 1)
+    addCubeToScene("p", 23662, 0.05);      // B4 (staff 1)
+    addCubeToScene("0", 23662, 0.05);      // B2 (staff 2)
+    addCubeToScene("0", 25352, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 26197, 0.05);      // B4 (staff 1)
+    addCubeToScene("w", 27042, 0.05);      // C#5 (staff 1)
+    addCubeToScene("n", 27042, 0.05);      // A3 (staff 2)
+    addCubeToScene("e", 27887, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 28732, 0.05);      // E5 (staff 1)
+    addCubeToScene("m", 28732, 0.05);      // G3 (staff 2)
+    addCubeToScene("u", 29578, 0.05);      // F#5 (staff 1)
+    addCubeToScene("i", 30000, 0.05);      // G5 (staff 1)
+    addCubeToScene("o", 30423, 0.05);      // A5 (staff 1)
+    addCubeToScene(",", 30423, 0.05);      // F#3 (staff 2)
+    addCubeToScene("i", 31690, 0.05);      // G5 (staff 1)
+    addCubeToScene("u", 32113, 0.05);      // F#5 (staff 1)
+    addCubeToScene(",", 32113, 0.05);      // F#3 (staff 2)
+    addCubeToScene("i", 32958, 0.05);      // G5 (staff 1)
+    addCubeToScene("o", 33380, 0.05);      // A5 (staff 1)
+    addCubeToScene("3", 33803, 0.05);      // B5 (staff 1)
+    addCubeToScene("/", 33803, 0.05);      // E3 (staff 2)
+    addCubeToScene("o", 35071, 0.05);      // A5 (staff 1)
+    addCubeToScene("i", 35493, 0.05);      // G5 (staff 1)
+    addCubeToScene("c", 35493, 0.05);      // D3 (staff 2)
+    addCubeToScene("o", 36338, 0.05);      // A5 (staff 1)
+    addCubeToScene("3", 36761, 0.05);      // B5 (staff 1)
+    addCubeToScene("1", 37183, 0.05);      // C#6 (staff 1)
+    addCubeToScene("x", 37183, 0.05);      // C#3 (staff 2)
+    addCubeToScene("3", 38451, 0.05);      // B5 (staff 1)
+    addCubeToScene("u", 38873, 0.05);      // F#5 (staff 1)
+    addCubeToScene(",", 38873, 0.05);      // F#3 (staff 2)
+    addCubeToScene("e", 39296, 0.05);      // D5 (staff 1)
+    addCubeToScene("w", 39718, 0.05);      // C#5 (staff 1)
+    addCubeToScene("0", 39718, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 40141, 0.05);      // B4 (staff 1)
+    addCubeToScene("w", 40563, 0.05);      // C#5 (staff 1)
+    addCubeToScene("n", 40563, 0.05);      // A3 (staff 2)
+    addCubeToScene("e", 41409, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 42254, 0.05);      // E5 (staff 1)
+    addCubeToScene("m", 42254, 0.05);      // G3 (staff 2)
+    addCubeToScene("u", 43099, 0.05);      // F#5 (staff 1)
+    addCubeToScene("i", 43521, 0.05);      // G5 (staff 1)
+    addCubeToScene("o", 43944, 0.05);      // A5 (staff 1)
+    addCubeToScene(",", 43944, 0.05);      // F#3 (staff 2)
+    addCubeToScene("i", 45211, 0.05);      // G5 (staff 1)
+    addCubeToScene("u", 45634, 0.05);      // F#5 (staff 1)
+    addCubeToScene(",", 45634, 0.05);      // F#3 (staff 2)
+    addCubeToScene("i", 46479, 0.05);      // G5 (staff 1)
+    addCubeToScene("o", 46902, 0.05);      // A5 (staff 1)
+    addCubeToScene("3", 47324, 0.05);      // B5 (staff 1)
+    addCubeToScene("/", 47324, 0.05);      // E3 (staff 2)
+    addCubeToScene("o", 48592, 0.05);      // A5 (staff 1)
+    addCubeToScene("i", 49014, 0.05);      // G5 (staff 1)
+    addCubeToScene("c", 49014, 0.05);      // D3 (staff 2)
+    addCubeToScene("o", 49859, 0.05);      // A5 (staff 1)
+    addCubeToScene("3", 50282, 0.05);      // B5 (staff 1)
+    addCubeToScene("5", 50704, 0.05);      // C6 (staff 1)
+    addCubeToScene("z", 50704, 0.05);      // C3 (staff 2)
+    addCubeToScene("i", 51972, 0.05);      // G5 (staff 1)
+    addCubeToScene("t", 52395, 0.05);      // E5 (staff 1)
+    addCubeToScene(";", 52395, 0.05);      // Bb2 (staff 2)
+    addCubeToScene("i", 53240, 0.05);      // G5 (staff 1)
+    addCubeToScene("5", 53662, 0.05);      // C6 (staff 1)
+    addCubeToScene("1", 54085, 0.05);      // C#6 (staff 1)
+    addCubeToScene(".", 54085, 0.05);      // F3 (staff 2)
+    addCubeToScene("b", 54085, 0.05);      // B3 (staff 2)
+    addCubeToScene("2", 55352, 0.05);      // G#5 (staff 1)
+    addCubeToScene("1", 55775, 0.05);      // C#6 (staff 1)
+    addCubeToScene("/", 55775, 0.05);      // E3 (staff 2)
+    addCubeToScene(";", 55775, 0.05);      // A#3 (staff 2)
+    addCubeToScene("u", 57042, 0.05);      // F#5 (staff 1)
+    addCubeToScene("u", 57465, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 57465, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 59155, 0.05);      // B4 (staff 1)
+    addCubeToScene("/", 59155, 0.05);      // E3 (staff 2)
+    addCubeToScene("w", 59578, 0.05);      // C#5 (staff 1)
+    addCubeToScene("e", 60000, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 60423, 0.05);      // E5 (staff 1)
+    addCubeToScene("u", 60845, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 60845, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 62113, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 62535, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 62535, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 63803, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 64226, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 64226, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 65493, 0.05);      // B4 (staff 1)
+    addCubeToScene("e", 65916, 0.05);      // D5 (staff 1)
+    addCubeToScene("2", 65916, 0.05);      // G#2 (staff 2)
+    addCubeToScene("p", 66338, 0.05);      // B4 (staff 1)
+    addCubeToScene("k", 66761, 0.05);      // G4 (staff 1)
+    addCubeToScene("m", 66761, 0.05);      // G2 (staff 2)
+    addCubeToScene("e", 67183, 0.05);      // D5 (staff 1)
+    addCubeToScene("p", 67606, 0.05);      // B4 (staff 1)
+    addCubeToScene("0", 67606, 0.05);      // B2 (staff 2)
+    addCubeToScene("/", 69296, 0.05);      // E3 (staff 2)
+    addCubeToScene("t", 69719, 0.05);      // E5 (staff 1)
+    addCubeToScene("e", 70141, 0.05);      // D5 (staff 1)
+    addCubeToScene("w", 70564, 0.05);      // C#5 (staff 1)
+    addCubeToScene("u", 70986, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 70986, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 72676, 0.05);      // B4 (staff 1)
+    addCubeToScene("/", 72676, 0.05);      // E3 (staff 2)
+    addCubeToScene("w", 73099, 0.05);      // C#5 (staff 1)
+    addCubeToScene("e", 73521, 0.05);      // D5 (staff 1)
+    addCubeToScene("t", 73944, 0.05);      // E5 (staff 1)
+    addCubeToScene("u", 74366, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 74366, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 75634, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 76057, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 76057, 0.05);      // B2 (staff 2)
+    addCubeToScene("e", 77324, 0.05);      // D5 (staff 1)
+    addCubeToScene("u", 77747, 0.05);      // F#5 (staff 1)
+    addCubeToScene("0", 77747, 0.05);      // B2 (staff 2)
+    addCubeToScene("p", 79014, 0.05);      // B4 (staff 1)
+    addCubeToScene("e", 79437, 0.05);      // D5 (staff 1)
+    addCubeToScene("2", 79437, 0.05);      // G#2 (staff 2)
+    addCubeToScene("p", 79859, 0.05);      // B4 (staff 1)
+    addCubeToScene("k", 80282, 0.05);      // G4 (staff 1)
+    addCubeToScene("m", 80282, 0.05);      // G2 (staff 2)
+    addCubeToScene("e", 80704, 0.05);      // D5 (staff 1)
+    addCubeToScene("p", 81127, 0.05);      // B4 (staff 1)
+    addCubeToScene("0", 81127, 0.05);      // B2 (staff 2)
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
