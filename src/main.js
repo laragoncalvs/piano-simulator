@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { keyMap } from "./keyMap.js";
 import { allCubes } from "./cubes.js";
 import { loadedTexturesAlt } from './cubes.js'; // ajuste o caminho conforme seu projeto
+import notasJson from './notas.json';
+import lagoJson from './lago.json';
 
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -302,7 +304,7 @@ if (animationId !== null) {
 
 
 voltar.addEventListener("click", () => {
-     telaInicial.style.setProperty("margin-top", "0vh", "important");
+    telaInicial.style.setProperty("margin-top", "0vh", "important");
     telaInicial.style.setProperty("padding", "0px", "important");
     telaInicial.style.setProperty("background-color", "transparent", "important");
 
@@ -336,8 +338,10 @@ elvisMusic.addEventListener("click", () => {
     bethovenMusic.classList.remove("musicaEscolhida")
     tchaiMusic.classList.remove("musicaEscolhida")
     elvisMusic.classList.add("musicaEscolhida");
-    area.style.setProperty("margin-left", "308px", "important");
-    area.style.setProperty("width", "153px", "important");
+    // Für Elise: E3 (32ª) a F5 (57ª) = 26 notas em 88 teclas
+    // Proporcionalmente ao piano: margin-left = (32/88)*960≈349px, width = (26/88)*960≈283px
+    area.style.setProperty("margin-left", "349px", "important");
+    area.style.setProperty("width", "283px", "important");
 
 
 })
@@ -347,8 +351,10 @@ bethovenMusic.addEventListener("click", () => {
     bethovenMusic.classList.add("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
     tchaiMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "308px", "important");
-    area.style.setProperty("width", "125px", "important");
+    // Ode to Joy: C3 (28ª) a G4 (47ª) = 20 notas em 88 teclas
+    // Proporcionalmente ao piano: margin-left = (28/88)*960≈306px, width = (20/88)*960≈218px
+    area.style.setProperty("margin-left", "306px", "important");
+    area.style.setProperty("width", "218px", "important");
 
 
 })
@@ -358,8 +364,10 @@ tchaiMusic.addEventListener("click", () => {
     tchaiMusic.classList.add("musicaEscolhida")
     bethovenMusic.classList.remove("musicaEscolhida");
     elvisMusic.classList.remove("musicaEscolhida");
-    area.style.setProperty("margin-left", "416px", "important");
-        area.style.setProperty("width", "190px", "important");
+    // Lago dos Cisnes: G2 (22ª) a C#6 (74ª) = 53 notas em 88 teclas
+    // Proporcionalmente ao piano: margin-left = (22/88)*960≈240px, width = (53/88)*960≈580px
+    area.style.setProperty("margin-left", "140px", "important");
+    area.style.setProperty("width", "582px", "important");
 
 
 })
@@ -436,9 +444,9 @@ autoplayButton.addEventListener("click", () => {
 
 jogarButton.addEventListener("click", () => {
     if (modoAtual === "jogar") return;
- telaInicial.style.setProperty("margin-top", "0vh", "important");
+    telaInicial.style.setProperty("margin-top", "0vh", "important");
     telaInicial.style.setProperty("padding", "0px", "important");
-    telaInicial.style.setProperty("background-color", "transparent", "important");    titulo.style.display = "none";
+    telaInicial.style.setProperty("background-color", "transparent", "important"); titulo.style.display = "none";
     resetarButton.style.display = "inline";
     voltarButton.style.display = "inline";
     canvas.style.display = "inline";
@@ -735,7 +743,7 @@ function carregarPartituraClair() {
 }
 
 function carregarPartituraOdeToJoy() {
-      addCubeToScene("g", 0, 0.05);      // E4 (staff 1)
+    addCubeToScene("g", 0, 0.05);      // E4 (staff 1)
     addCubeToScene("z", 0, 0.05);      // C3 (staff 2)
     addCubeToScene("m", 0, 0.05);      // G3 (staff 2)
     addCubeToScene("g", 536, 0.05);      // E4 (staff 1)
@@ -846,7 +854,7 @@ function carregarPartituraOdeToJoy() {
     addCubeToScene("m", 32946, 0.05);      // G3 (staff 2)
     addCubeToScene("a", 33214, 0.05);      // C4 (staff 1)
     addCubeToScene("hifen", 33214, 0.05);      // E3 (staff 2)
-    addCubeToScene("m", 33214, 0.05); 
+    addCubeToScene("m", 33214, 0.05);
 
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
@@ -1285,391 +1293,39 @@ function carregarPartituraCisne() {
 
 }
 
-function carregarPartituraFurEliseff() {
-    addCubeToScene("2", 0, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("w", 0, 0.05);      // Db5 (staff 1)
-    addCubeToScene("h", 0, 0.05);      // F4 (staff 2)
-    addCubeToScene("2", 423, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("q", 423, 0.05);      // C5 (staff 1)
-    addCubeToScene("f", 423, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("k", 1268, 0.05);      // G4 (staff 1)
-    addCubeToScene("ç", 1268, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("s", 1268, 0.05);      // Db4 (staff 2)
-    addCubeToScene("2", 1690, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("r", 1690, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("a", 1690, 0.05);      // C4 (staff 2)
-    addCubeToScene("h", 2535, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 2535, 0.05);      // Db5 (staff 1)
-    addCubeToScene("x", 2535, 0.05);      // Db3 (staff 2)
-    addCubeToScene(";", 2535, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("2", 2958, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("q", 2958, 0.05);      // C5 (staff 1)
-    addCubeToScene("v", 2958, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("f", 2958, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("k", 3803, 0.05);      // G4 (staff 1)
-    addCubeToScene("ç", 3803, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("v", 3803, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("s", 3803, 0.05);      // Db4 (staff 2)
-    addCubeToScene("2", 4225, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("2", 4225, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 4225, 0.05);      // C4 (staff 2)
-    addCubeToScene("w", 5070, 0.05);      // Db5 (staff 1)
-    addCubeToScene("u", 5070, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("ç", 5070, 0.05);      // Bb4 (staff 2)
-    addCubeToScene("w", 5493, 0.05);      // Db5 (staff 1)
-    addCubeToScene("y", 5493, 0.05);      // F5 (staff 1)
-    addCubeToScene("2", 5493, 0.05);      // Ab4 (staff 2)
-    addCubeToScene("q", 6338, 0.05);      // C5 (staff 1)
-    addCubeToScene("r", 6338, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("j", 6338, 0.05);      // Gb4 (staff 2)
-    addCubeToScene("w", 6761, 0.05);      // Db5 (staff 1)
-    addCubeToScene("2", 6761, 0.05);      // Ab5 (staff 1)
-    addCubeToScene("h", 6761, 0.05);      // F4 (staff 2)
-    addCubeToScene("ç", 7606, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("u", 7606, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("//", 7606, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("f", 7606, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("w", 8028, 0.05);      // Db5 (staff 1)
-    addCubeToScene("y", 8028, 0.05);      // F5 (staff 1)
-    addCubeToScene("2", 8028, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("2", 8028, 0.05);      // Ab4 (staff 2)
-    addCubeToScene("q", 8873, 0.05);      // C5 (staff 1)
-    addCubeToScene("r", 8873, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("2", 8873, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("j", 8873, 0.05);      // Gb4 (staff 2)
-    addCubeToScene("w", 9296, 0.05);      // Db5 (staff 1)
-    addCubeToScene("s", 9296, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 9296, 0.05);      // F4 (staff 2)
-    addCubeToScene("s", 10141, 0.05);      // Db4 (staff 1)
-    addCubeToScene("w", 10141, 0.05);      // Db5 (staff 1)
-    addCubeToScene(".", 10141, 0.05);      // F3 (staff 2)
-    addCubeToScene("2", 10141, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 10563, 0.05);      // Db4 (staff 1)
-    addCubeToScene("w", 10563, 0.05);      // Db5 (staff 1)
-    addCubeToScene("v", 10563, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("2", 10563, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 10986, 0.05);      // C4 (staff 1)
-    addCubeToScene("q", 10986, 0.05);      // C5 (staff 1)
-    addCubeToScene(";", 11408, 0.05);      // Bb3 (staff 1)
-    addCubeToScene("ç", 11408, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("x", 11408, 0.05);      // Db3 (staff 2)
-    addCubeToScene("m", 11408, 0.05);      // G3 (staff 2)
-    addCubeToScene("ç", 11831, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("z", 11831, 0.05);      // C3 (staff 2)
-    addCubeToScene("a", 11831, 0.05);      // C4 (staff 2)
-    addCubeToScene("r", 12254, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("w", 12676, 0.05);      // Db5 (staff 1)
-    addCubeToScene("x", 12676, 0.05);      // Db3 (staff 2)
-    addCubeToScene(";", 12676, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("f", 13099, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("h", 13944, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 14366, 0.05);      // Db5 (staff 1)
-    addCubeToScene("v", 14366, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("f", 14366, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("q", 14789, 0.05);      // C5 (staff 1)
-    addCubeToScene("ç", 15211, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("v", 15211, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("s", 15211, 0.05);      // Db4 (staff 2)
-    addCubeToScene("2", 15634, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("k", 16479, 0.05);      // G4 (staff 1)
-    addCubeToScene("ç", 16901, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("2", 16901, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 16901, 0.05);      // C4 (staff 2)
-    addCubeToScene("2", 17324, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("j", 17746, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 17746, 0.05);      // Gb5 (staff 1)
-    addCubeToScene(";", 17746, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("s", 17746, 0.05);      // Db4 (staff 2)
-    addCubeToScene("j", 18169, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 18169, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("2", 18169, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 18169, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 18592, 0.05);      // F4 (staff 1)
-    addCubeToScene("y", 18592, 0.05);      // F5 (staff 1)
-    addCubeToScene("f", 19014, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("r", 19014, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("//", 19014, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("a", 19014, 0.05);      // C4 (staff 2)
-    addCubeToScene("r", 19437, 0.05);      // Eb5 (staff 1)
-    addCubeToScene(".", 19437, 0.05);      // F3 (staff 2)
-    addCubeToScene("h", 19437, 0.05);      // F4 (staff 2)
-    addCubeToScene("2", 19859, 0.05);      // Ab5 (staff 1)
-    addCubeToScene("u", 20282, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("//", 20282, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("f", 20282, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("2", 20704, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("ç", 21549, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("u", 21972, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("2", 21972, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("2", 21972, 0.05);      // Ab4 (staff 2)
-    addCubeToScene("y", 22394, 0.05);      // F5 (staff 1)
-    addCubeToScene("r", 22817, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("2", 22817, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("j", 22817, 0.05);      // Gb4 (staff 2)
-    addCubeToScene("w", 23239, 0.05);      // Db5 (staff 1)
-    addCubeToScene("q", 24085, 0.05);      // C5 (staff 1)
-    addCubeToScene("r", 24507, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("s", 24507, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 24507, 0.05);      // F4 (staff 2)
-    addCubeToScene("w", 24930, 0.05);      // Db5 (staff 1)
-    addCubeToScene("h", 25352, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 25352, 0.05);      // Db5 (staff 1)
-    addCubeToScene("s", 25352, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 25775, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 25775, 0.05);      // Db5 (staff 1)
-    addCubeToScene(";", 25775, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("h", 26620, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 26620, 0.05);      // Db5 (staff 1)
-    addCubeToScene("2", 26620, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("w", 27042, 0.05);      // Db5 (staff 1)
-    addCubeToScene("m", 27042, 0.05);      // G3 (staff 2)
-    addCubeToScene("q", 27465, 0.05);      // C5 (staff 1)
-    addCubeToScene("2", 27465, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("3", 27887, 0.05);      // Cb5 (staff 1)
-    addCubeToScene("2", 27887, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("f", 28310, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("f", 29155, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("3", 29577, 0.05);      // Cb5 (staff 1)
-    addCubeToScene("2", 29577, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("3", 30423, 0.05);      // Cb5 (staff 1)
-    addCubeToScene("//", 30423, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("f", 30845, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("f", 31690, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("3", 32113, 0.05);      // Cb5 (staff 1)
-    addCubeToScene(".", 32113, 0.05);      // F3 (staff 2)
-    addCubeToScene("ç", 32535, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("//", 32535, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("ç", 32958, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("//", 32958, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("s", 33380, 0.05);      // Db4 (staff 1)
-    addCubeToScene("s", 34225, 0.05);      // Db4 (staff 1)
-    addCubeToScene("q", 34648, 0.05);      // C5 (staff 1)
-    addCubeToScene("v", 34648, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("2", 34648, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("w", 35493, 0.05);      // Db5 (staff 1)
-    addCubeToScene("x", 35493, 0.05);      // Db3 (staff 2)
-    addCubeToScene("2", 35493, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("j", 35915, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("h", 36761, 0.05);      // F4 (staff 1)
-    addCubeToScene("r", 37183, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("z", 37183, 0.05);      // C3 (staff 2)
-    addCubeToScene("2", 37183, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("j", 38028, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("j", 38451, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("f", 39296, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("j", 39718, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("2", 39718, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("h", 40141, 0.05);      // F4 (staff 1)
-    addCubeToScene("ç", 40563, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("//", 40563, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("j", 40775, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("v", 40775, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("f", 40986, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("x", 40986, 0.05);      // Db3 (staff 2)
-    addCubeToScene("s", 41408, 0.05);      // Db4 (staff 1)
-    addCubeToScene(";", 41831, 0.05);      // Bb3 (staff 1)
-    addCubeToScene("//", 41831, 0.05);      // Gb2 (staff 2)
-    addCubeToScene("s", 42254, 0.05);      // Db4 (staff 1)
-    addCubeToScene("h", 42254, 0.05);      // F4 (staff 1)
-    addCubeToScene("2", 42254, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 42676, 0.05);      // C4 (staff 1)
-    addCubeToScene("f", 42676, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("s", 43099, 0.05);      // Db4 (staff 1)
-    addCubeToScene("w", 43099, 0.05);      // Db5 (staff 1)
-    addCubeToScene(".", 43099, 0.05);      // F3 (staff 2)
-    addCubeToScene("2", 43099, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 43521, 0.05);      // C4 (staff 1)
-    addCubeToScene("q", 43521, 0.05);      // C5 (staff 1)
-    addCubeToScene("2", 43521, 0.05);      // Ab2 (staff 2)
-    addCubeToScene("v", 43521, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("2", 43521, 0.05);      // Ab3 (staff 2)
-    addCubeToScene(";", 44366, 0.05);      // Bb3 (staff 1)
-    addCubeToScene("ç", 44366, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("x", 44366, 0.05);      // Db3 (staff 2)
-    addCubeToScene("m", 44366, 0.05);      // G3 (staff 2)
-    addCubeToScene("f", 44789, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("r", 44789, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("z", 44789, 0.05);      // C3 (staff 2)
-    addCubeToScene("a", 44789, 0.05);      // C4 (staff 2)
-    addCubeToScene("w", 45634, 0.05);      // Db5 (staff 1)
-    addCubeToScene("x", 45634, 0.05);      // Db3 (staff 2)
-    addCubeToScene(";", 45634, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("h", 46056, 0.05);      // F4 (staff 1)
-    addCubeToScene("w", 46479, 0.05);      // Db5 (staff 1)
-    addCubeToScene("v", 46479, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("f", 46479, 0.05);      // Eb4 (staff 2)
-    addCubeToScene("q", 46901, 0.05);      // C5 (staff 1)
-    addCubeToScene("ç", 47324, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("v", 47324, 0.05);      // Eb3 (staff 2)
-    addCubeToScene("s", 47324, 0.05);      // Db4 (staff 2)
-    addCubeToScene("2", 47746, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("k", 48592, 0.05);      // G4 (staff 1)
-    addCubeToScene("ç", 49014, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("2", 49014, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("a", 49014, 0.05);      // C4 (staff 2)
-    addCubeToScene("2", 49437, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("j", 49859, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 49859, 0.05);      // Gb5 (staff 1)
-    addCubeToScene(";", 49859, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("s", 49859, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 50282, 0.05);      // F4 (staff 1)
-    addCubeToScene("y", 50282, 0.05);      // F5 (staff 1)
-    addCubeToScene("2", 50282, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 50282, 0.05);      // Db4 (staff 2)
-    addCubeToScene("f", 51127, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("r", 51127, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("//", 51127, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("a", 51127, 0.05);      // C4 (staff 2)
-    addCubeToScene("2", 51549, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("2", 51549, 0.05);      // Ab5 (staff 1)
-    addCubeToScene(".", 51549, 0.05);      // F3 (staff 2)
-    addCubeToScene("s", 51549, 0.05);      // Db4 (staff 2)
-    addCubeToScene("j", 52394, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 52394, 0.05);      // Gb5 (staff 1)
-    addCubeToScene(";", 52394, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("s", 52394, 0.05);      // Db4 (staff 2)
-    addCubeToScene("j", 52817, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 52817, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("2", 52817, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 52817, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 53239, 0.05);      // F4 (staff 1)
-    addCubeToScene("y", 53239, 0.05);      // F5 (staff 1)
-    addCubeToScene("f", 53662, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("r", 53662, 0.05);      // Eb5 (staff 1)
-    addCubeToScene("//", 53662, 0.05);      // Gb3 (staff 2)
-    addCubeToScene("a", 53662, 0.05);      // C4 (staff 2)
-    addCubeToScene("2", 54085, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("2", 54085, 0.05);      // Ab5 (staff 1)
-    addCubeToScene(".", 54085, 0.05);      // F3 (staff 2)
-    addCubeToScene("s", 54085, 0.05);      // Db4 (staff 2)
-    addCubeToScene("j", 54930, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 54930, 0.05);      // Gb5 (staff 1)
-    addCubeToScene(";", 54930, 0.05);      // Bb3 (staff 2)
-    addCubeToScene("s", 54930, 0.05);      // Db4 (staff 2)
-    addCubeToScene("j", 55352, 0.05);      // Gb4 (staff 1)
-    addCubeToScene("u", 55352, 0.05);      // Gb5 (staff 1)
-    addCubeToScene("2", 55352, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 55352, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 55775, 0.05);      // F4 (staff 1)
-    addCubeToScene("y", 55775, 0.05);      // F5 (staff 1)
-    addCubeToScene("ç", 56197, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("]", 56197, 0.05);      // Bb5 (staff 1)
-    addCubeToScene("m", 56197, 0.05);      // G3 (staff 2)
-    addCubeToScene("s", 56197, 0.05);      // Db4 (staff 2)
-    addCubeToScene("g", 56197, 0.05);      // E4 (staff 2)
-    addCubeToScene("ç", 56620, 0.05);      // Bb4 (staff 1)
-    addCubeToScene("]", 56620, 0.05);      // Bb5 (staff 1)
-    addCubeToScene("2", 56620, 0.05);      // Ab3 (staff 2)
-    addCubeToScene("s", 56620, 0.05);      // Db4 (staff 2)
-    addCubeToScene("h", 56620, 0.05);      // F4 (staff 2)
-    addCubeToScene("2", 57042, 0.05);      // Ab4 (staff 1)
-    addCubeToScene("2", 57042, 0.05);      // Ab5 (staff 1)
-    addCubeToScene("a", 57887, 0.05);      // C4 (staff 1)
-    addCubeToScene("2", 57887, 0.05);      // Ab1 (staff 2)
-    addCubeToScene("2", 57887, 0.05);      // Ab2 (staff 2)
-    addCubeToScene("f", 58732, 0.05);      // Eb4 (staff 1)
-    addCubeToScene("s", 58944, 0.05);      // Db4 (staff 1)
-    addCubeToScene("//", 59155, 0.05);      // Gb3 (staff 1)
+
+
+const pitchToKey = {};
+for (const [key, pitch] of Object.entries(keyMap)) {
+    pitchToKey[pitch] = key;
 }
 
-function carregarPartituraFurElise() {
-    addCubeToScene("t", 2000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 2500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 3000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 3500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 4000, 0.05);      // E5 (staff 1)
-    addCubeToScene("p", 4500, 0.05);      // B4 (staff 1)
-    addCubeToScene("e", 5000, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 5500, 0.05);      // C5 (staff 1)
-    addCubeToScene("l", 6000, 0.05);      // A4 (staff 1)
-    addCubeToScene("n", 6000, 0.05);      // A3 (staff 2)
-    addCubeToScene("a", 7500, 0.05);      // C4 (staff 1)
-    addCubeToScene("g", 8000, 0.05);      // E4 (staff 1)
-    addCubeToScene("l", 8500, 0.05);      // A4 (staff 1)
-    addCubeToScene("p", 9000, 0.05);      // B4 (staff 1)
-    addCubeToScene("hifen", 9000, 0.05);      // E3 (staff 2)
-    addCubeToScene("g", 10500, 0.05);      // E4 (staff 1)
-    addCubeToScene("2", 11000, 0.05);      // G#4 (staff 1)
-    addCubeToScene("p", 11500, 0.05);      // B4 (staff 1)
-    addCubeToScene("q", 12000, 0.05);      // C5 (staff 1)
-    addCubeToScene("n", 12000, 0.05);      // A3 (staff 2)
-    addCubeToScene("g", 13500, 0.05);      // E4 (staff 1)
-    addCubeToScene("t", 14000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 14500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 15000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 15500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 16000, 0.05);      // E5 (staff 1)
-    addCubeToScene("p", 16500, 0.05);      // B4 (staff 1)
-    addCubeToScene("e", 17000, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 17500, 0.05);      // C5 (staff 1)
-    addCubeToScene("l", 18000, 0.05);      // A4 (staff 1)
-    addCubeToScene("n", 18000, 0.05);      // A3 (staff 2)
-    addCubeToScene("a", 19500, 0.05);      // C4 (staff 1)
-    addCubeToScene("g", 20000, 0.05);      // E4 (staff 1)
-    addCubeToScene("l", 20500, 0.05);      // A4 (staff 1)
-    addCubeToScene("p", 21000, 0.05);      // B4 (staff 1)
-    addCubeToScene("hifen", 21000, 0.05);      // E3 (staff 2)
-    addCubeToScene("g", 22500, 0.05);      // E4 (staff 1)
-    addCubeToScene("q", 23000, 0.05);      // C5 (staff 1)
-    addCubeToScene("p", 23500, 0.05);      // B4 (staff 1)
-    addCubeToScene("l", 24000, 0.05);      // A4 (staff 1)
-    addCubeToScene("n", 24000, 0.05);      // A3 (staff 2)
-    addCubeToScene("p", 25500, 0.05);      // B4 (staff 1)
-    addCubeToScene("q", 26000, 0.05);      // C5 (staff 1)
-    addCubeToScene("e", 26500, 0.05);      // D5 (staff 1)
-    addCubeToScene("t", 27000, 0.05);      // E5 (staff 1)
-    addCubeToScene("a", 27000, 0.05);      // C4 (staff 2)
-    addCubeToScene("k", 28500, 0.05);      // G4 (staff 1)
-    addCubeToScene("y", 29000, 0.05);      // F5 (staff 1)
-    addCubeToScene("t", 29500, 0.05);      // E5 (staff 1)
-    addCubeToScene("e", 30000, 0.05);      // D5 (staff 1)
-    addCubeToScene("b", 30000, 0.05);      // B3 (staff 2)
-    addCubeToScene("h", 31500, 0.05);      // F4 (staff 1)
-    addCubeToScene("t", 32000, 0.05);      // E5 (staff 1)
-    addCubeToScene("e", 32500, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 33000, 0.05);      // C5 (staff 1)
-    addCubeToScene("n", 33000, 0.05);      // A3 (staff 2)
-    addCubeToScene("g", 34500, 0.05);      // E4 (staff 1)
-    addCubeToScene("e", 35000, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 35500, 0.05);      // C5 (staff 1)
-    addCubeToScene("p", 36000, 0.05);      // B4 (staff 1)
-    addCubeToScene("2", 36000, 0.05);      // G#3 (staff 2)
-    addCubeToScene("t", 41000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 41500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 42000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 42500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 43000, 0.05);      // E5 (staff 1)
-    addCubeToScene("p", 43500, 0.05);      // B4 (staff 1)
-    addCubeToScene("e", 44000, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 44500, 0.05);      // C5 (staff 1)
-    addCubeToScene("l", 45000, 0.05);      // A4 (staff 1)
-    addCubeToScene("n", 45000, 0.05);      // A3 (staff 2)
-    addCubeToScene("a", 46500, 0.05);      // C4 (staff 1)
-    addCubeToScene("g", 47000, 0.05);      // E4 (staff 1)
-    addCubeToScene("l", 47500, 0.05);      // A4 (staff 1)
-    addCubeToScene("p", 48000, 0.05);      // B4 (staff 1)
-    addCubeToScene("hifen", 48000, 0.05);      // E3 (staff 2)
-    addCubeToScene("g", 49500, 0.05);      // E4 (staff 1)
-    addCubeToScene("2", 50000, 0.05);      // G#4 (staff 1)
-    addCubeToScene("p", 50500, 0.05);      // B4 (staff 1)
-    addCubeToScene("q", 51000, 0.05);      // C5 (staff 1)
-    addCubeToScene("n", 51000, 0.05);      // A3 (staff 2)
-    addCubeToScene("g", 52500, 0.05);      // E4 (staff 1)
-    addCubeToScene("t", 53000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 53500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 54000, 0.05);      // E5 (staff 1)
-    addCubeToScene("r", 54500, 0.05);      // D#5 (staff 1)
-    addCubeToScene("t", 55000, 0.05);      // E5 (staff 1)
-    addCubeToScene("p", 55500, 0.05);      // B4 (staff 1)
-    addCubeToScene("e", 56000, 0.05);      // D5 (staff 1)
-    addCubeToScene("q", 56500, 0.05);      // C5 (staff 1)
-    addCubeToScene("l", 57000, 0.05);      // A4 (staff 1)
-    addCubeToScene("n", 57000, 0.05);      // A3 (staff 2)
-    addCubeToScene("a", 58500, 0.05);      // C4 (staff 1)
-    addCubeToScene("g", 59000, 0.05);      // E4 (staff 1)
-    addCubeToScene("l", 59500, 0.05);      // A4 (staff 1)
-    addCubeToScene("p", 60000, 0.05);      // B4 (staff 1)
-    addCubeToScene("hifen", 60000, 0.05);      // E3 (staff 2)
-        duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
+async function carregarPartituraFurElise() {
+    const notes = notasJson;
 
+    for (const note of notes) {
+        const key = pitchToKey[note.pitch];
+        if (!key) {
+            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
+            continue;
+        }
+        addCubeToScene(key, note.start_ms, 0.05);
+    }
+
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
+}
+
+async function carregarPartituraCisne1() {
+    const notes = lagoJson;
+
+    for (const note of notes) {
+        const key = pitchToKey[note.pitch];
+        if (!key) {
+            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
+            continue;
+        }
+        addCubeToScene(key, note.start_ms, 0.05);
+    }
+
+    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 }
