@@ -16,10 +16,12 @@ let animationId = null;
 let startTime = null;
 let fimTimeout = null;
 let musica = null;
+let pontuation = 0;
+let totalNotas = 0;  // Total de notas da música
+let pontosParaAcerto = 0;  // Pontos por acerto correto
+const PONTUACAO_MAXIMA = 1000;  // Pontuação máxima
 
 let duracaoTotal = 0;
-const progressContainer = document.getElementById("progressContainer");
-const progressBar = document.getElementById("progressBar");
 
 
 function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
@@ -166,7 +168,7 @@ function spawnCube(letter, speed) {
 
     const cube = new THREE.Mesh(geometry, newMaterials);
     cube.position.copy(baseCube.position);
-    cube.userData = { speed, letter, hit: false };
+    cube.userData = { speed, letter, hit: false, opacity: 1.0 };
 
     scene.add(cube);
     activeCubes.push(cube);
@@ -204,46 +206,57 @@ function animate() {
         const offset = 0.8;
 
         if (!cube.userData.hit && cube.position.z >= (zAlvo - offset)) {
-            cube.userData.hit = true;
-
-            const letra = cube.userData.letter;
-
-            // Muda a cor das outras faces (exceto a face 2 com textura)
-
-
-            if (Array.isArray(cube.material)) {
-                cube.material.forEach((mat, idx) => {
-                    if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
-                        mat.color.set(0x51B79F);
-                    }
-
-                    if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
-                        const novaTextura = loadedTexturesAlt[letra];
-                        if (novaTextura) {
-                            mat.map = novaTextura;
-                            mat.needsUpdate = true;
-                        } else {
-                            console.warn(`Textura alternativa não encontrada para: ${letra}`);
-                        }
-                    }
-                });
-            }
-
-
-
+            // No autoplay, marca como hit e remove automaticamente
             if (modoAtual === "autoplay") {
+                cube.userData.hit = true;
+
+                const letra = cube.userData.letter;
+
+                // Muda a cor das outras faces (exceto a face 2 com textura)
+                if (Array.isArray(cube.material)) {
+                    cube.material.forEach((mat, idx) => {
+                        if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
+                            mat.color.set(0x51B79F);
+                        }
+
+                        if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                            const novaTextura = loadedTexturesAlt[letra];
+                            if (novaTextura) {
+                                mat.map = novaTextura;
+                                mat.needsUpdate = true;
+                            } else {
+                                console.warn(`Textura alternativa não encontrada para: ${letra}`);
+                            }
+                        }
+                    });
+                }
+
                 const note = keyMap[cube.userData.letter];
                 if (piano && note) {
                     piano.play(note);
                 }
-            }
 
-            // Aguarda 200ms antes de remover o cubo
-            setTimeout(() => {
-                if (scene.children.includes(cube)) scene.remove(cube);
-                const index = activeCubes.indexOf(cube);
-                if (index !== -1) activeCubes.splice(index, 1);
-            }, 400);
+                // Aguarda 400ms antes de remover o cubo
+                setTimeout(() => {
+                    if (scene.children.includes(cube)) scene.remove(cube);
+                    const index = activeCubes.indexOf(cube);
+                    if (index !== -1) activeCubes.splice(index, 1);
+                }, 400);
+            }
+        }
+
+        // Se o cubo passou da área sem ser pressionado no modo jogar
+        if (modoAtual === "jogar" && !cube.userData.hit && cube.position.z > (zAlvo + 1.5)) {
+            cube.userData.hit = true;
+            
+            // Penalidade de -5% do valor de cada acerto
+            const penalidade = pontosParaAcerto * 0.05;
+            pontuation = Math.max(0, pontuation - penalidade);
+            atualizarPontuacao();
+
+            // Remove o cubo
+            scene.remove(cube);
+            activeCubes.splice(i, 1);
         }
     }
 
@@ -283,7 +296,43 @@ function resetarCena() {
 
     spawnEvents.length = 0;
     startTime = null;
+    fimTimeout = null;
+}
 
+function atualizarPontuacao() {
+    if (pontuacao) {
+        pontuacao.textContent = `Pontuação: ${Math.floor(pontuation)}`;
+    }
+    // Atualizar progress bar de pontuação
+    const pontuacaoBar = document.getElementById("pontuacaoBar");
+    if (pontuacaoBar) {
+        const percentual = (pontuation / PONTUACAO_MAXIMA) * 100;
+        pontuacaoBar.style.width = percentual + "%";
+    }
+}
+
+function atualizarOpacidadeCubo(cube) {
+    if (Array.isArray(cube.material)) {
+        cube.material.forEach((mat) => {
+            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshBasicMaterial) {
+                mat.opacity = cube.userData.opacity;
+                mat.transparent = true;
+                mat.needsUpdate = true;
+            }
+        });
+    }
+}
+
+function reduzirOpacidadeCubo(cube) {
+    cube.userData.opacity = Math.max(0, cube.userData.opacity - 1/3);
+    atualizarOpacidadeCubo(cube);
+    
+    // Se opacidade chegou a 0, remover cubo
+    if (cube.userData.opacity <= 0.05) {
+        scene.remove(cube);
+        const index = activeCubes.indexOf(cube);
+        if (index !== -1) activeCubes.splice(index, 1);
+    }
 }
 
 const canvas = renderer.domElement;
@@ -296,6 +345,10 @@ const tchaiMusic = document.getElementById("tchai");
 
 const resetar = document.getElementById("resetarButton");
 const voltar = document.getElementById("voltarButton");
+const pontuacao = document.getElementById("pontuacao");
+const gameMenu = document.getElementById("gameMenu");
+const progressContainer = document.getElementById("progressContainer");
+const progressBar = document.getElementById("progressBar");
 
 if (animationId !== null) {
     cancelAnimationFrame(animationId);
@@ -315,13 +368,14 @@ voltar.addEventListener("click", () => {
     jogarButton.disabled = false;
     autoplayButton.disabled = false;
     progressContainer.style.display = "none";
+    pontuacao.style.display = "none";
+    document.getElementById("pontuacaoContainer").style.display = "none";
+    document.getElementById("gameMenu").style.display = "none";
     telaInicial.style.marginTop = "10vh"
     jogarButton.classList.remove("ativo");
     autoplayButton.classList.remove("ativo");
 
     titulo.style.display = "inline";
-    resetarButton.style.display = "none";
-    voltarButton.style.display = "none";
     pianoImg.style.display = "inline";
 
     elvis.style.display = "inline";
@@ -379,13 +433,14 @@ autoplayButton.addEventListener("click", () => {
     telaInicial.style.setProperty("padding", "0px", "important");
     telaInicial.style.setProperty("background-color", "transparent", "important");
     progressBar.style.width = "0%";
-    progressContainer.style.display = "block";
+    progressContainer.style.display = "flex";
+    pontuacao.style.display = "block";
+    document.getElementById("pontuacaoContainer").style.display = "block";
+    document.getElementById("gameMenu").style.display = "flex";
     playElvis.style.display = "none"
     playTchai.style.display = "none"
     playBethoven.style.display = "none"
     titulo.style.display = "none";
-    resetarButton.style.display = "inline";
-    voltarButton.style.display = "inline";
     pianoImg.style.display = "none";
     //grade.style.display = "none";
     //imgContainer.style.display = "none";
@@ -394,6 +449,8 @@ autoplayButton.addEventListener("click", () => {
 
 
     modoAtual = "autoplay";
+    pontuation = 0;
+    atualizarPontuacao();
     resetarCena();
     if (musica === "bethoven") {
         carregarPartituraOdeToJoy();
@@ -442,16 +499,19 @@ autoplayButton.addEventListener("click", () => {
     }
 });
 
+
+
 jogarButton.addEventListener("click", () => {
     if (modoAtual === "jogar") return;
     telaInicial.style.setProperty("margin-top", "0vh", "important");
     telaInicial.style.setProperty("padding", "0px", "important");
     telaInicial.style.setProperty("background-color", "transparent", "important"); titulo.style.display = "none";
-    resetarButton.style.display = "inline";
-    voltarButton.style.display = "inline";
+    document.getElementById("gameMenu").style.display = "flex";
+    pontuacao.style.display = "block";
     canvas.style.display = "inline";
     progressBar.style.width = "0%";
-    progressContainer.style.display = "block";
+    progressContainer.style.display = "flex";
+    document.getElementById("pontuacaoContainer").style.display = "block";
 
     playElvis.style.display = "none"
     playTchai.style.display = "none"
@@ -465,6 +525,8 @@ jogarButton.addEventListener("click", () => {
     //
     console.log("carregado")
     modoAtual = "jogar";
+    pontuation = 0;
+    atualizarPontuacao();
     resetarCena();
     if (musica === "bethoven") {
         carregarPartituraOdeToJoy();
@@ -504,16 +566,85 @@ jogarButton.addEventListener("click", () => {
 
         piano.play(note);
 
-        for (let i = activeCubes.length - 1; i >= 0; i--) {
+        // Primeiro, procura o cubo mais próximo na área correta
+        let acertou = false;
+        let cuboMaisProximoNaArea = null;
+        let menorDistanciaArea = Infinity;
+
+        for (let i = 0; i < activeCubes.length; i++) {
             const cube = activeCubes[i];
             const cubeNote = keyMap[cube.userData.letter];
-            const near = Math.abs(cube.position.z - plane2.position.z) < 0.4;
+            const near = Math.abs(cube.position.z - plane2.position.z) < 2;
 
             if (!cube.userData.hit && cubeNote === note && near) {
-                cube.userData.hit = true;
-                scene.remove(cube);
-                activeCubes.splice(i, 1);
-                break;
+                const distancia = Math.abs(cube.position.z - plane2.position.z);
+                if (distancia < menorDistanciaArea) {
+                    menorDistanciaArea = distancia;
+                    cuboMaisProximoNaArea = cube;
+                }
+            }
+        }
+
+        if (cuboMaisProximoNaArea) {
+            cuboMaisProximoNaArea.userData.hit = true;
+            acertou = true;
+
+            const letra = cuboMaisProximoNaArea.userData.letter;
+
+            // Muda a cor e textura (igual ao autoplay)
+            if (Array.isArray(cuboMaisProximoNaArea.material)) {
+                cuboMaisProximoNaArea.material.forEach((mat, idx) => {
+                    if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
+                        mat.color.set(0x51B79F);
+                    }
+
+                    if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                        const novaTextura = loadedTexturesAlt[letra];
+                        if (novaTextura) {
+                            mat.map = novaTextura;
+                            mat.needsUpdate = true;
+                        } else {
+                            console.warn(`Textura alternativa não encontrada para: ${letra}`);
+                        }
+                    }
+                });
+            }
+
+            // Remove o cubo após a mudança de cor e textura
+            setTimeout(() => {
+                pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
+                atualizarPontuacao();
+                scene.remove(cuboMaisProximoNaArea);
+                const index = activeCubes.indexOf(cuboMaisProximoNaArea);
+                if (index !== -1) activeCubes.splice(index, 1);
+            }, 400);
+        }
+
+        // Se não acertou na área correta, procura pelo cubo mais próximo com a mesma nota
+        if (!acertou) {
+            let cuboMaisProximo = null;
+            let menorDistancia = Infinity;
+
+            for (let i = 0; i < activeCubes.length; i++) {
+                const cube = activeCubes[i];
+                const cubeNote = keyMap[cube.userData.letter];
+
+                if (!cube.userData.hit && cubeNote === note) {
+                    const distancia = Math.abs(cube.position.z - plane2.position.z);
+                    if (distancia < menorDistancia) {
+                        menorDistancia = distancia;
+                        cuboMaisProximo = cube;
+                    }
+                }
+            }
+
+            if (cuboMaisProximo) {
+                reduzirOpacidadeCubo(cuboMaisProximo);
+            } else {
+                // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
+                const penalidade = pontosParaAcerto * 0.10;
+                pontuation = Math.max(0, pontuation - penalidade);
+                atualizarPontuacao();
             }
         }
     };
@@ -563,6 +694,8 @@ resetar.addEventListener("click", () => {
 
             piano.play(note);
 
+            // Primeiro, procura um cubo na área correta
+            let acertou = false;
             for (let i = activeCubes.length - 1; i >= 0; i--) {
                 const cube = activeCubes[i];
                 const cubeNote = keyMap[cube.userData.letter];
@@ -570,9 +703,66 @@ resetar.addEventListener("click", () => {
 
                 if (!cube.userData.hit && cubeNote === note && near) {
                     cube.userData.hit = true;
-                    scene.remove(cube);
-                    activeCubes.splice(i, 1);
+                    acertou = true;
+
+                    const letra = cube.userData.letter;
+
+                    // Muda a cor e textura (igual ao autoplay)
+                    if (Array.isArray(cube.material)) {
+                        cube.material.forEach((mat, idx) => {
+                            if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
+                                mat.color.set(0x51B79F);
+                            }
+
+                            if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                                const novaTextura = loadedTexturesAlt[letra];
+                                if (novaTextura) {
+                                    mat.map = novaTextura;
+                                    mat.needsUpdate = true;
+                                } else {
+                                    console.warn(`Textura alternativa não encontrada para: ${letra}`);
+                                }
+                            }
+                        });
+                    }
+
+                    // Remove o cubo após a mudança de cor e textura
+                    setTimeout(() => {
+                        pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
+                        atualizarPontuacao();
+                        scene.remove(cube);
+                        const index = activeCubes.indexOf(cube);
+                        if (index !== -1) activeCubes.splice(index, 1);
+                    }, 400);
                     break;
+                }
+            }
+
+            // Se não acertou na área correta, procura pelo cubo mais próximo com a mesma nota
+            if (!acertou) {
+                let cuboMaisProximo = null;
+                let menorDistancia = Infinity;
+
+                for (let i = 0; i < activeCubes.length; i++) {
+                    const cube = activeCubes[i];
+                    const cubeNote = keyMap[cube.userData.letter];
+
+                    if (!cube.userData.hit && cubeNote === note) {
+                        const distancia = Math.abs(cube.position.z - plane2.position.z);
+                        if (distancia < menorDistancia) {
+                            menorDistancia = distancia;
+                            cuboMaisProximo = cube;
+                        }
+                    }
+                }
+
+                if (cuboMaisProximo) {
+                    reduzirOpacidadeCubo(cuboMaisProximo);
+                } else {
+                    // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
+                    const penalidade = pontosParaAcerto * 0.10;
+                    pontuation = Math.max(0, pontuation - penalidade);
+                    atualizarPontuacao();
                 }
             }
         };
@@ -593,7 +783,6 @@ resetar.addEventListener("click", () => {
         animate();
     }
 });
-
 
 function carregarPartituraOde() {
     addCubeToScene("g", 0, 0.05);
@@ -855,6 +1044,10 @@ function carregarPartituraOdeToJoy() {
     addCubeToScene("a", 33214, 0.05);      // C4 (staff 1)
     addCubeToScene("hifen", 33214, 0.05);      // E3 (staff 2)
     addCubeToScene("m", 33214, 0.05);
+
+    // Calcular pontuação por acerto
+    totalNotas = spawnEvents.length;
+    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
 
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
@@ -1289,6 +1482,11 @@ function carregarPartituraCisne() {
     addCubeToScene("e", 80704, 0.05);      // D5 (staff 1)
     addCubeToScene("p", 81127, 0.05);      // B4 (staff 1)
     addCubeToScene("0", 81127, 0.05);      // B2 (staff 2)
+    
+    // Calcular pontuação por acerto
+    totalNotas = spawnEvents.length;
+    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
+    
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
@@ -1311,6 +1509,10 @@ async function carregarPartituraFurElise() {
         }
         addCubeToScene(key, note.start_ms, 0.05);
     }
+
+    // Calcular pontuação por acerto
+    totalNotas = spawnEvents.length;
+    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
 
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 }
