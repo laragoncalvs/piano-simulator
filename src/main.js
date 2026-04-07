@@ -248,7 +248,7 @@ function animate() {
         // Se o cubo passou da área sem ser pressionado no modo jogar
         if (modoAtual === "jogar" && !cube.userData.hit && cube.position.z > (zAlvo + 1.5)) {
             cube.userData.hit = true;
-            
+
             // Penalidade de -5% do valor de cada acerto
             const penalidade = pontosParaAcerto * 0.05;
             pontuation = Math.max(0, pontuation - penalidade);
@@ -274,10 +274,26 @@ function animate() {
                 canvas.style.display = 'none';
 
                 const fimDiv = document.getElementById('fimDaCena');
-                if (fimDiv) fimDiv.style.display = 'block';
+                const pontuacaoFinal = document.getElementById('pontuacaoFinal');
+                if (fimDiv) {
+                    fimDiv.style.display = 'flex';
+                    // Atualiza as estrelas baseado na pontuação
+                    atualizarEstrelas();
+                    // Só anima pontuação no modo jogar
+                    if (modoAtual === "jogar") {
+                        pontuacaoFinal.style.display = 'block';
+                        animarPontuacaoFinal();
+                    } else {
+                        // Esconde a pontuação em modo autoplay
+                        pontuacaoFinal.style.display = 'none';
+                    }
+                }
 
-                document.getElementById('nomeDaMusica').style.display = 'none';
                 document.getElementById('botoesMusica').style.display = 'none';
+                document.getElementById('pontuacaoContainer').style.display = 'none';
+                document.getElementById('pontuacaoTitle').style.display = 'none';
+                document.getElementById('pontuacao').style.display = 'none';
+                document.getElementById('gameMenu').style.display = 'none';
                 telaInicial.style.display = 'none';
 
                 console.log("Animação finalizada.");
@@ -314,25 +330,82 @@ function atualizarPontuacao() {
     }
 }
 
-// Função para mostrar animação de pontos flutuantes
+// Função para animar a pontuação final
+function animarPontuacaoFinal() {
+    const pontuacaoFinal = document.getElementById('pontuacaoFinal');
+    const pontuacaoMaxima = Math.floor(pontuation);
+    const duracao = 2000; // 2 segundos
+    const inicio = performance.now();
+
+    function animar(agora) {
+        const decorrido = agora - inicio;
+        const progresso = Math.min(decorrido / duracao, 1);
+        const valorAtual = Math.floor(progresso * pontuacaoMaxima);
+
+        pontuacaoFinal.textContent = valorAtual;
+
+        if (progresso < 1) {
+            requestAnimationFrame(animar);
+        }
+    }
+
+    requestAnimationFrame(animar);
+}
+
+// Função para atualizar as estrelas baseado na pontuação
+function atualizarEstrelas() {
+    const estrelas = document.querySelectorAll('.estrelas span');
+    const fraseMotivacao = document.getElementById('fraseMotivacao');
+    const pontuacaoAtual = Math.floor(pontuation);
+    
+    // Determina quantas estrelas mostrar
+    let quantidadeEstrelas = 1;
+    let frase = "Bom trabalho!";
+    
+    if (pontuacaoAtual < 700) {
+        quantidadeEstrelas = 1;
+        frase = "Boa tentativa! Continue praticando!";
+    } else if (pontuacaoAtual < 850) {
+        quantidadeEstrelas = 2;
+        frase = "Excelente desempenho! Você está quase lá!";
+    } else {
+        quantidadeEstrelas = 3;
+        frase = "Perfeito! Você é um maestro!";
+    }
+    
+    // Atualiza as estrelas: cheias (★) ou vazias (☆)
+    estrelas.forEach((estrela, index) => {
+        if (index < quantidadeEstrelas) {
+            estrela.textContent = '★'; // Estrela cheia
+        } else {
+            estrela.textContent = '☆'; // Estrela vazia
+        }
+    });
+    
+    // Atualiza a frase de motivação
+    if (fraseMotivacao) {
+        fraseMotivacao.textContent = frase;
+    }
+}
+
 function showPointsAnimation(points) {
     const roundedPoints = Math.round(points);
     // Não mostra animação se os pontos arredondados forem zero
     if (roundedPoints === 0) return;
-    
+
     const pontosDiv = document.createElement('div');
     pontosDiv.className = `floating-points ${roundedPoints >= 0 ? 'positive' : 'negative'}`;
     pontosDiv.textContent = roundedPoints >= 0 ? `+${roundedPoints}` : `${roundedPoints}`;
-    
+
     // Posição aleatória na tela (parte superior)
     const randomX = Math.random() * (window.innerWidth - 200) + 100;
     const randomY = window.innerHeight * 0.3 + Math.random() * 200;
-    
+
     pontosDiv.style.left = randomX + 'px';
     pontosDiv.style.top = randomY + 'px';
-    
+
     document.body.appendChild(pontosDiv);
-    
+
     // Remove o elemento após a animação
     setTimeout(() => {
         pontosDiv.remove();
@@ -352,9 +425,9 @@ function atualizarOpacidadeCubo(cube) {
 }
 
 function reduzirOpacidadeCubo(cube) {
-    cube.userData.opacity = Math.max(0, cube.userData.opacity - 1/3);
+    cube.userData.opacity = Math.max(0, cube.userData.opacity - 1 / 3);
     atualizarOpacidadeCubo(cube);
-    
+
     // Se opacidade chegou a 0, remover cubo
     if (cube.userData.opacity <= 0.05) {
         scene.remove(cube);
@@ -415,17 +488,19 @@ autoplayButton.addEventListener("click", () => {
     if (modoAtual === "autoplay") return;
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
-    pontuacao.style.display = "block";
-    document.getElementById("pontuacaoContainer").style.display = "block";
+    // Não mostra pontuação no modo autoplay
+    pontuacao.style.display = "none";
+    document.getElementById("pontuacaoContainer").style.display = "none";
+    document.getElementById("pontuacaoTitle").style.display = "none";
     document.getElementById("gameMenu").style.display = "flex";
     document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
     document.getElementById("nomeDaMusica").style.display = "block";
     document.getElementById("botoesMusica").style.display = "flex";
-    
+
     // Atualizar estado ativo dos botões
     document.getElementById("botoesAutoplay").classList.add("ativo");
     document.getElementById("botoesJogar").classList.remove("ativo");
-    
+
     canvas.style.display = "inline";
 
     modoAtual = "autoplay";
@@ -478,6 +553,7 @@ jogarButton.addEventListener("click", () => {
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
     document.getElementById("pontuacaoContainer").style.display = "block";
+    document.getElementById("pontuacaoTitle").style.display = "block";
     document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
     document.getElementById("nomeDaMusica").style.display = "block";
     document.getElementById("botoesMusica").style.display = "flex";
@@ -1434,11 +1510,11 @@ function carregarPartituraCisne() {
     addCubeToScene("e", 80704, 0.05);      // D5 (staff 1)
     addCubeToScene("p", 81127, 0.05);      // B4 (staff 1)
     addCubeToScene("0", 81127, 0.05);      // B2 (staff 2)
-    
+
     // Calcular pontuação por acerto
     totalNotas = spawnEvents.length;
     pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
-    
+
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 
 }
