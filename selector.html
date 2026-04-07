@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #0B0912;
+      overflow: hidden;
+    }
+
+    .telaInicial {}
+
+    .telaInicial h1 {
+      font-size: 1rem;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow:
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
+      display: inline;
+      margin: 0 !important;
+    }
+
+    .telaInicial span {
+      font-size: 1em;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow:
+        -1px -1px 0 #F5873F,
+        1px -1px 0 #F5873F,
+        -1px 1px 0 #B03A74,
+        1px 1px 0 #B03A74;
+    }
+
+    #telaInicial {
+      margin-top: 5vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 50px;
+      border-radius: 20px;
+      width: 60%;
+    }
+
+    #jogarButton,
+    #autoplayButton {
+      padding: 12px 40px;
+      color: #0e0e0e;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 0.8em;
+      font-weight: 400;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    #jogarButton {
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
+    }
+
+    #autoplayButton {
+      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
+    }
+
+    #autoplayButton:hover,
+    #jogarButton:hover {
+      background-color: #555;
+      color: white;
+    }
+
+    #elvis {
+      margin-top: 15px;
+    }
+
+    .ativo {
+      background-color: transparent !important;
+      border: 2px solid #64fedd !important;
+      color: #64fedd !important;
+      font-weight: bold !important;
+      margin-bottom: 12px;
+    }
+
+    .musicaEscolhida {
+      background-color: transparent !important;
+      color: #09179b !important;
+      text-shadow: none !important;
+    }
+
+    .titulo {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 2.5rem !important;
+      text-shadow: none !important;
+      color: white;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    h5 {
+      color: #8a888b
+    }
+
+    #area {
+      position: fixed;
+      background-color: #09179b;
+      z-index: 500;
+      height: 100px;
+      width: 283px;
+      opacity: 0.5;
+      margin-left: 349px;
+      transition: margin-left 0.5s ease;
+      transition: width 0.5s ease;
+    }
+
+    #pianoImg {
+      margin-bottom: 30px;
+      z-index: 0;
+    }
+
+    a {
+      display: inline;
+    }
+
+    #buttons {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #elvis,
+    #tchai,
+    #bethoven {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #inicialButtons {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    #inicialButtons button {
+      color: #0e0e0e;
+    }
+  </style>
+  <script>
+    let musica = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Referencias aos elementos
+      const telaInicial = document.getElementById("telaInicial");
+      const elvis = document.getElementById("elvis");
+      const bethoven = document.getElementById("bethoven");
+      const tchai = document.getElementById("tchai");
+      const area = document.getElementById("area");
+      const jogarButton = document.getElementById("jogarButton");
+      const autoplayButton = document.getElementById("autoplayButton");
+      const playElvis = document.getElementById("playElvis");
+      const playTchai = document.getElementById("playTchai");
+      const playBethoven = document.getElementById("playBethoven");
+
+      const elvisMusic = document.getElementById("elvis");
+      const bethovenMusic = document.getElementById("bethoven");
+      const tchaiMusic = document.getElementById("tchai");
+
+      // Inicializar a primeira música (elvis) como selecionada
+      musica = "elvis";
+      elvisMusic.classList.add("musicaEscolhida");
+      bethovenMusic.classList.remove("musicaEscolhida");
+      tchaiMusic.classList.remove("musicaEscolhida");
+      area.style.setProperty("margin-left", "349px", "important");
+      area.style.setProperty("width", "283px", "important");
+
+      elvisMusic.addEventListener("click", () => {
+        musica = "elvis"
+        bethovenMusic.classList.remove("musicaEscolhida")
+        tchaiMusic.classList.remove("musicaEscolhida")
+        elvisMusic.classList.add("musicaEscolhida");
+        // Für Elise: E3 (32ª) a F5 (57ª) = 26 notas em 88 teclas
+        // Proporcionalmente ao piano: margin-left = (32/88)*960≈349px, width = (26/88)*960≈283px
+        area.style.setProperty("margin-left", "349px", "important");
+        area.style.setProperty("width", "283px", "important");
+      })
+
+      bethovenMusic.addEventListener("click", () => {
+        musica = "bethoven"
+        bethovenMusic.classList.add("musicaEscolhida");
+        elvisMusic.classList.remove("musicaEscolhida");
+        tchaiMusic.classList.remove("musicaEscolhida");
+        // Ode to Joy: C3 (28ª) a G4 (47ª) = 20 notas em 88 teclas
+        // Proporcionalmente ao piano: margin-left = (28/88)*960≈306px, width = (20/88)*960≈218px
+        area.style.setProperty("margin-left", "306px", "important");
+        area.style.setProperty("width", "218px", "important");
+      })
+
+      tchaiMusic.addEventListener("click", () => {
+        musica = "tchai"
+        tchaiMusic.classList.add("musicaEscolhida")
+        bethovenMusic.classList.remove("musicaEscolhida");
+        elvisMusic.classList.remove("musicaEscolhida");
+        // Lago dos Cisnes: G2 (22ª) a C#6 (74ª) = 53 notas em 88 teclas
+        // Proporcionalmente ao piano: margin-left = (22/88)*960≈240px, width = (53/88)*960≈580px
+        area.style.setProperty("margin-left", "140px", "important");
+        area.style.setProperty("width", "582px", "important");
+      })
+
+      jogarButton.addEventListener("click", () => {
+        if (musica) {
+          localStorage.setItem("musica", musica);
+          localStorage.setItem("modo", "jogar");
+          window.location.href = "game.html";
+        } else {
+          alert("Selecione uma música!");
+        }
+      });
+
+      autoplayButton.addEventListener("click", () => {
+        if (musica) {
+          localStorage.setItem("musica", musica);
+          localStorage.setItem("modo", "autoplay");
+          window.location.href = "game.html";
+        } else {
+          alert("Selecione uma música!");
+        }
+      });
+    });
+  </script>
+
+
+</head>
+
+
+<body>
+  <div id="telaInicial" class="telaInicial">
+    <div id="titulo" style="margin-bottom: 20px;">
+
+
+      <h1 class="titulo"> SELECIONE UMA MÚSICA</h1> <br>
+      <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
+    </div>
+      <div id="buttons" id="elvis"> <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
+          <h1>Beethoven - Für Elise
+ </h1> <span>Fácil</span>
+        </button> <a id="playElvis"
+          href="https://www.youtube.com/watch?v=wfF0zHeU3Zs"
+          target="_blank"><img style="width: 20px;" src="./assets/play.png"></a> </div>
+      <div id="buttons"> <button style="margin: 0px 10px;" id="bethoven">
+          <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
+        </button> <a id="playBethoven"
+          href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img
+            style="width: 20px;" src="./assets/play.png"></a> </div>
+      <div id="buttons"> <button style="margin:  0px 10px;" id="tchai">
+          <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
+        </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
+            style="width: 20px;" src="./assets/play.png"></a> </div>
+
+
+    <div id="pianoImg">
+      <h5>Área do piano que vai ser tocada:</h5>
+      <div id="area"></div>
+      <img src="./assets/piano-completo-test.png" />
+    </div>
+    <div id="inicialButtons">
+      <button id="jogarButton">JOGAR</button>
+      <button id="autoplayButton">AUTOPLAY</button>
+    </div>
+  </div>
+</body>
+
+
+</html>

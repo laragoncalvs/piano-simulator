@@ -88,7 +88,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0B0912);
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 6, 2);
+camera.position.set(0, 6, 3);
 camera.lookAt(0, 1, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -111,7 +111,7 @@ const planeMaterial2 = new THREE.MeshStandardMaterial({
 const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
 
 plane2.rotation.x = -Math.PI / 2;
-plane2.position.z = 2;
+plane2.position.z = 3;
 
 scene.add(plane2);
 
@@ -134,7 +134,7 @@ const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, 
 lines.forEach((line, i) => {
     line.rotation.x = -Math.PI / 2;
     line.position.x = [0, 1.1, -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5, 6.7, -6.7][i];
-    line.position.z = -3.5;
+    line.position.z = -2.5;
     scene.add(line);
 });
 
@@ -252,6 +252,7 @@ function animate() {
             // Penalidade de -5% do valor de cada acerto
             const penalidade = pontosParaAcerto * 0.05;
             pontuation = Math.max(0, pontuation - penalidade);
+            showPointsAnimation(-penalidade);
             atualizarPontuacao();
 
             // Remove o cubo
@@ -275,6 +276,8 @@ function animate() {
                 const fimDiv = document.getElementById('fimDaCena');
                 if (fimDiv) fimDiv.style.display = 'block';
 
+                document.getElementById('nomeDaMusica').style.display = 'none';
+                document.getElementById('botoesMusica').style.display = 'none';
                 telaInicial.style.display = 'none';
 
                 console.log("Animação finalizada.");
@@ -301,7 +304,7 @@ function resetarCena() {
 
 function atualizarPontuacao() {
     if (pontuacao) {
-        pontuacao.textContent = `Pontuação: ${Math.floor(pontuation)}`;
+        pontuacao.textContent = `000${Math.floor(pontuation)}`;
     }
     // Atualizar progress bar de pontuação
     const pontuacaoBar = document.getElementById("pontuacaoBar");
@@ -309,6 +312,31 @@ function atualizarPontuacao() {
         const percentual = (pontuation / PONTUACAO_MAXIMA) * 100;
         pontuacaoBar.style.width = percentual + "%";
     }
+}
+
+// Função para mostrar animação de pontos flutuantes
+function showPointsAnimation(points) {
+    const roundedPoints = Math.round(points);
+    // Não mostra animação se os pontos arredondados forem zero
+    if (roundedPoints === 0) return;
+    
+    const pontosDiv = document.createElement('div');
+    pontosDiv.className = `floating-points ${roundedPoints >= 0 ? 'positive' : 'negative'}`;
+    pontosDiv.textContent = roundedPoints >= 0 ? `+${roundedPoints}` : `${roundedPoints}`;
+    
+    // Posição aleatória na tela (parte superior)
+    const randomX = Math.random() * (window.innerWidth - 200) + 100;
+    const randomY = window.innerHeight * 0.3 + Math.random() * 200;
+    
+    pontosDiv.style.left = randomX + 'px';
+    pontosDiv.style.top = randomY + 'px';
+    
+    document.body.appendChild(pontosDiv);
+    
+    // Remove o elemento após a animação
+    setTimeout(() => {
+        pontosDiv.remove();
+    }, 2000);
 }
 
 function atualizarOpacidadeCubo(cube) {
@@ -336,19 +364,31 @@ function reduzirOpacidadeCubo(cube) {
 }
 
 const canvas = renderer.domElement;
-const autoplayButton = document.getElementById("autoplayButton");
-const jogarButton = document.getElementById("jogarButton");
-
-const elvisMusic = document.getElementById("elvis");
-const bethovenMusic = document.getElementById("bethoven");
-const tchaiMusic = document.getElementById("tchai");
-
 const resetar = document.getElementById("resetarButton");
 const voltar = document.getElementById("voltarButton");
 const pontuacao = document.getElementById("pontuacao");
 const gameMenu = document.getElementById("gameMenu");
 const progressContainer = document.getElementById("progressContainer");
 const progressBar = document.getElementById("progressBar");
+const autoplayButton = document.getElementById("autoplayButton");
+const jogarButton = document.getElementById("jogarButton");
+
+// Mapeamento de nomes de músicas
+const nomesDasMusicas = {
+    "elvis": "Beethoven - Für Elise",
+    "bethoven": "Bethoven - Ode á Alegria",
+    "tchai": "Tchaikovsky - Lago dos Cisnes"
+};
+
+// Função para obter nome da música
+function obterNomeDaMusica(musicaKey) {
+    return nomesDasMusicas[musicaKey] || "Música";
+}
+
+// Ler música e modo do localStorage
+const musicaArmazenada = localStorage.getItem("musica") || "elvis";
+const modoArmazenado = localStorage.getItem("modo") || "autoplay";
+musica = musicaArmazenada;
 
 if (animationId !== null) {
     cancelAnimationFrame(animationId);
@@ -357,96 +397,36 @@ if (animationId !== null) {
 
 
 voltar.addEventListener("click", () => {
-    telaInicial.style.setProperty("margin-top", "0vh", "important");
-    telaInicial.style.setProperty("padding", "0px", "important");
-    telaInicial.style.setProperty("background-color", "transparent", "important");
-
-    playElvis.style.display = "inline"
-    playTchai.style.display = "inline"
-    playBethoven.style.display = "inline"
     modoAtual = null;
-    jogarButton.disabled = false;
-    autoplayButton.disabled = false;
     progressContainer.style.display = "none";
     pontuacao.style.display = "none";
     document.getElementById("pontuacaoContainer").style.display = "none";
     document.getElementById("gameMenu").style.display = "none";
-    telaInicial.style.marginTop = "10vh"
-    jogarButton.classList.remove("ativo");
-    autoplayButton.classList.remove("ativo");
-
-    titulo.style.display = "inline";
-    pianoImg.style.display = "inline";
-
-    elvis.style.display = "inline";
-    bethoven.style.display = "inline";
-    tchai.style.display = "inline";
-
+    document.getElementById("nomeDaMusica").style.display = "none";
+    document.getElementById("botoesMusica").style.display = "none";
+    document.getElementById("botoesJogar").classList.remove("ativo");
+    document.getElementById("botoesAutoplay").classList.remove("ativo");
     canvas.style.display = "none";
-
-    telaInicial.style.display = 'flex';
+    window.location.href = "selector.html";
 });
-
-elvisMusic.addEventListener("click", () => {
-    musica = "elvis"
-    bethovenMusic.classList.remove("musicaEscolhida")
-    tchaiMusic.classList.remove("musicaEscolhida")
-    elvisMusic.classList.add("musicaEscolhida");
-    // Für Elise: E3 (32ª) a F5 (57ª) = 26 notas em 88 teclas
-    // Proporcionalmente ao piano: margin-left = (32/88)*960≈349px, width = (26/88)*960≈283px
-    area.style.setProperty("margin-left", "349px", "important");
-    area.style.setProperty("width", "283px", "important");
-
-
-})
-
-bethovenMusic.addEventListener("click", () => {
-    musica = "bethoven"
-    bethovenMusic.classList.add("musicaEscolhida");
-    elvisMusic.classList.remove("musicaEscolhida");
-    tchaiMusic.classList.remove("musicaEscolhida");
-    // Ode to Joy: C3 (28ª) a G4 (47ª) = 20 notas em 88 teclas
-    // Proporcionalmente ao piano: margin-left = (28/88)*960≈306px, width = (20/88)*960≈218px
-    area.style.setProperty("margin-left", "306px", "important");
-    area.style.setProperty("width", "218px", "important");
-
-
-})
-
-tchaiMusic.addEventListener("click", () => {
-    musica = "tchai"
-    tchaiMusic.classList.add("musicaEscolhida")
-    bethovenMusic.classList.remove("musicaEscolhida");
-    elvisMusic.classList.remove("musicaEscolhida");
-    // Lago dos Cisnes: G2 (22ª) a C#6 (74ª) = 53 notas em 88 teclas
-    // Proporcionalmente ao piano: margin-left = (22/88)*960≈240px, width = (53/88)*960≈580px
-    area.style.setProperty("margin-left", "140px", "important");
-    area.style.setProperty("width", "582px", "important");
-
-
-})
 
 
 autoplayButton.addEventListener("click", () => {
     if (modoAtual === "autoplay") return;
-    telaInicial.style.setProperty("margin-top", "0vh", "important");
-    telaInicial.style.setProperty("padding", "0px", "important");
-    telaInicial.style.setProperty("background-color", "transparent", "important");
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
     pontuacao.style.display = "block";
     document.getElementById("pontuacaoContainer").style.display = "block";
     document.getElementById("gameMenu").style.display = "flex";
-    playElvis.style.display = "none"
-    playTchai.style.display = "none"
-    playBethoven.style.display = "none"
-    titulo.style.display = "none";
-    pianoImg.style.display = "none";
-    //grade.style.display = "none";
-    //imgContainer.style.display = "none";
-    // containerButton.style.transform = 'translateY(150px)';
+    document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
+    document.getElementById("nomeDaMusica").style.display = "block";
+    document.getElementById("botoesMusica").style.display = "flex";
+    
+    // Atualizar estado ativo dos botões
+    document.getElementById("botoesAutoplay").classList.add("ativo");
+    document.getElementById("botoesJogar").classList.remove("ativo");
+    
     canvas.style.display = "inline";
-
 
     modoAtual = "autoplay";
     pontuation = 0;
@@ -454,26 +434,13 @@ autoplayButton.addEventListener("click", () => {
     resetarCena();
     if (musica === "bethoven") {
         carregarPartituraOdeToJoy();
-        elvis.style.display = "none"
-        tchai.style.display = "none"
     } else if (musica == "tchai") {
         carregarPartituraCisne();
-        bethoven.style.display = "none"
-        elvis.style.display = "none"
-
     }
     else {
-
         carregarPartituraFurElise();
-        bethoven.style.display = "none"
-        tchai.style.display = "none"
-
-
     }
     startTime = performance.now();
-    jogarButton.disabled = false;
-    autoplayButton.classList.add("ativo");
-    jogarButton.classList.remove("ativo");
     if (teclaListener) {
         document.removeEventListener("keydown", teclaListener);
         teclaListener = null;
@@ -503,54 +470,35 @@ autoplayButton.addEventListener("click", () => {
 
 jogarButton.addEventListener("click", () => {
     if (modoAtual === "jogar") return;
-    telaInicial.style.setProperty("margin-top", "0vh", "important");
-    telaInicial.style.setProperty("padding", "0px", "important");
-    telaInicial.style.setProperty("background-color", "transparent", "important"); titulo.style.display = "none";
     document.getElementById("gameMenu").style.display = "flex";
     pontuacao.style.display = "block";
+    document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
+    document.getElementById("nomeDaMusica").style.display = "block";
     canvas.style.display = "inline";
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
     document.getElementById("pontuacaoContainer").style.display = "block";
+    document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
+    document.getElementById("nomeDaMusica").style.display = "block";
+    document.getElementById("botoesMusica").style.display = "flex";
 
-    playElvis.style.display = "none"
-    playTchai.style.display = "none"
-    playBethoven.style.display = "none"
-    pianoImg.style.display = "none";
+    // Atualizar estado ativo dos botões
+    document.getElementById("botoesJogar").classList.add("ativo");
+    document.getElementById("botoesAutoplay").classList.remove("ativo");
 
-    //degrade.style.display = "none";
-    //grade.style.display = "none";
-    //imgContainer.style.display = "none";
-    //      containerButton.style.transform = 'translateY(150px)';
-    //
-    console.log("carregado")
     modoAtual = "jogar";
     pontuation = 0;
     atualizarPontuacao();
     resetarCena();
     if (musica === "bethoven") {
         carregarPartituraOdeToJoy();
-        elvis.style.display = "none"
-        tchai.style.display = "none"
     } else if (musica == "tchai") {
         carregarPartituraCisne();
-        bethoven.style.display = "none"
-        elvis.style.display = "none"
     }
     else {
-
         carregarPartituraFurElise();
-        bethoven.style.display = "none"
-        tchai.style.display = "none"
-
     }
     startTime = performance.now();
-    jogarButton.disabled = true;
-    autoplayButton.disabled = false;
-
-
-    jogarButton.classList.add("ativo");
-    autoplayButton.classList.remove("ativo");
     if (animationId !== null) {
         cancelAnimationFrame(animationId);
         animationId = null;
@@ -574,7 +522,7 @@ jogarButton.addEventListener("click", () => {
         for (let i = 0; i < activeCubes.length; i++) {
             const cube = activeCubes[i];
             const cubeNote = keyMap[cube.userData.letter];
-            const near = Math.abs(cube.position.z - plane2.position.z) < 2;
+            const near = Math.abs(cube.position.z - plane2.position.z) < 1;
 
             if (!cube.userData.hit && cubeNote === note && near) {
                 const distancia = Math.abs(cube.position.z - plane2.position.z);
@@ -613,6 +561,7 @@ jogarButton.addEventListener("click", () => {
             // Remove o cubo após a mudança de cor e textura
             setTimeout(() => {
                 pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
+                showPointsAnimation(pontosParaAcerto);
                 atualizarPontuacao();
                 scene.remove(cuboMaisProximoNaArea);
                 const index = activeCubes.indexOf(cuboMaisProximoNaArea);
@@ -644,6 +593,7 @@ jogarButton.addEventListener("click", () => {
                 // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
                 const penalidade = pontosParaAcerto * 0.10;
                 pontuation = Math.max(0, pontuation - penalidade);
+                showPointsAnimation(-penalidade);
                 atualizarPontuacao();
             }
         }
@@ -729,6 +679,7 @@ resetar.addEventListener("click", () => {
                     // Remove o cubo após a mudança de cor e textura
                     setTimeout(() => {
                         pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
+                        showPointsAnimation(pontosParaAcerto);
                         atualizarPontuacao();
                         scene.remove(cube);
                         const index = activeCubes.indexOf(cube);
@@ -762,6 +713,7 @@ resetar.addEventListener("click", () => {
                     // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
                     const penalidade = pontosParaAcerto * 0.10;
                     pontuation = Math.max(0, pontuation - penalidade);
+                    showPointsAnimation(-penalidade);
                     atualizarPontuacao();
                 }
             }
