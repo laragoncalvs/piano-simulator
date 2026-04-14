@@ -133,7 +133,7 @@
     }
 
     #pianoImg {
-      margin-bottom: 30px;
+      margin-bottom: 10px;
       z-index: 0;
     }
 
@@ -157,6 +157,45 @@
       align-items: center;
     }
 
+    #modoContainer {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .botaoModo {
+      padding: 5px;
+      width: 200px;
+      height: 70px;
+      font-size: 0.9em;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Press Start 2P', monospace;
+      background-color: transparent;
+      color: white;
+    }
+    .botaoModo, h5{
+      margin-bottom: 5px;
+      margin-top: 0px;
+    }
+
+    .botaoModo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(245, 135, 63, 0.5);
+    }
+
+    .botaoModo.ativo {
+      color: white;
+      border-color: #F5873F;
+      text-shadow: none;
+      box-shadow: 0 0 20px #F5873F;
+    }
+
     #inicialButtons {
       display: flex;
       gap: 20px;
@@ -169,23 +208,31 @@
   </style>
   <script>
     let musica = null;
+    let modo = "jogador"; // Modo padrão é "jogador"
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Referencias aos elementos
-      const telaInicial = document.getElementById("telaInicial");
-      const elvis = document.getElementById("elvis");
-      const bethoven = document.getElementById("bethoven");
-      const tchai = document.getElementById("tchai");
-      const area = document.getElementById("area");
-      const jogarButton = document.getElementById("jogarButton");
-      const autoplayButton = document.getElementById("autoplayButton");
-      const playElvis = document.getElementById("playElvis");
-      const playTchai = document.getElementById("playTchai");
-      const playBethoven = document.getElementById("playBethoven");
-
+      // Referencias aos elementos de música
       const elvisMusic = document.getElementById("elvis");
       const bethovenMusic = document.getElementById("bethoven");
       const tchaiMusic = document.getElementById("tchai");
+      const area = document.getElementById("area");
+      
+      // Referências aos botões de modo
+      const botaoAprendiz = document.getElementById("botaoAprendiz");
+      const botaoJogador = document.getElementById("botaoJogador");
+      
+      // Referências aos botões de ação
+      const jogarButton = document.getElementById("jogarButton");
+      const autoplayButton = document.getElementById("autoplayButton");
+
+      // Recuperar modo do localStorage se existir
+      const modoSalvo = localStorage.getItem("modoSelecionado");
+      if (modoSalvo) {
+        modo = modoSalvo;
+      }
+
+      // Inicializar estado dos botões de modo
+      atualizarEstadoBotoesModo();
 
       // Inicializar a primeira música (elvis) como selecionada
       musica = "elvis";
@@ -195,13 +242,25 @@
       area.style.setProperty("margin-left", "349px", "important");
       area.style.setProperty("width", "283px", "important");
 
+      // Event listeners para seleção de modo
+      botaoAprendiz.addEventListener("click", () => {
+        modo = "aprendiz";
+        localStorage.setItem("modoSelecionado", "aprendiz");
+        atualizarEstadoBotoesModo();
+      });
+
+      botaoJogador.addEventListener("click", () => {
+        modo = "jogador";
+        localStorage.setItem("modoSelecionado", "jogador");
+        atualizarEstadoBotoesModo();
+      });
+
+      // Event listeners para seleção de música
       elvisMusic.addEventListener("click", () => {
         musica = "elvis"
         bethovenMusic.classList.remove("musicaEscolhida")
         tchaiMusic.classList.remove("musicaEscolhida")
         elvisMusic.classList.add("musicaEscolhida");
-        // Für Elise: E3 (32ª) a F5 (57ª) = 26 notas em 88 teclas
-        // Proporcionalmente ao piano: margin-left = (32/88)*960≈349px, width = (26/88)*960≈283px
         area.style.setProperty("margin-left", "349px", "important");
         area.style.setProperty("width", "283px", "important");
       })
@@ -211,8 +270,6 @@
         bethovenMusic.classList.add("musicaEscolhida");
         elvisMusic.classList.remove("musicaEscolhida");
         tchaiMusic.classList.remove("musicaEscolhida");
-        // Ode to Joy: C3 (28ª) a G4 (47ª) = 20 notas em 88 teclas
-        // Proporcionalmente ao piano: margin-left = (28/88)*960≈306px, width = (20/88)*960≈218px
         area.style.setProperty("margin-left", "306px", "important");
         area.style.setProperty("width", "218px", "important");
       })
@@ -222,8 +279,6 @@
         tchaiMusic.classList.add("musicaEscolhida")
         bethovenMusic.classList.remove("musicaEscolhida");
         elvisMusic.classList.remove("musicaEscolhida");
-        // Lago dos Cisnes: G2 (22ª) a C#6 (74ª) = 53 notas em 88 teclas
-        // Proporcionalmente ao piano: margin-left = (22/88)*960≈240px, width = (53/88)*960≈580px
         area.style.setProperty("margin-left", "140px", "important");
         area.style.setProperty("width", "582px", "important");
       })
@@ -232,6 +287,7 @@
         if (musica) {
           localStorage.setItem("musica", musica);
           localStorage.setItem("modo", "jogar");
+          localStorage.setItem("modoMusica", modo);
           window.location.href = "game.html";
         } else {
           alert("Selecione uma música!");
@@ -242,11 +298,22 @@
         if (musica) {
           localStorage.setItem("musica", musica);
           localStorage.setItem("modo", "autoplay");
+          localStorage.setItem("modoMusica", modo);
           window.location.href = "game.html";
         } else {
           alert("Selecione uma música!");
         }
       });
+
+      function atualizarEstadoBotoesModo() {
+        if (modo === "aprendiz") {
+          botaoAprendiz.classList.add("ativo");
+          botaoJogador.classList.remove("ativo");
+        } else {
+          botaoJogador.classList.add("ativo");
+          botaoAprendiz.classList.remove("ativo");
+        }
+      }
     });
   </script>
 
@@ -257,33 +324,59 @@
 <body>
   <div id="telaInicial" class="telaInicial">
     <div id="titulo" style="margin-bottom: 20px;">
-
-
-      <h1 class="titulo"> SELECIONE UMA MÚSICA</h1> <br>
-      <h5>Depois pressione jogar ou autoplay para uma demonstração</h5>
+      <h1 class="titulo">SELECIONE UMA MÚSICA</h1> <br>
+      <h5 style="margin-top: 10px;">Depois pressione jogar ou autoplay para uma demonstração</h5>
     </div>
-      <div id="buttons" id="elvis"> <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
-          <h1>Beethoven - Für Elise
- </h1> <span>Fácil</span>
-        </button> <a id="playElvis"
-          href="https://www.youtube.com/watch?v=wfF0zHeU3Zs"
-          target="_blank"><img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-      <div id="buttons"> <button style="margin: 0px 10px;" id="bethoven">
-          <h1>Bethoven - Ode á Alegria </h1><span>Médio</span>
-        </button> <a id="playBethoven"
-          href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank"><img
-            style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
-      <div id="buttons"> <button style="margin:  0px 10px;" id="tchai">
-          <h1>Tchaikovsky - Lago dos Cisnes </h1><span>Díficil</span>
-        </button> <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank"><img
-            style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png"></a> </div>
 
-
+    
+    <!-- Seletores de Música -->
+    <div id="buttons">
+      <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
+        <h1>Beethoven - Für Elise</h1><span>Fácil</span>
+      </button>
+      <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
+        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
+      </a>
+    </div>
+    
+    <div id="buttons">
+      <button style="margin: 0px 10px;" id="bethoven">
+        <h1>Bethoven - Ode á Alegria</h1><span>Médio</span>
+      </button>
+      <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D" target="_blank">
+        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
+      </a>
+    </div>
+    
+    <div id="buttons">
+      <button style="margin: 0px 10px;" id="tchai">
+        <h1>Tchaikovsky - Lago dos Cisnes</h1><span>Díficil</span>
+      </button>
+      <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank">
+        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
+      </a>
+    </div>
+    <!-- Seletores de Modo -->
+     <h5 style="margin-top: 10px;">Agora escolha um modo de jogo</h5>
+    <div id="modoContainer">
+      <button id="botaoAprendiz" class="botaoModo">
+        <h5 style="color: inherit;">APRENDIZ</h5>
+        <small style="font-size: 0.6em;">para treinar!</small>
+      </button>
+      <button id="botaoJogador" class="botaoModo">
+        <h5 style="color: inherit;">JOGADOR</h5>
+        <small style="font-size: 0.6em;">velocidade original!</small>
+      </button>
+    </div>
+    
+    <!-- Visualização da Área do Piano -->
     <div id="pianoImg">
       <h5>Área do piano que vai ser tocada:</h5>
       <div id="area"></div>
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" />
     </div>
+    
+    <!-- Botões de Ação -->
     <div id="inicialButtons">
       <button id="jogarButton">JOGAR</button>
       <button id="autoplayButton">AUTOPLAY</button>
