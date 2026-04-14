@@ -150,7 +150,8 @@
 
     #elvis,
     #tchai,
-    #bethoven {
+    #bethoven,
+    #yoursong {
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -215,6 +216,7 @@
       const elvisMusic = document.getElementById("elvis");
       const bethovenMusic = document.getElementById("bethoven");
       const tchaiMusic = document.getElementById("tchai");
+      const yourSongMusic = document.getElementById("yoursong");
       const area = document.getElementById("area");
       
       // Referências aos botões de modo
@@ -239,6 +241,7 @@
       elvisMusic.classList.add("musicaEscolhida");
       bethovenMusic.classList.remove("musicaEscolhida");
       tchaiMusic.classList.remove("musicaEscolhida");
+      yourSongMusic.classList.remove("musicaEscolhida");
       area.style.setProperty("margin-left", "349px", "important");
       area.style.setProperty("width", "283px", "important");
 
@@ -279,8 +282,19 @@
         tchaiMusic.classList.add("musicaEscolhida")
         bethovenMusic.classList.remove("musicaEscolhida");
         elvisMusic.classList.remove("musicaEscolhida");
+        yourSongMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "140px", "important");
         area.style.setProperty("width", "582px", "important");
+      })
+
+      yourSongMusic.addEventListener("click", () => {
+        musica = "yoursong"
+        yourSongMusic.classList.add("musicaEscolhida")
+        bethovenMusic.classList.remove("musicaEscolhida");
+        elvisMusic.classList.remove("musicaEscolhida");
+        tchaiMusic.classList.remove("musicaEscolhida");
+        area.style.setProperty("margin-left", "280px", "important");
+        area.style.setProperty("width", "230px", "important");
       })
 
       jogarButton.addEventListener("click", () => {
@@ -353,6 +367,15 @@
         <h1>Tchaikovsky - Lago dos Cisnes</h1><span>Díficil</span>
       </button>
       <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank">
+        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
+      </a>
+    </div>
+    
+    <div id="buttons">
+      <button style="margin: 0px 10px;" id="yoursong">
+        <h1>Elton John - Your Song</h1><span>Médio</span>
+      </button>
+      <a id="playYourSong" href="https://www.youtube.com/watch?v=A3tqsoFUF0w" target="_blank">
         <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
       </a>
     </div>
