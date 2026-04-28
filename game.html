@@ -314,6 +314,7 @@
         opacity: 0;
         transform: translateY(-10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -325,9 +326,11 @@
         opacity: 0;
         transform: scale(0) rotateZ(-180deg);
       }
+
       50% {
         transform: scale(1.2);
       }
+
       100% {
         opacity: 1;
         transform: scale(1) rotateZ(0deg);
@@ -361,6 +364,102 @@
       font-size: 58px;
     }
 
+    /* Ranking */
+    #rankingEntry {
+      margin: 1rem 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    #rankingMsg {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #E323CA;
+    }
+
+    #rankingInputWrapper {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    #rankingNomeInput {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #E323CA;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      width: 180px;
+    }
+
+    #rankingNomeInput::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    #rankingConfirmarBtn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: #E323CA;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #rankingConfirmarBtn:hover {
+      background: #c41daa;
+    }
+
+    #rankingOl {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem auto;
+      max-width: 340px;
+      text-align: left;
+    }
+
+    .ranking-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .ranking-destaque {
+      background: rgba(227, 35, 202, 0.2);
+      color: white;
+      font-weight: 600;
+    }
+
+    .ranking-pos {
+      min-width: 28px;
+      color: #E323CA;
+      font-weight: 700;
+    }
+
+    .ranking-nome {
+      flex: 1;
+    }
+
+    .ranking-pts {
+      min-width: 50px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .ranking-data {
+      min-width: 70px;
+      text-align: right;
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
 
     @keyframes floatPoints {
       0% {
@@ -397,7 +496,7 @@
   </script>
 
 
-  <script type="module" crossorigin src="/piano-simulator/assets/game-DDU7U-k1.js"></script>
+  <script type="module" crossorigin src="/piano-simulator/assets/game-Cb4CNf47.js"></script>
 </head>
 
 
@@ -453,8 +552,8 @@
     <h3 id="fraseMotivacao">Parabéns!</h3>
     <h2 id="pontuacaoFinal">0</h2>
     <div id="fimDaCena-buttons">
-      <button id="jogarButton" onclick="window.location.href='game.html'">Jogar novamente</button>
-      <button id="autoplayButton" onclick="window.location.href='selector.html'">Voltar</button>
+      <button onclick="window.location.href='game.html'">Jogar novamente</button>
+      <button onclick="window.location.href='selector.html'">Voltar</button>
     </div>
   </div>
 

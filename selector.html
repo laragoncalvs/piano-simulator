@@ -209,6 +209,155 @@
     #inicialButtons button {
       color: #0e0e0e;
     }
+
+    #rankingButton {
+  color: white;
+  font-family: 'Press Start 2P', monospace;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 0.6em;
+  letter-spacing: 2px;
+  animation: rankingPiscar 1s  infinite;
+  cursor: pointer;
+}
+
+#rankingButton:hover {
+  color: #E323CA;
+  animation: none;
+}
+
+@keyframes rankingPiscar {
+  0%, 100% { color: white; }
+  50%       { color: #E323CA; }
+}
+
+    #rankingModalBox {
+      background: #0B0912;
+      border: 1px solid #E323CA;
+      border-radius: 16px;
+      width: 460px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 28px 28px 24px;
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    #rankingModalHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #rankingModalTitulo {
+      font-size: 0.85rem;
+      color: #E323CA;
+    }
+
+    #rankingFecharBtn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    #rankingFecharBtn:hover {
+      color: white;
+    }
+
+    #rankingModalFiltros {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    #rankingModalMusica {
+      font-size: 0.5rem;
+      color: rgba(255, 255, 255, 0.6);
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    #rankingModalModos {
+      display: flex;
+      gap: 8px;
+    }
+
+    #rankingModalModoAtual {
+      font-size: 0.45rem;
+      color: #E323CA;
+      border: 1px solid #E323CA;
+      border-radius: 20px;
+      padding: 4px 12px;
+      white-space: nowrap;
+    }
+
+    #rankingModalLista {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 8px;
+    }
+
+    #rankingModalLista li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    #rankingModalLista li:first-child {
+      background: rgba(227, 35, 202, 0.12);
+    }
+
+    #rankingModalLista li:nth-child(2) {
+      background: rgba(227, 35, 202, 0.07);
+    }
+
+    #rankingModalLista li:nth-child(3) {
+      background: rgba(227, 35, 202, 0.04);
+    }
+
+    .rm-pos {
+      min-width: 26px;
+      color: #E323CA;
+      font-weight: 700;
+    }
+
+    .rm-nome {
+      flex: 1;
+    }
+
+    .rm-pts {
+      color: #64fedd;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    .rm-data {
+      min-width: 60px;
+      text-align: right;
+      font-size: 0.4rem;
+      opacity: 0.5;
+    }
+
+    #rankingModalVazio {
+      font-size: 0.5rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: center;
+      margin: 20px 0 0;
+      display: none;
+    }
   </style>
   <script>
     let musica = null;
@@ -231,6 +380,78 @@
       // Referências aos botões de ação
       const jogarButton = document.getElementById("jogarButton");
       const autoplayButton = document.getElementById("autoplayButton");
+
+      const rankingButton = document.getElementById('rankingButton');
+      const rankingModal = document.getElementById('rankingModal');
+      const rankingFecharBtn = document.getElementById('rankingFecharBtn');
+      const rankingModalLista = document.getElementById('rankingModalLista');
+      const rankingModalVazio = document.getElementById('rankingModalVazio');
+      const rankingModalMusica = document.getElementById('rankingModalMusica');
+      let rankingModoAtivo = 'jogador'; // valor inicial
+      const nomesMusicas = {
+        "littlestar": "Twinkle, Twinkle, Little Star",
+        "jinglebell": "Jingle Bells",
+        "elvis": "Beethoven - Für Elise",
+        "bethoven": "Bethoven - Ode á Alegria",
+        "tchai": "Tchaikovsky - Lago dos Cisnes"
+      };
+
+     function carregarRankingModal() {
+  const key = `ranking_${musica}_jogar_${modo}`;
+  let lista = [];
+  try {
+    const data = localStorage.getItem(key);
+    lista = data ? JSON.parse(data) : [];
+  } catch { lista = []; }
+
+  rankingModalMusica.textContent = nomesMusicas[musica] || musica;
+  document.getElementById('rankingModalModoAtual').textContent =
+    modo === 'aprendiz' ? 'Aprendiz' : 'Jogador';
+
+  rankingModalLista.innerHTML = '';
+
+  if (lista.length === 0) {
+    rankingModalVazio.style.display = 'block';
+    rankingModalLista.style.display = 'none';
+  } else {
+    rankingModalVazio.style.display = 'none';
+    rankingModalLista.style.display = 'block';
+    lista.forEach((entry, i) => {
+      const li = document.createElement('li');
+      const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`;
+      li.innerHTML = `
+        <span class="rm-pos">${medalha}</span>
+        <span class="rm-nome">${entry.nome}</span>
+        <span class="rm-pts">${entry.pontuacao}</span>
+        <span class="rm-data">${entry.data}</span>
+      `;
+      rankingModalLista.appendChild(li);
+    });
+  }
+}
+
+rankingButton.addEventListener('click', () => {
+  rankingModal.style.display = 'flex';
+  carregarRankingModal();
+});
+      rankingButton.addEventListener('click', () => {
+        rankingModal.style.display = 'flex';
+        carregarRankingModal();
+      });
+
+      rankingFecharBtn.addEventListener('click', () => {
+        rankingModal.style.display = 'none';
+      });
+
+      rankingModal.addEventListener('click', (e) => {
+        if (e.target === rankingModal) rankingModal.style.display = 'none';
+      });
+
+     
+
+      // Atualiza o modal sempre que a música selecionada muda — adicione esta linha
+      // em cada listener de música, logo após o `musica = "..."`:
+      // carregarRankingModal(); (só tem efeito se o modal estiver aberto)
 
       // Recuperar modo do localStorage se existir
       const modoSalvo = localStorage.getItem("modoSelecionado");
@@ -275,6 +496,8 @@
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "349px", "important");
         area.style.setProperty("width", "283px", "important");
+        if (rankingModal.style.display === 'flex') carregarRankingModal();
+
       })
 
       bethovenMusic.addEventListener("click", () => {
@@ -286,6 +509,8 @@
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "306px", "important");
         area.style.setProperty("width", "218px", "important");
+        if (rankingModal.style.display === 'flex') carregarRankingModal();
+
       })
 
       tchaiMusic.addEventListener("click", () => {
@@ -297,6 +522,8 @@
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "140px", "important");
         area.style.setProperty("width", "582px", "important");
+        if (rankingModal.style.display === 'flex') carregarRankingModal();
+
       })
 
       littlestarMusic.addEventListener("click", () => {
@@ -308,7 +535,9 @@
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "215px", "important");
         area.style.setProperty("width", "231px", "important");
-      }) 
+        if (rankingModal.style.display === 'flex') carregarRankingModal();
+
+      })
       jinglebellMusic.addEventListener("click", () => {
         musica = "jinglebell"
         jinglebellMusic.classList.add("musicaEscolhida")
@@ -318,6 +547,8 @@
         littlestarMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "384px", "important");
         area.style.setProperty("width", "108px", "important");
+        if (rankingModal.style.display === 'flex') carregarRankingModal();
+
       })
 
 
@@ -358,18 +589,30 @@
 
 </head>
 
-
 <body>
+  <!-- MODAL DE RANKING — agora dentro do body, estrutura corrigida -->
+  <div id="rankingModal"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center;">
+    <div id="rankingModalBox">
+      <div id="rankingModalHeader">
+        <span id="rankingModalTitulo">🏆 Ranking</span>
+        <button id="rankingFecharBtn">✕</button>
+      </div>
+      <div id="rankingModalFiltros">
+        <span id="rankingModalMusica">—</span>
+        <span id="rankingModalModoAtual"></span>
+      </div>
+      <ol id="rankingModalLista"></ol>
+      <p id="rankingModalVazio">Nenhuma pontuação ainda para essa combinação.</p>
+    </div>
+  </div>
   <div id="telaInicial" class="telaInicial">
     <div id="titulo" style="margin-bottom: 20px;">
-      <h1 class="titulo">SELECIONE UMA MÚSICA</h1> <br>
+      <h1 class="titulo">SELECIONE UMA MÚSICA</h1><br>
       <h5 style="margin-top: 10px;">Depois pressione jogar ou autoplay para uma demonstração</h5>
     </div>
 
-
-    <!-- Seletores de Música -->
     <div id="buttons">
-
       <button style="margin: 0px 10px;" id="jinglebell">
         <h1>Jingle Bells - James Lord Pierpont</h1><span>Fácil</span>
       </button>
@@ -386,14 +629,13 @@
       </a>
     </div>
     <div id="buttons">
-      <button style="margin: 0px 10px;" id="elvis" class="musicaEscolhida">
+      <button style="margin: 0px 10px;" id="elvis">
         <h1>Beethoven - Für Elise</h1><span>Médio</span>
       </button>
       <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
         <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
       </a>
     </div>
-
     <div id="buttons">
       <button style="margin: 0px 10px;" id="bethoven">
         <h1>Bethoven - Ode á Alegria</h1><span>Médio</span>
@@ -403,7 +645,6 @@
         <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
       </a>
     </div>
-
     <div id="buttons">
       <button style="margin: 0px 10px;" id="tchai">
         <h1>Tchaikovsky - Lago dos Cisnes</h1><span>Díficil</span>
@@ -413,8 +654,6 @@
       </a>
     </div>
 
-
-    <!-- Seletores de Modo -->
     <h5 style="margin-top: 10px;">Agora escolha um modo de jogo</h5>
     <div id="modoContainer">
       <button id="botaoAprendiz" class="botaoModo">
@@ -427,20 +666,18 @@
       </button>
     </div>
 
-    <!-- Visualização da Área do Piano -->
     <div id="pianoImg">
       <h5>Área do piano que vai ser tocada:</h5>
       <div id="area"></div>
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" />
     </div>
+    <button id="rankingButton"> >> VER RANKING ATUAL </button>
 
-    <!-- Botões de Ação -->
     <div id="inicialButtons">
       <button id="jogarButton">JOGAR</button>
       <button id="autoplayButton">AUTOPLAY</button>
     </div>
   </div>
 </body>
-
 
 </html>
