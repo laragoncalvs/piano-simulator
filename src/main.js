@@ -1097,6 +1097,20 @@ function exibirFormularioRanking(posicao) {
     const btn = document.getElementById('rankingConfirmarBtn');
     input.focus();
 
+    // Desativa o piano ao focar no input
+    input.addEventListener('focus', () => {
+        if (teclaListener) {
+            document.removeEventListener('keydown', teclaListener);
+        }
+    });
+
+    // Reativa ao sair do input (opcional, mas justo)
+    input.addEventListener('blur', () => {
+        if (teclaListener) {
+            document.addEventListener('keydown', teclaListener);
+        }
+    });
+
     function confirmarNome() {
         const nome = input.value.trim();
         if (!nome) {
@@ -1113,7 +1127,10 @@ function exibirFormularioRanking(posicao) {
     }
 
     btn.addEventListener('click', confirmarNome);
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmarNome(); });
+    input.addEventListener('keydown', (e) => {
+        e.stopPropagation(); // impede que a tecla chegue ao listener do piano
+        if (e.key === 'Enter') confirmarNome();
+    });
 }
 
 function verificarEAdicionarAoRanking() {
