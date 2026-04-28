@@ -292,14 +292,13 @@ function animate() {
                 const pontuacaoFinal = document.getElementById('pontuacaoFinal');
                 if (fimDiv) {
                     fimDiv.style.display = 'flex';
-                    // Atualiza as estrelas baseado na pontuação
                     atualizarEstrelas();
-                    // Só anima pontuação no modo jogar
+
                     if (modoAtual === "jogar") {
                         pontuacaoFinal.style.display = 'block';
                         animarPontuacaoFinal();
+                        setTimeout(verificarEAdicionarAoRanking, 2200);
                     } else {
-                        // Esconde a pontuação em modo autoplay
                         pontuacaoFinal.style.display = 'none';
                     }
                 }
@@ -309,9 +308,7 @@ function animate() {
                 document.getElementById('pontuacaoTitle').style.display = 'none';
                 document.getElementById('pontuacao').style.display = 'none';
                 document.getElementById('gameMenu').style.display = 'none';
-                telaInicial.style.display = 'none';
 
-                console.log("Animação finalizada.");
             }, 1000);
         }
     }
@@ -327,10 +324,17 @@ function resetarCena() {
         scene.remove(cube);
     }
     activeCubes.length = 0;
-
     spawnEvents.length = 0;
     startTime = null;
     fimTimeout = null;
+
+    // Remove ranking anterior se existir
+    const rankingEntry = document.getElementById('rankingEntry');
+    if (rankingEntry) rankingEntry.remove();
+
+    // Esconde e reseta a tela de fim
+    const fimDiv = document.getElementById('fimDaCena');
+    if (fimDiv) fimDiv.style.display = 'none';
 }
 
 function atualizarPontuacao() {
@@ -371,25 +375,25 @@ function animarPontuacaoFinal() {
 function atualizarEstrelas() {
     const estrelas = document.querySelector('.estrelas');
     const fraseMotivacao = document.getElementById('fraseMotivacao');
-    
+
     // Não mostra estrelas e frase de motivação em modo autoplay
     if (modoAtual === "autoplay") {
         if (estrelas) estrelas.style.display = 'none';
         if (fraseMotivacao) fraseMotivacao.style.display = 'none';
         return;
     }
-    
+
     // Mostra novamente no modo jogar
     if (estrelas) estrelas.style.display = 'block';
     if (fraseMotivacao) fraseMotivacao.style.display = 'block';
-    
+
     const estrelasSpans = document.querySelectorAll('.estrelas span');
     const pontuacaoAtual = Math.floor(pontuation);
-    
+
     // Determina quantas estrelas mostrar
     let quantidadeEstrelas = 1;
     let frase = "Bom trabalho!";
-    
+
     if (pontuacaoAtual < 700) {
         quantidadeEstrelas = 1;
         frase = "Boa tentativa! Continue praticando!";
@@ -400,7 +404,7 @@ function atualizarEstrelas() {
         quantidadeEstrelas = 3;
         frase = "Perfeito! Você é um maestro!";
     }
-    
+
     // Atualiza as estrelas: cheias (★) ou vazias (☆)
     estrelasSpans.forEach((estrela, index) => {
         if (index < quantidadeEstrelas) {
@@ -409,7 +413,7 @@ function atualizarEstrelas() {
             estrela.textContent = '☆'; // Estrela vazia
         }
     });
-    
+
     // Atualiza a frase de motivação
     if (fraseMotivacao) {
         fraseMotivacao.textContent = frase;
@@ -473,6 +477,7 @@ const progressContainer = document.getElementById("progressContainer");
 const progressBar = document.getElementById("progressBar");
 const autoplayButton = document.getElementById("autoplayButton");
 const jogarButton = document.getElementById("jogarButton");
+
 
 // Mapeamento de nomes de músicas
 const nomesDasMusicas = {
@@ -547,9 +552,9 @@ autoplayButton.addEventListener("click", () => {
         carregarPartituraOdeToJoy();
     } else if (musica == "tchai") {
         carregarPartituraCisne();
-    } else if(musica === "littlestar") {    
-        carregarPartituraTwinkle(); 
-    } else if(musica === "jinglebell") {
+    } else if (musica === "littlestar") {
+        carregarPartituraTwinkle();
+    } else if (musica === "jinglebell") {
         carregarPartituraJingleBell();
     }
     else {
@@ -610,9 +615,9 @@ jogarButton.addEventListener("click", () => {
         carregarPartituraOdeToJoy();
     } else if (musica == "tchai") {
         carregarPartituraCisne();
-    } else if(musica === "littlestar") {
-        carregarPartituraTwinkle(); 
-    } else if(musica === "jinglebell") {
+    } else if (musica === "littlestar") {
+        carregarPartituraTwinkle();
+    } else if (musica === "jinglebell") {
         carregarPartituraJingleBell();
     }
     else {
@@ -936,8 +941,8 @@ async function carregarPartituraTwinkle() {
 }
 
 async function carregarPartituraOdeToJoy() {
-    const notes = odeToJoy;     
-        for (const note of notes) {
+    const notes = odeToJoy;
+    for (const note of notes) {
         const key = pitchToKey[note.pitch];
         if (!key) {
             console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
@@ -972,4 +977,173 @@ async function carregarPartituraJingleBell() {
     totalNotas = spawnEvents.length;
     pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
+}
+
+
+// ============================================================
+// SISTEMA DE RANKING
+// ============================================================
+
+const MAX_USUARIO_LENGTH = 15;
+const MAX_RANKING = 10;
+
+function getRankingKey(musicaKey, modo) {
+    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
+    return `ranking_${musicaKey}_${modo}_${modoMusica}`;
+}
+
+function carregarRanking(musicaKey, modo) {
+    try {
+        const data = localStorage.getItem(getRankingKey(musicaKey, modo));
+        return data ? JSON.parse(data) : [];
+    } catch {
+        return [];
+    }
+}
+
+function salvarRanking(musicaKey, modo, lista) {
+    localStorage.setItem(getRankingKey(musicaKey, modo), JSON.stringify(lista));
+}
+
+function isEligibleRanking(pontuacaoAtual, musicaKey, modo) {
+    const lista = carregarRanking(musicaKey, modo);
+    if (lista.length < MAX_RANKING) return true;
+    return pontuacaoAtual > lista[lista.length - 1].pontuacao;
+}
+
+function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modo) {
+    const lista = carregarRanking(musicaKey, modo);
+    const nomeLower = nome.toLowerCase();
+    const indexExistente = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
+
+    if (indexExistente !== -1) {
+        if (pontuacaoAtual > lista[indexExistente].pontuacao) {
+            lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
+            lista[indexExistente].data = new Date().toLocaleDateString('pt-BR');
+        }
+    } else {
+        lista.push({
+            nome: nome.slice(0, MAX_USUARIO_LENGTH).trim(),
+            pontuacao: Math.floor(pontuacaoAtual),
+            data: new Date().toLocaleDateString('pt-BR')
+        });
+    }
+
+    lista.sort((a, b) => b.pontuacao - a.pontuacao);
+    const listaFinal = lista.slice(0, MAX_RANKING);
+    salvarRanking(musicaKey, modo, listaFinal);
+    return listaFinal.findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
+}
+
+function exibirListaRanking(nomeDestaque) {
+    const lista = carregarRanking(musica, modoAtual);
+    const listaDiv = document.getElementById('rankingLista');
+    if (!listaDiv) return;
+
+    let html = '<ol id="rankingOl">';
+    lista.forEach((entry, i) => {
+        const destaque = entry.nome.toLowerCase() === nomeDestaque.toLowerCase()
+            ? ' ranking-destaque' : '';
+        html += `
+            <li class="ranking-item${destaque}">
+                <span class="ranking-pos">${i + 1}º</span>
+                <span class="ranking-nome">${entry.nome}</span>
+                <span class="ranking-pts">${entry.pontuacao}</span>
+                <span class="ranking-data">${entry.data}</span>
+            </li>`;
+    });
+    html += '</ol>';
+    listaDiv.innerHTML = html;
+}
+
+// Cria o container base do ranking no #fimDaCena
+function criarContainerRanking(msgHtml, incluirFormulario) {
+    if (document.getElementById('rankingEntry')) return false;
+    const fimDiv = document.getElementById('fimDaCena');
+    const botoesDiv = document.getElementById('fimDaCena-buttons');
+    if (!fimDiv || !botoesDiv) return false;
+
+    const rankingDiv = document.createElement('div');
+    rankingDiv.id = 'rankingEntry';
+    rankingDiv.innerHTML = `
+        <p id="rankingMsg">${msgHtml}</p>
+        ${incluirFormulario ? `
+        <div id="rankingInputWrapper">
+            <input type="text" id="rankingNomeInput" maxlength="${MAX_USUARIO_LENGTH}"
+                placeholder="Seu nome" autocomplete="off" />
+            <button id="rankingConfirmarBtn">Confirmar</button>
+        </div>` : ''}
+        <div id="rankingLista"></div>
+    `;
+    fimDiv.insertBefore(rankingDiv, botoesDiv);
+    return true;
+}
+
+// Exibe ranking sem pedir nome (nome já conhecido)
+function mostrarRankingFinal(nomeDestaque) {
+    const lista = carregarRanking(musica, modoAtual);
+    const pos = lista.findIndex(e => e.nome.toLowerCase() === nomeDestaque.toLowerCase());
+    const msg = pos !== -1 ? `🏆 Você ficou em ${pos + 1}º lugar!` : '🏆 Ranking';
+
+    if (!criarContainerRanking(msg, false)) return;
+    exibirListaRanking(nomeDestaque);
+}
+
+// Exibe formulário para entrada do nome (primeira vez)
+function exibirFormularioRanking(posicao) {
+    if (!criarContainerRanking(`🏆 Você entrou no top ${posicao}º do ranking!`, true)) return;
+
+    const input = document.getElementById('rankingNomeInput');
+    const btn = document.getElementById('rankingConfirmarBtn');
+    input.focus();
+
+    function confirmarNome() {
+        const nome = input.value.trim();
+        if (!nome) {
+            input.style.borderColor = 'red';
+            return;
+        }
+
+        localStorage.setItem('rankingNomeUsuario', nome);
+        const pos = inserirNoRanking(nome, pontuation, musica, modoAtual);
+
+        document.getElementById('rankingInputWrapper').style.display = 'none';
+        document.getElementById('rankingMsg').textContent = `🏆 Você ficou em ${pos}º lugar!`;
+        exibirListaRanking(nome);
+    }
+
+    btn.addEventListener('click', confirmarNome);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmarNome(); });
+}
+
+function verificarEAdicionarAoRanking() {
+    if (modoAtual !== "jogar") return;
+
+    const pontuacaoAtual = Math.floor(pontuation);
+    if (pontuacaoAtual <= 0) return;
+
+    const nomeArmazenado = localStorage.getItem('rankingNomeUsuario');
+
+    if (nomeArmazenado) {
+        // Tem nome salvo — nunca pede de novo
+        const lista = carregarRanking(musica, modoAtual);
+        const entradaExistente = lista.find(
+            e => e.nome.toLowerCase() === nomeArmazenado.toLowerCase()
+        );
+        const deveAtualizar = !entradaExistente || pontuacaoAtual > entradaExistente.pontuacao;
+
+        if (deveAtualizar && isEligibleRanking(pontuacaoAtual, musica, modoAtual)) {
+            inserirNoRanking(nomeArmazenado, pontuacaoAtual, musica, modoAtual);
+        }
+
+        mostrarRankingFinal(nomeArmazenado);
+        return;
+    }
+
+    // Primeira vez — só pede nome se entrar no top 10
+    if (isEligibleRanking(pontuacaoAtual, musica, modoAtual)) {
+        const lista = carregarRanking(musica, modoAtual);
+        const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
+        exibirFormularioRanking(posProvisoria);
+    }
 }
