@@ -297,7 +297,9 @@ function animate() {
                     if (modoAtual === "jogar") {
                         pontuacaoFinal.style.display = 'block';
                         animarPontuacaoFinal();
-                        setTimeout(verificarEAdicionarAoRanking, 2200);
+                        setTimeout(() => {
+                            verificarEAdicionarAoRanking().catch(console.error);
+                        }, 2200);
                     } else {
                         pontuacaoFinal.style.display = 'none';
                     }
@@ -980,42 +982,69 @@ async function carregarPartituraJingleBell() {
 }
 
 
-// ============================================================
-// SISTEMA DE RANKING
+/// ============================================================
+// SISTEMA DE RANKING — armazenamento global via JSONBin
 // ============================================================
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
+const JSONBIN_BIN_ID = '69f1188faaba8821974b8a2f';
+const JSONBIN_API_KEY = '$2a$10$RBwCZQy9WisM0z0MJC4cvOFKLJBE0zQtDUqHlJY.Fs.srbe6cMPWi';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
-function getRankingKey(musicaKey, modo) {
-    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
-    return `ranking_${musicaKey}_${modo}_${modoMusica}`;
+
+
+let rankingCache = null;
+
+function getRankingKey(musicaKey, modoMusica) {
+    return `${musicaKey}_jogar_${modoMusica}`;
 }
 
-function carregarRanking(musicaKey, modo) {
+async function carregarRankingGlobal() {
+    if (rankingCache) return rankingCache;
     try {
-        const data = localStorage.getItem(getRankingKey(musicaKey, modo));
-        return data ? JSON.parse(data) : [];
+        const res = await fetch(`${JSONBIN_URL}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+        });
+        const json = await res.json();
+        rankingCache = json.record || {};
+        return rankingCache;
     } catch {
-        return [];
+        return {};
     }
 }
 
-function salvarRanking(musicaKey, modo, lista) {
-    localStorage.setItem(getRankingKey(musicaKey, modo), JSON.stringify(lista));
+async function salvarRankingGlobal(dados) {
+    rankingCache = dados;
+    try {
+        const res = await fetch(JSONBIN_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_API_KEY
+            },
+            body: JSON.stringify(dados)
+        });
+        const json = await res.json();
+        console.log('Resposta JSONBin:', json);
+    } catch (err) {
+        console.error('Erro ao salvar no JSONBin:', err);
+    }
 }
 
-function isEligibleRanking(pontuacaoAtual, musicaKey, modo) {
-    const lista = carregarRanking(musicaKey, modo);
-    if (lista.length < MAX_RANKING) return true;
-    return pontuacaoAtual > lista[lista.length - 1].pontuacao;
+async function carregarRanking(musicaKey, modoMusica) {
+    const dados = await carregarRankingGlobal();
+    const key = getRankingKey(musicaKey, modoMusica);
+    return dados[key] || [];
 }
 
-function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modo) {
-    const lista = carregarRanking(musicaKey, modo);
+async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
+    const dados = await carregarRankingGlobal();
+    const key = getRankingKey(musicaKey, modoMusica);
+    const lista = dados[key] || [];
     const nomeLower = nome.toLowerCase();
-    const indexExistente = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
 
+    const indexExistente = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
     if (indexExistente !== -1) {
         if (pontuacaoAtual > lista[indexExistente].pontuacao) {
             lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
@@ -1030,15 +1059,23 @@ function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modo) {
     }
 
     lista.sort((a, b) => b.pontuacao - a.pontuacao);
-    const listaFinal = lista.slice(0, MAX_RANKING);
-    salvarRanking(musicaKey, modo, listaFinal);
-    return listaFinal.findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
+    dados[key] = lista.slice(0, MAX_RANKING);
+    rankingCache = dados;
+
+    await salvarRankingGlobal(dados);
+    return dados[key].findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
 }
 
-function exibirListaRanking(nomeDestaque) {
-    const lista = carregarRanking(musica, modoAtual);
+async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
+    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
+    const lista = listaJaCarregada || await carregarRanking(musica, modoMusica);
     const listaDiv = document.getElementById('rankingLista');
     if (!listaDiv) return;
+
+    if (lista.length === 0) {
+        listaDiv.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>';
+        return;
+    }
 
     let html = '<ol id="rankingOl">';
     lista.forEach((entry, i) => {
@@ -1056,7 +1093,6 @@ function exibirListaRanking(nomeDestaque) {
     listaDiv.innerHTML = html;
 }
 
-// Cria o container base do ranking no #fimDaCena
 function criarContainerRanking(msgHtml, incluirFormulario) {
     if (document.getElementById('rankingEntry')) return false;
     const fimDiv = document.getElementById('fimDaCena');
@@ -1073,23 +1109,23 @@ function criarContainerRanking(msgHtml, incluirFormulario) {
                 placeholder="Seu nome" autocomplete="off" />
             <button id="rankingConfirmarBtn">Confirmar</button>
         </div>` : ''}
-        <div id="rankingLista"></div>
+        <div id="rankingLista"><p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Carregando...</p></div>
     `;
     fimDiv.insertBefore(rankingDiv, botoesDiv);
     return true;
 }
 
-// Exibe ranking sem pedir nome (nome já conhecido)
-function mostrarRankingFinal(nomeDestaque) {
-    const lista = carregarRanking(musica, modoAtual);
+async function mostrarRankingFinal(nomeDestaque) {
+    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
+    rankingCache = null;
+    const lista = await carregarRanking(musica, modoMusica);
     const pos = lista.findIndex(e => e.nome.toLowerCase() === nomeDestaque.toLowerCase());
-    const msg = pos !== -1 ? `🏆 Você ficou em ${pos + 1}º lugar!` : '🏆 Ranking';
+    const msg = pos !== -1 ? `🏆 Você entrou no ranking!` : '🏆 Ranking';
 
     if (!criarContainerRanking(msg, false)) return;
-    exibirListaRanking(nomeDestaque);
+    await exibirListaRanking(nomeDestaque, lista);
 }
 
-// Exibe formulário para entrada do nome (primeira vez)
 function exibirFormularioRanking(posicao) {
     if (!criarContainerRanking(`🏆 Você entrou no top ${posicao}º do ranking!`, true)) return;
 
@@ -1097,70 +1133,84 @@ function exibirFormularioRanking(posicao) {
     const btn = document.getElementById('rankingConfirmarBtn');
     input.focus();
 
-    // Desativa o piano ao focar no input
     input.addEventListener('focus', () => {
-        if (teclaListener) {
-            document.removeEventListener('keydown', teclaListener);
-        }
+        if (teclaListener) document.removeEventListener('keydown', teclaListener);
     });
-
-    // Reativa ao sair do input (opcional, mas justo)
     input.addEventListener('blur', () => {
-        if (teclaListener) {
-            document.addEventListener('keydown', teclaListener);
-        }
+        if (teclaListener) document.addEventListener('keydown', teclaListener);
     });
 
-    function confirmarNome() {
+    async function confirmarNome() {
         const nome = input.value.trim();
         if (!nome) {
             input.style.borderColor = 'red';
             return;
         }
 
+        btn.disabled = true;
+        btn.textContent = '...';
         localStorage.setItem('rankingNomeUsuario', nome);
-        const pos = inserirNoRanking(nome, pontuation, musica, modoAtual);
+
+        const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
+        const pos = await inserirNoRanking(nome, pontuation, musica, modoMusica);
+
+        rankingCache = null;
 
         document.getElementById('rankingInputWrapper').style.display = 'none';
         document.getElementById('rankingMsg').textContent = `🏆 Você ficou em ${pos}º lugar!`;
-        exibirListaRanking(nome);
+
+        const listaNova = await carregarRanking(musica, modoMusica);
+        await exibirListaRanking(nome, listaNova);
     }
 
     btn.addEventListener('click', confirmarNome);
     input.addEventListener('keydown', (e) => {
-        e.stopPropagation(); // impede que a tecla chegue ao listener do piano
+        e.stopPropagation();
         if (e.key === 'Enter') confirmarNome();
     });
 }
 
-function verificarEAdicionarAoRanking() {
+async function verificarEAdicionarAoRanking() {
     if (modoAtual !== "jogar") return;
 
     const pontuacaoAtual = Math.floor(pontuation);
     if (pontuacaoAtual <= 0) return;
 
+    rankingCache = null;
+
+    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
     const nomeArmazenado = localStorage.getItem('rankingNomeUsuario');
 
-    if (nomeArmazenado) {
-        // Tem nome salvo — nunca pede de novo
-        const lista = carregarRanking(musica, modoAtual);
-        const entradaExistente = lista.find(
-            e => e.nome.toLowerCase() === nomeArmazenado.toLowerCase()
-        );
-        const deveAtualizar = !entradaExistente || pontuacaoAtual > entradaExistente.pontuacao;
+    try {
+        const lista = await carregarRanking(musica, modoMusica);
 
-        if (deveAtualizar && isEligibleRanking(pontuacaoAtual, musica, modoAtual)) {
-            inserirNoRanking(nomeArmazenado, pontuacaoAtual, musica, modoAtual);
+        if (nomeArmazenado) {
+            const entradaExistente = lista.find(
+                e => e.nome.toLowerCase() === nomeArmazenado.toLowerCase()
+            );
+            const deveAtualizar = !entradaExistente || pontuacaoAtual > entradaExistente.pontuacao;
+            const cabe = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
+
+            if (deveAtualizar && cabe) {
+                await inserirNoRanking(nomeArmazenado, pontuacaoAtual, musica, modoMusica);
+                rankingCache = null;
+            }
+
+            await mostrarRankingFinal(nomeArmazenado);
+            return;
         }
 
-        mostrarRankingFinal(nomeArmazenado);
-        return;
-    }
+        const cabe = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
+        if (cabe) {
+            const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
+            exibirFormularioRanking(posProvisoria);
+        }
 
-    // Primeira vez — só pede nome se entrar no top 10
-    if (isEligibleRanking(pontuacaoAtual, musica, modoAtual)) {
-        const lista = carregarRanking(musica, modoAtual);
-        const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
-        exibirFormularioRanking(posProvisoria);
+    } catch (err) {
+        console.error('Erro no ranking:', err);
     }
 }
+
+
+
+
