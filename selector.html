@@ -211,25 +211,32 @@
     }
 
     #rankingButton {
-  color: white;
-  font-family: 'Press Start 2P', monospace;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-size: 0.6em;
-  letter-spacing: 2px;
-  animation: rankingPiscar 1s  infinite;
-  cursor: pointer;
-}
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      font-size: 0.6em;
+      letter-spacing: 2px;
+      animation: rankingPiscar 1s infinite;
+      cursor: pointer;
+    }
 
-#rankingButton:hover {
-  color: #E323CA;
-  animation: none;
-}
+    #rankingButton:hover {
+      color: #E323CA;
+      animation: none;
+    }
 
-@keyframes rankingPiscar {
-  0%, 100% { color: white; }
-  50%       { color: #E323CA; }
-}
+    @keyframes rankingPiscar {
+
+      0%,
+      100% {
+        color: white;
+      }
+
+      50% {
+        color: #E323CA;
+      }
+    }
 
     #rankingModalBox {
       background: #0B0912;
@@ -396,47 +403,57 @@
         "tchai": "Tchaikovsky - Lago dos Cisnes"
       };
 
-     function carregarRankingModal() {
-  const key = `ranking_${musica}_jogar_${modo}`;
-  let lista = [];
-  try {
-    const data = localStorage.getItem(key);
-    lista = data ? JSON.parse(data) : [];
-  } catch { lista = []; }
+      const JSONBIN_BIN_ID = '69f1188faaba8821974b8a2f';
+      const JSONBIN_API_KEY = '$2a$10$RBwCZQy9WisM0z0MJC4cvOFKLJBE0zQtDUqHlJY.Fs.srbe6cMPWi';
 
-  rankingModalMusica.textContent = nomesMusicas[musica] || musica;
-  document.getElementById('rankingModalModoAtual').textContent =
-    modo === 'aprendiz' ? 'Aprendiz' : 'Jogador';
+      async function carregarRankingModal() {
+        rankingModalLista.innerHTML = '';
+        rankingModalVazio.style.display = 'none';
+        rankingModalLista.style.display = 'block';
+        rankingModalLista.innerHTML = '<li style="color:rgba(255,255,255,0.3);font-size:0.45rem;list-style:none;text-align:center;padding:16px 0;">Carregando...</li>';
 
-  rankingModalLista.innerHTML = '';
+        let lista = [];
+        try {
+          const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+          });
+          const json = await res.json();
+          const dados = json.record || {};
+          const key = `${musica}_jogar_${modo}`;
+          lista = dados[key] || [];
+        } catch {
+          lista = [];
+        }
 
-  if (lista.length === 0) {
-    rankingModalVazio.style.display = 'block';
-    rankingModalLista.style.display = 'none';
-  } else {
-    rankingModalVazio.style.display = 'none';
-    rankingModalLista.style.display = 'block';
-    lista.forEach((entry, i) => {
-      const li = document.createElement('li');
-      const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`;
-      li.innerHTML = `
-        <span class="rm-pos">${medalha}</span>
-        <span class="rm-nome">${entry.nome}</span>
-        <span class="rm-pts">${entry.pontuacao}</span>
-        <span class="rm-data">${entry.data}</span>
-      `;
-      rankingModalLista.appendChild(li);
-    });
-  }
-}
+        rankingModalMusica.textContent = nomesMusicas[musica] || musica;
+        document.getElementById('rankingModalModoAtual').textContent =
+          modo === 'aprendiz' ? 'Aprendiz' : 'Jogador';
 
-rankingButton.addEventListener('click', () => {
-  rankingModal.style.display = 'flex';
-  carregarRankingModal();
-});
+        rankingModalLista.innerHTML = '';
+
+        if (lista.length === 0) {
+          rankingModalVazio.style.display = 'block';
+          rankingModalLista.style.display = 'none';
+        } else {
+          rankingModalVazio.style.display = 'none';
+          rankingModalLista.style.display = 'block';
+          lista.forEach((entry, i) => {
+            const li = document.createElement('li');
+            const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`;
+            li.innerHTML = `
+                <span class="rm-pos">${medalha}</span>
+                <span class="rm-nome">${entry.nome}</span>
+                <span class="rm-pts">${entry.pontuacao}</span>
+                <span class="rm-data">${entry.data}</span>
+            `;
+            rankingModalLista.appendChild(li);
+          });
+        }
+      }
+
       rankingButton.addEventListener('click', () => {
         rankingModal.style.display = 'flex';
-        carregarRankingModal();
+        carregarRankingModal().catch(console.error);
       });
 
       rankingFecharBtn.addEventListener('click', () => {
@@ -447,7 +464,6 @@ rankingButton.addEventListener('click', () => {
         if (e.target === rankingModal) rankingModal.style.display = 'none';
       });
 
-     
 
       // Atualiza o modal sempre que a música selecionada muda — adicione esta linha
       // em cada listener de música, logo após o `musica = "..."`:
@@ -478,12 +494,16 @@ rankingButton.addEventListener('click', () => {
         modo = "aprendiz";
         localStorage.setItem("modoSelecionado", "aprendiz");
         atualizarEstadoBotoesModo();
+            if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+
       });
 
       botaoJogador.addEventListener("click", () => {
         modo = "jogador";
         localStorage.setItem("modoSelecionado", "jogador");
         atualizarEstadoBotoesModo();
+            if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+
       });
 
       // Event listeners para seleção de música
@@ -496,7 +516,7 @@ rankingButton.addEventListener('click', () => {
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "349px", "important");
         area.style.setProperty("width", "283px", "important");
-        if (rankingModal.style.display === 'flex') carregarRankingModal();
+    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -509,7 +529,7 @@ rankingButton.addEventListener('click', () => {
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "306px", "important");
         area.style.setProperty("width", "218px", "important");
-        if (rankingModal.style.display === 'flex') carregarRankingModal();
+    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -522,7 +542,7 @@ rankingButton.addEventListener('click', () => {
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "140px", "important");
         area.style.setProperty("width", "582px", "important");
-        if (rankingModal.style.display === 'flex') carregarRankingModal();
+    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -535,7 +555,7 @@ rankingButton.addEventListener('click', () => {
         jinglebellMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "215px", "important");
         area.style.setProperty("width", "231px", "important");
-        if (rankingModal.style.display === 'flex') carregarRankingModal();
+    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
       jinglebellMusic.addEventListener("click", () => {
@@ -547,7 +567,7 @@ rankingButton.addEventListener('click', () => {
         littlestarMusic.classList.remove("musicaEscolhida");
         area.style.setProperty("margin-left", "384px", "important");
         area.style.setProperty("width", "108px", "important");
-        if (rankingModal.style.display === 'flex') carregarRankingModal();
+    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
