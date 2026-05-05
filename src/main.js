@@ -1,5 +1,6 @@
 import Soundfont from "soundfont-player";
 import * as THREE from 'three';
+import { createClient } from '@supabase/supabase-js';
 import { keyMap } from "./keyMap.js";
 import { allCubes } from "./cubes.js";
 import { loadedTexturesAlt } from './cubes.js'; // ajuste o caminho conforme seu projeto
@@ -95,11 +96,20 @@ const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerH
 camera.position.set(0, 6, 3);
 camera.lookAt(0, 1, 0);
 
+// Ajuste de câmera para mobile real
+const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if (isMobile) {
+    camera.position.set(0, 5, 4);
+    camera.fov = 95;
+    camera.updateProjectionMatrix();
+}
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const planeGeometry2 = new THREE.PlaneGeometry(13.5, 2);
+const scaleMultiplier = isMobile ? 0.38 : 1;
+const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 * scaleMultiplier);
 
 
 
@@ -122,7 +132,7 @@ scene.add(plane2);
 
 
 
-const lineGeometry = new THREE.PlaneGeometry(0.04, 9);
+const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
 const lineMaterial = new THREE.MeshStandardMaterial({
     color: 0xE323CA,
     map: gradientTexture,
@@ -137,7 +147,7 @@ const lineMaterial = new THREE.MeshStandardMaterial({
 const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
 lines.forEach((line, i) => {
     line.rotation.x = -Math.PI / 2;
-    line.position.x = [0, 1.1, -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5, 6.7, -6.7][i];
+    line.position.x = [0, 1.1, -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5, 6.7, -6.7][i] * scaleMultiplier;
     line.position.z = -2.5;
     scene.add(line);
 });
@@ -146,6 +156,15 @@ scene.add(new THREE.AmbientLight(0xffffff, 2));
 const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
 directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
+
+// Handle redimensionamento da janela
+window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+});
 
 
 
@@ -983,16 +1002,33 @@ async function carregarPartituraJingleBell() {
 
 
 /// ============================================================
-// SISTEMA DE RANKING — armazenamento global via JSONBin
+// SISTEMA DE RANKING — armazenamento global via Supabase
 // ============================================================
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
-const JSONBIN_BIN_ID = '69f1188faaba8821974b8a2f';
-const JSONBIN_API_KEY = '$2a$10$RBwCZQy9WisM0z0MJC4cvOFKLJBE0zQtDUqHlJY.Fs.srbe6cMPWi';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
+// Credenciais Supabase carregadas do .env
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('[Supabase] Variáveis de ambiente faltando. Verifique `.env`:', {
+        SUPABASE_URL: SUPABASE_URL || '<vazio>',
+        SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ? '****' : '<vazio>'
+    });
+}
+
+if (SUPABASE_URL && SUPABASE_URL.includes('/rest/v1')) {
+    console.error('[Supabase] URL inválida. Use a URL base do projeto Supabase sem `/rest/v1` no final.');
+}
+
+if (SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('sb_secret_')) {
+    console.warn('[Supabase] A chave parece ser service_role. Use a ANON KEY no cliente web.');
+}
+
+// Inicializar cliente Supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let rankingCache = null;
 
@@ -1003,13 +1039,38 @@ function getRankingKey(musicaKey, modoMusica) {
 async function carregarRankingGlobal() {
     if (rankingCache) return rankingCache;
     try {
-        const res = await fetch(`${JSONBIN_URL}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_API_KEY }
-        });
-        const json = await res.json();
-        rankingCache = json.record || {};
+        const { data, error } = await supabase
+            .from('rankings')
+            .select('*');
+        
+        if (error) {
+            console.error('Erro ao carregar ranking:', error);
+            return {};
+        }
+
+        // Reorganizar dados da forma esperada
+        rankingCache = {};
+        if (data) {
+            data.forEach(row => {
+                const key = getRankingKey(row.musica, row.modo);
+                if (!rankingCache[key]) {
+                    rankingCache[key] = [];
+                }
+                rankingCache[key].push({
+                    id: row.id,
+                    nome: row.nome,
+                    pontuacao: row.pontuacao,
+                    data: row.data
+                });
+            });
+            // Ordenar cada ranking por pontuação
+            Object.keys(rankingCache).forEach(key => {
+                rankingCache[key].sort((a, b) => b.pontuacao - a.pontuacao);
+            });
+        }
         return rankingCache;
-    } catch {
+    } catch (err) {
+        console.error('Erro ao carregar ranking global:', err);
         return {};
     }
 }
@@ -1017,18 +1078,55 @@ async function carregarRankingGlobal() {
 async function salvarRankingGlobal(dados) {
     rankingCache = dados;
     try {
-        const res = await fetch(JSONBIN_URL, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': JSONBIN_API_KEY
-            },
-            body: JSON.stringify(dados)
+        // Converter dados de volta para formato de tabela
+        const registros = [];
+        Object.entries(dados).forEach(([key, lista]) => {
+            const [musica, _, modo] = key.split('_');
+            lista.forEach(item => {
+                const registro = {
+                    musica,
+                    modo,
+                    nome: item.nome,
+                    pontuacao: item.pontuacao,
+                    data: item.data
+                };
+                if (item.id != null) {
+                    registro.id = item.id;
+                }
+                registros.push(registro);
+            });
         });
-        const json = await res.json();
-        console.log('Resposta JSONBin:', json);
+
+        const registrosParaInserir = registros.filter(item => item.id == null);
+        const registrosParaAtualizar = registros.filter(item => item.id != null);
+
+        if (registrosParaAtualizar.length > 0) {
+            const { error: updateError } = await supabase
+                .from('rankings')
+                .upsert(registrosParaAtualizar, { onConflict: ['id'] });
+
+            if (updateError) {
+                console.error('Erro ao atualizar ranking no Supabase:', updateError);
+            }
+        }
+
+        if (registrosParaInserir.length > 0) {
+            const { error: insertError } = await supabase
+                .from('rankings')
+                .insert(registrosParaInserir);
+
+            if (insertError) {
+                console.error('Erro ao inserir ranking no Supabase:', insertError);
+            }
+        }
+
+        if (registrosParaAtualizar.length === 0 && registrosParaInserir.length === 0) {
+            console.log('Nenhum registro de ranking para salvar.');
+        } else {
+            console.log(`Ranking salvo no Supabase: ${registrosParaAtualizar.length} atualizados, ${registrosParaInserir.length} inseridos.`);
+        }
     } catch (err) {
-        console.error('Erro ao salvar no JSONBin:', err);
+        console.error('Erro ao salvar ranking global:', err);
     }
 }
 
@@ -1126,12 +1224,24 @@ async function mostrarRankingFinal(nomeDestaque) {
     await exibirListaRanking(nomeDestaque, lista);
 }
 
-function exibirFormularioRanking(posicao) {
-    if (!criarContainerRanking(`🏆 Você entrou no top ${posicao}º do ranking!`, true)) return;
+function exibirFormularioRanking(posicao, nomePreenchido = null) {
+    const isEdicao = nomePreenchido !== null;
+    const titulo = isEdicao 
+        ? '✏️ Editar seu nome' 
+        : `🏆 Você entrou no ranking!`;
+    
+    if (!criarContainerRanking(titulo, true)) return;
 
     const input = document.getElementById('rankingNomeInput');
     const btn = document.getElementById('rankingConfirmarBtn');
+    
+    // Pré-preencher input se houver nome
+    if (nomePreenchido) {
+        input.value = nomePreenchido;
+    }
+    
     input.focus();
+    input.select(); // Seleciona todo o texto para facilitar edição
 
     input.addEventListener('focus', () => {
         if (teclaListener) document.removeEventListener('keydown', teclaListener);
@@ -1183,28 +1293,15 @@ async function verificarEAdicionarAoRanking() {
 
     try {
         const lista = await carregarRanking(musica, modoMusica);
-
-        if (nomeArmazenado) {
-            const entradaExistente = lista.find(
-                e => e.nome.toLowerCase() === nomeArmazenado.toLowerCase()
-            );
-            const deveAtualizar = !entradaExistente || pontuacaoAtual > entradaExistente.pontuacao;
-            const cabe = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
-
-            if (deveAtualizar && cabe) {
-                await inserirNoRanking(nomeArmazenado, pontuacaoAtual, musica, modoMusica);
-                rankingCache = null;
-            }
-
-            await mostrarRankingFinal(nomeArmazenado);
-            return;
-        }
-
         const cabe = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
-        if (cabe) {
-            const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
-            exibirFormularioRanking(posProvisoria);
-        }
+
+        if (!cabe) return; // Pontuação não entra no ranking
+
+        // Sempre mostrar formulário de edição/entrada
+        // Se houver nome armazenado, pré-preencher para edição
+        // Se não houver, deixar vazio para entrada
+        const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
+        exibirFormularioRanking(posProvisoria, nomeArmazenado);
 
     } catch (err) {
         console.error('Erro no ranking:', err);
