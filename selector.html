@@ -5,7 +5,6 @@
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -365,6 +364,182 @@
       margin: 20px 0 0;
       display: none;
     }
+
+    @media (max-width: 768px) {
+      body {
+        width: 100vw;
+        overflow-x: hidden;
+      }
+
+      #telaInicial {
+        padding: 30px 20px;
+        margin-top: 10px;
+        width: 95%;
+      }
+
+      #buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #buttons button {
+        width: 100%;
+        font-size: clamp(0.6em, 2vw, 0.8em);
+      }
+
+      #buttons button h1 {
+        font-size: clamp(0.7rem, 3vw, 1rem);
+        margin: 5px 0;
+      }
+
+      #buttons button span {
+        font-size: clamp(0.5rem, 2vw, 0.8rem);
+      }
+
+      #modoContainer {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+
+      .botaoModo {
+        width: 100%;
+        height: auto;
+        padding: 10px 5px;
+        font-size: clamp(0.5em, 2vw, 0.8em);
+      }
+
+      .botaoModo h5 {
+        margin: 3px 0;
+        font-size: clamp(0.5em, 2vw, 0.8em);
+      }
+
+      .botaoModo small {
+        font-size: clamp(0.3em, 1.5vw, 0.6em) !important;
+      }
+
+      #pianoImg {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      #pianoImg img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      #area {
+        width: 100% !important;
+        margin-left: 0 !important;
+        height: 80px;
+      }
+
+      #inicialButtons {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      #inicialButtons button {
+        width: 100%;
+        padding: 10px 20px;
+        font-size: clamp(0.6em, 2vw, 0.8em);
+      }
+
+      #rankingButton {
+        font-size: clamp(0.5em, 2vw, 0.6em);
+        margin: 15px 0;
+      }
+
+      h5 {
+        font-size: clamp(0.5rem, 2vw, 1rem);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        width: 100vw;
+        padding: 0;
+      }
+
+      #telaInicial {
+        padding: 20px 15px;
+        margin-top: 5px;
+        width: 100%;
+        border-radius: 10px;
+      }
+
+      .titulo {
+        font-size: clamp(1rem, 4vw, 1.5rem);
+        word-break: break-word;
+      }
+
+      #buttons {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      #buttons button {
+        width: 100%;
+        font-size: 0.6em;
+      }
+
+      #buttons a {
+        width: 30px;
+      }
+
+      #buttons a img {
+        width: 15px;
+      }
+
+      #modoContainer {
+        gap: 8px;
+      }
+
+      .botaoModo {
+        width: 100%;
+        height: 60px;
+        font-size: 0.5em;
+        padding: 8px;
+      }
+
+      .botaoModo h5 {
+        margin: 2px 0;
+        font-size: 0.5em;
+      }
+
+      .botaoModo small {
+        font-size: 0.3em !important;
+      }
+
+      #pianoImg h5 {
+        font-size: 0.6rem;
+      }
+
+      #rankingModalBox {
+        width: 95vw;
+        padding: 16px 12px;
+      }
+
+      #rankingModalTitulo {
+        font-size: 0.7rem;
+      }
+
+      #rankingModalMusica {
+        font-size: 0.45rem;
+      }
+
+      #rankingModalModoAtual {
+        font-size: 0.4rem;
+        padding: 3px 8px;
+      }
+
+      #rankingModalLista li {
+        font-size: 0.45rem;
+        padding: 6px 8px;
+      }
+    }
   </style>
   <script>
     let musica = null;
@@ -403,8 +578,9 @@
         "tchai": "Tchaikovsky - Lago dos Cisnes"
       };
 
-      const JSONBIN_BIN_ID = '69f1188faaba8821974b8a2f';
-      const JSONBIN_API_KEY = '$2a$10$RBwCZQy9WisM0z0MJC4cvOFKLJBE0zQtDUqHlJY.Fs.srbe6cMPWi';
+      // Credenciais Supabase
+      const SUPABASE_URL = 'https://jqfpexrinkycxobbmmyx.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZnBleHJpbmt5Y3hvYmJtbXl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUzNjMsImV4cCI6MjA5MzQ2MTM2M30.pKgaVo1Gcr9LQcixVhwEHwv61pQOzGDsvyfpHCdGWwU';
 
       async function carregarRankingModal() {
         rankingModalLista.innerHTML = '';
@@ -414,14 +590,27 @@
 
         let lista = [];
         try {
-          const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+          const url = new URL(`${SUPABASE_URL}/rest/v1/rankings`);
+          url.searchParams.append('musica', `eq.${musica}`);
+          url.searchParams.append('modo', `eq.${modo}`);
+          url.searchParams.append('order', 'pontuacao.desc');
+
+          const response = await fetch(url.toString(), {
+            headers: {
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'apikey': SUPABASE_ANON_KEY
+            }
           });
-          const json = await res.json();
-          const dados = json.record || {};
-          const key = `${musica}_jogar_${modo}`;
-          lista = dados[key] || [];
-        } catch {
+
+          if (!response.ok) {
+            const erroTexto = await response.text().catch(() => 'sem corpo de erro');
+            console.error('Erro ao carregar ranking:', response.status, response.statusText, erroTexto);
+            lista = [];
+          } else {
+            lista = await response.json();
+          }
+        } catch (err) {
+          console.error('Erro ao carregar ranking modal:', err);
           lista = [];
         }
 
