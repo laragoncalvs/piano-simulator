@@ -358,6 +358,117 @@ function resetarCena() {
     if (fimDiv) fimDiv.style.display = 'none';
 }
 
+function criarPianoVirtual() {
+    if (!isMobile) return;
+
+    // Layout estilo teclado de celular: linha de números + 3 linhas QWERTY
+    // Apenas as teclas que existem nas partituras são ativas; as demais ficam visíveis mas desabilitadas
+    const teclasPiano = new Set(['a','s','w','d','e','f','t','g','y','h','u','j','k','o','l']);
+
+    const linhas = [
+        ['1','2','3','4','5','6','7','8','9','0'],
+        ['q','w','e','r','t','y','u','i','o','p'],
+        ['a','s','d','f','g','h','j','k','l'],
+        ['z','x','c','v','b','n','m'],
+    ];
+
+    // Remove piano antigo se já existir
+    document.getElementById('pianoVirtual')?.remove();
+
+    const pianoDiv = document.createElement('div');
+    pianoDiv.id = 'pianoVirtual';
+    pianoDiv.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 6px 4px 14px;
+        background: #1a1a1c;
+        border-top: 1px solid rgba(227,35,202,0.35);
+        z-index: 100;
+        touch-action: none;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    `;
+
+    linhas.forEach((linha) => {
+        const row = document.createElement('div');
+        row.style.cssText = `
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        `;
+
+        linha.forEach((key) => {
+            const btn = document.createElement('button');
+
+            btn.textContent = key.toUpperCase();
+            btn.dataset.key = key.toLowerCase();
+
+            btn.style.cssText = `
+                flex: 1;
+                max-width: 38px;
+                height: 42px;
+                border-radius: 8px;
+                border: none;
+                background: #3a3a3e;
+                color: #ffffff;
+                font-size: 16px;
+                font-weight: 500;
+                font-family: -apple-system, 'SF Pro Text', Helvetica, sans-serif;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 1px 0 0 #000;
+                touch-action: manipulation;
+                user-select: none;
+                -webkit-user-select: none;
+                letter-spacing: 0.5px;
+                transition: background 0.08s;
+            `;
+
+                const simularTecla = (e) => {
+                    e.preventDefault();
+
+                    if (audioContext?.state === 'suspended') {
+                        audioContext.resume();
+                    }
+
+                    // Feedback visual estilo tecla pressionada
+                    btn.style.background = '#E323CA';
+                    btn.style.transform = 'scale(0.94)';
+                    setTimeout(() => {
+                        btn.style.background = '#3a3a3e';
+                        btn.style.transform = 'scale(1)';
+                    }, 120);
+
+                    document.dispatchEvent(new KeyboardEvent('keydown', {
+                        key: key.toLowerCase(),
+                        bubbles: true,
+                        cancelable: true
+                    }));
+                };
+
+                btn.addEventListener('touchstart', simularTecla, { passive: false });
+            
+
+            row.appendChild(btn);
+        });
+
+        pianoDiv.appendChild(row);
+    });
+
+    document.body.appendChild(pianoDiv);
+
+    // Ajusta canvas para não ficar escondido atrás do teclado (altura ~4 linhas)
+    const alturaEstimada = 4 * 47 + 20; // linhas × (tecla + gap) + padding
+    renderer.domElement.style.paddingBottom = `${alturaEstimada}px`;
+}
+
+criarPianoVirtual();
+
 function atualizarPontuacao() {
     if (pontuacao) {
         pontuacao.textContent = `000${Math.floor(pontuation)}`;
