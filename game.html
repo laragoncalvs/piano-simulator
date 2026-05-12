@@ -649,11 +649,28 @@
   </script>
 
 
-  <script type="module" crossorigin src="/piano-simulator/assets/game-B-Dj-HaX.js"></script>
+  <script type="module" crossorigin src="/piano-simulator/assets/game-ChX7-b3t.js"></script>
 </head>
 
 
 <body>
+  <!-- Input invisível para capturar teclado do celular -->
+  <input
+    id="mobileKeyInput"
+    type="text"
+    style="
+      position: fixed;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      pointer-events: none;
+      border: none;
+      outline: none;
+    "
+    autocomplete="off"
+    spellcheck="false"
+  />
+
   <!-- Menu de controles durante o jogo -->
   <div id="gameMenu">
     <button id="resetarButton">Resetar</button>
