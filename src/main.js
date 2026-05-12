@@ -24,19 +24,45 @@ function getAudioContext() {
     return audioContext;
 }
 
-function resumeAudioContext() {
+async function resumeAudioContext() {
     const ctx = getAudioContext();
     if (!ctx) return null;
     if (ctx.state === "suspended") {
-        ctx.resume().catch((error) => {
+        try {
+            await ctx.resume();
+        } catch (error) {
             console.warn("Falha ao retomar AudioContext:", error);
-        });
+        }
     }
     return ctx;
 }
 
-document.addEventListener("touchstart", resumeAudioContext, { once: true, passive: true });
-document.addEventListener("click", resumeAudioContext, { once: true, passive: true });
+async function loadPiano() {
+    if (pianoLoaded) return piano;
+    const ctx = getAudioContext();
+    if (!ctx) return null;
+    resumeAudioContext();
+    try {
+        piano = await Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 });
+        pianoLoaded = true;
+    } catch (error) {
+        console.warn("Falha ao carregar o piano:", error);
+    }
+    return piano;
+}
+
+document.addEventListener("touchstart", async () => {
+    await loadPiano();
+}, { once: true, passive: false });
+document.addEventListener("touchend", async () => {
+    await loadPiano();
+}, { once: true, passive: false });
+document.addEventListener("mousedown", async () => {
+    await loadPiano();
+}, { once: true, passive: false });
+document.addEventListener("click", async () => {
+    await loadPiano();
+}, { once: true, passive: false });
 
 let piano = null;
 let pianoLoaded = false;
@@ -682,7 +708,7 @@ voltar.addEventListener("click", () => {
 });
 
 
-autoplayButton.addEventListener("click", () => {
+autoplayButton.addEventListener("click", async () => {
     if (modoAtual === "autoplay") return;
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
@@ -728,22 +754,13 @@ autoplayButton.addEventListener("click", () => {
         animationId = null;
     }
 
-    resumeAudioContext();
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    loadPiano().catch(console.error);
+    animate();
 });
 
 
 
-jogarButton.addEventListener("click", () => {
+jogarButton.addEventListener("click", async () => {
     if (modoAtual === "jogar") return;
     document.getElementById("gameMenu").style.display = "flex";
     pontuacao.style.display = "block";
@@ -880,19 +897,10 @@ jogarButton.addEventListener("click", () => {
     };
     document.addEventListener("keydown", teclaListener);
 
-    resumeAudioContext();
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    loadPiano().catch(console.error);
+    animate();
 });
-resetar.addEventListener("click", () => {
+resetar.addEventListener("click", async () => {
     resetarCena();
 
     if (animationId !== null) {
@@ -1003,17 +1011,8 @@ resetar.addEventListener("click", () => {
         document.addEventListener("keydown", teclaListener);
     }
 
-    resumeAudioContext();
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    loadPiano().catch(console.error);
+    animate();
 });
 
 
