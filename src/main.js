@@ -31,19 +31,19 @@ async function ensureAudioContext() {
 }
 
 async function loadPiano() {
-  const ctx = await ensureAudioContext(); // garante criação + resume aqui
-  if (!ctx) return null;
-  if (pianoLoaded) return piano;
-  try {
-    piano = await Soundfont.instrument(ctx, "acoustic_grand_piano", {
-      gain: 4,
-    });
-    pianoLoaded = true;
-  } catch (error) {
-    console.warn("Falha ao carregar piano:", error);
-    pianoLoaded = false; // permite tentar de novo
-  }
-  return piano;
+    const ctx = await ensureAudioContext();
+    if (!ctx) return null;
+    if (pianoLoaded) return piano;
+    try {
+        console.log('Tentando carregar piano...');
+        piano = await Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 });
+        pianoLoaded = true;
+        console.log('Piano carregado com sucesso:', piano);
+    } catch (error) {
+        console.error("Erro DETALHADO ao carregar piano:", error); // <-- mude warn pra error
+        pianoLoaded = false;
+    }
+    return piano;
 }
 
 ["touchstart", "touchend", "mousedown", "click"].forEach((evt) => {
@@ -739,6 +739,8 @@ voltar.addEventListener("click", () => {
 
 autoplayButton.addEventListener("click", async () => {
   if (modoAtual === "autoplay") return;
+      await loadPiano(); // aguarda aqui
+
   progressBar.style.width = "0%";
   progressContainer.style.display = "flex";
   // Não mostra pontuação no modo autoplay
@@ -788,7 +790,11 @@ autoplayButton.addEventListener("click", async () => {
 });
 
 jogarButton.addEventListener("click", async () => {
+
+    diagnosticar();
   if (modoAtual === "jogar") return;
+      await loadPiano(); // aguarda aqui
+
   document.getElementById("gameMenu").style.display = "flex";
   pontuacao.style.display = "block";
   document.getElementById("nomeDaMusica").textContent =
@@ -930,6 +936,7 @@ jogarButton.addEventListener("click", async () => {
 });
 resetar.addEventListener("click", async () => {
   resetarCena();
+    await loadPiano(); // aguarda aqui
 
   if (animationId !== null) {
     cancelAnimationFrame(animationId);
@@ -1483,4 +1490,32 @@ async function verificarEAdicionarAoRanking() {
   } catch (err) {
     console.error("Erro no ranking:", err);
   }
+}
+async function diagnosticar() {
+    // Adicione isso no diagnóstico:
+console.log('Chamando loadPiano...');
+const p = await loadPiano();
+console.log('Resultado loadPiano:', p);
+    console.log('=== DIAGNÓSTICO ===');
+    console.log('pianoLoaded:', pianoLoaded);
+    console.log('piano:', piano);
+    console.log('audioContext:', audioContext);
+    console.log('audioContext.state:', audioContext?.state);
+    
+    // Testa se o contexto toca qualquer coisa
+    const ctx = await ensureAudioContext();
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+    console.log('Buffer silencioso tocado, state agora:', ctx.state);
+    
+    // Testa oscillator
+    const osc = ctx.createOscillator();
+    osc.connect(ctx.destination);
+    osc.frequency.value = 440;
+    osc.start();
+    setTimeout(() => osc.stop(), 500);
+    console.log('Oscillator iniciado — você deve ouvir um bip');
 }
