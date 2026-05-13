@@ -77,7 +77,7 @@ camera.lookAt(0, 1, 0);
 
 const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile) {
-    camera.position.set(0, 5, 4);
+    camera.position.set(0, 4.5, 4);
     camera.fov = 95;
     camera.updateProjectionMatrix();
 }
@@ -86,8 +86,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const scaleMultiplier = isMobile ? 0.38 : 1;
-const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 * scaleMultiplier);
+const scaleMultiplier = isMobile ? 0.45 : 1;
+const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 );
 const planeMaterial2 = new THREE.MeshStandardMaterial({
     color: 0xE323CA,
     side: THREE.DoubleSide,
@@ -98,6 +98,11 @@ const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
 plane2.rotation.x = -Math.PI / 2;
 plane2.position.z = 3;
 scene.add(plane2);
+
+if(isMobile) {
+  plane2.position.z =0.3;
+  plane2.scale.set(1, 0.8, 1);
+}
 
 const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
 const lineMaterial = new THREE.MeshStandardMaterial({
@@ -153,7 +158,9 @@ function spawnCube(letter, speed) {
     }
     const cube = new THREE.Mesh(geometry, newMaterials);
     cube.position.copy(baseCube.position);
+    cube.position.x *= scaleMultiplier;
     cube.userData = { speed, letter, hit: false, opacity: 1.0 };
+    if (isMobile) cube.scale.set(0.5, 0.5, 0.5);
     scene.add(cube);
     activeCubes.push(cube);
 }
@@ -349,6 +356,12 @@ function resetarCena() {
 }
 
 // ─── PIANO VIRTUAL — mobile, sem KeyboardEvent sintético ───
+function desabilitarTeclado() {
+  const teclado = document.getElementById('pianoVirtual');
+  if (teclado) {
+    teclado.style.display= 'none';
+  }
+}
 
 function criarPianoVirtual() {
     if (!isMobile) return;
@@ -442,7 +455,6 @@ function criarPianoVirtual() {
     renderer.domElement.style.paddingBottom = `${alturaEstimada}px`;
 }
 
-criarPianoVirtual();
 
 function atualizarPontuacao() {
     if (pontuacao) {
@@ -582,6 +594,8 @@ voltar.addEventListener("click", () => {
 
 autoplayButton.addEventListener("click", () => {
     if (modoAtual === "autoplay") return;
+    desabilitarTeclado();
+
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
     pontuacao.style.display = "none";
@@ -625,6 +639,8 @@ autoplayButton.addEventListener("click", () => {
 
 jogarButton.addEventListener("click", () => {
     if (modoAtual === "jogar") return;
+    criarPianoVirtual();
+
     document.getElementById("gameMenu").style.display = "flex";
     pontuacao.style.display = "block";
     document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
