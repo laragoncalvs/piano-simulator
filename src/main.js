@@ -1,80 +1,57 @@
-import Soundfont from "soundfont-player";
 import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
 import { keyMap } from "./keyMap.js";
 import { allCubes } from "./cubes.js";
-import { loadedTexturesAlt } from './cubes.js'; // ajuste o caminho conforme seu projeto
+import { loadedTexturesAlt } from './cubes.js';
 import notasJson from './partituras/furelise.json';
 import lagoJson from './partituras/lago.json';
 import littlestar from './partituras/littlestar.json';
 import jinglebell from './partituras/jinglebell.json';
 import odeToJoy from './partituras/ode.json';
+import { garantirAudio, carregarPiano, getPiano } from './audioManager.js';
+import { registrarDesktop, removerDesktop, conectarBotaoMobile } from './inputManager.js';
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-let piano = null;
-let pianoLoaded = false;
 let modoAtual = null;
-let modoMusica = null; // "aprendiz" ou "jogador"
-let multiplicadorTempo = 1; // Multiplicador de tempo para ajustar velocidade
-let teclaListener = null;
+let modoMusica = null;
+let multiplicadorTempo = 1;
 let animationId = null;
 let startTime = null;
 let fimTimeout = null;
 let musica = null;
 let pontuation = 0;
-let totalNotas = 0;  // Total de notas da música
-let pontosParaAcerto = 0;  // Pontos por acerto correto
-const PONTUACAO_MAXIMA = 1000;  // Pontuação máxima
-
+let totalNotas = 0;
+let pontosParaAcerto = 0;
+const PONTUACAO_MAXIMA = 1000;
 let duracaoTotal = 0;
 
+// ─── Textures ────────────────────────────────────────────────
 
 function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
     const size = 256;
     const canvas = document.createElement('canvas');
-
     if (['left-to-right', 'right-to-left'].includes(direction)) {
-        canvas.width = size;
-        canvas.height = 1;
+        canvas.width = size; canvas.height = 1;
     } else {
-        canvas.width = 1;
-        canvas.height = size;
+        canvas.width = 1; canvas.height = size;
     }
-
     const context = canvas.getContext('2d');
-
     let x0 = 0, y0 = 0, x1 = 0, y1 = 0;
-
     switch (direction) {
-        case 'top-to-bottom':
-            x0 = 0; y0 = 0; x1 = 0; y1 = size;
-            break;
-        case 'bottom-to-top':
-            x0 = 0; y0 = size; x1 = 0; y1 = 0;
-            break;
-        case 'left-to-right':
-            x0 = 0; y0 = 0; x1 = size; y1 = 0;
-            break;
-        case 'right-to-left':
-            x0 = size; y0 = 0; x1 = 0; y1 = 0;
-            break;
-        default:
-            console.warn(`Direção inválida: "${direction}". Usando 'bottom-to-top'.`);
-            x0 = 0; y0 = size; x1 = 0; y1 = 0;
+        case 'top-to-bottom': x0=0;y0=0;x1=0;y1=size; break;
+        case 'bottom-to-top': x0=0;y0=size;x1=0;y1=0; break;
+        case 'left-to-right': x0=0;y0=0;x1=size;y1=0; break;
+        case 'right-to-left': x0=size;y0=0;x1=0;y1=0; break;
+        default: x0=0;y0=size;x1=0;y1=0;
     }
-
     const gradient = context.createLinearGradient(x0, y0, x1, y1);
-    gradient.addColorStop(0, hexToRgba(colorHex, 0.0)); // Início transparente
-    gradient.addColorStop(0.7, hexToRgba(colorHex, 0.7)); // Fim opaco
-
+    gradient.addColorStop(0, hexToRgba(colorHex, 0.0));
+    gradient.addColorStop(0.7, hexToRgba(colorHex, 0.7));
     context.fillStyle = gradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
-
     const texture = new THREE.CanvasTexture(canvas);
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.minFilter = THREE.LinearFilter;
-
     return texture;
 }
 
@@ -85,19 +62,18 @@ function hexToRgba(hex, alpha) {
     return `rgba(${r},${g},${b},${alpha})`;
 }
 
+// ─── Three.js setup ──────────────────────────────────────────
 
 const gradientTexture = createAlphaGradientTexture('#E323CA', "top-to-bottom");
-const gradientTexture2 = createAlphaGradientTexture('#E323CA', "bottom-to-top");
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0B0912);
 
+const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 6, 3);
 camera.lookAt(0, 1, 0);
-
-// Ajuste de câmera para mobile real
-const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile) {
     camera.position.set(0, 5, 4);
     camera.fov = 95;
@@ -109,45 +85,24 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const scaleMultiplier = isMobile ? 0.38 : 1;
-const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 * scaleMultiplier);
 
-
-
-const planeMaterial2 = new THREE.MeshStandardMaterial({
-    color: 0xE323CA,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.5,
-
-
-});
-
-const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
-
+const plane2 = new THREE.Mesh(
+    new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 * scaleMultiplier),
+    new THREE.MeshStandardMaterial({ color: 0xE323CA, side: THREE.DoubleSide, transparent: true, opacity: 0.5 })
+);
 plane2.rotation.x = -Math.PI / 2;
 plane2.position.z = 3;
-
 scene.add(plane2);
-
-
-
 
 const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
 const lineMaterial = new THREE.MeshStandardMaterial({
-    color: 0xE323CA,
-    map: gradientTexture,
-
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.5,
-    depthWrite: false
-
+    color: 0xE323CA, map: gradientTexture, side: THREE.DoubleSide,
+    transparent: true, opacity: 0.5, depthWrite: false
 });
-
-const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
+const lines = Array.from({ length: 13 }, () => new THREE.Mesh(lineGeometry, lineMaterial));
 lines.forEach((line, i) => {
     line.rotation.x = -Math.PI / 2;
-    line.position.x = [0, 1.1, -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5, 6.7, -6.7][i] * scaleMultiplier;
+    line.position.x = [0,1.1,-1.1,2.2,-2.2,3.3,-3.3,4.4,-4.4,5.5,-5.5,6.7,-6.7][i] * scaleMultiplier;
     line.position.z = -2.5;
     scene.add(line);
 });
@@ -157,16 +112,13 @@ const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
 directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
 
-// Handle redimensionamento da janela
 window.addEventListener('resize', () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    camera.aspect = width / height;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-
+// ─── Gameplay ─────────────────────────────────────────────────
 
 const activeCubes = [];
 const spawnEvents = [];
@@ -175,12 +127,9 @@ function addCubeToScene(letter, delay, speed) {
     spawnEvents.push({ letter, delay, speed, spawned: false });
 }
 
-// Função para aplicar multiplicador de tempo a todos os eventos após carregamento
 function aplicarMultiplicadorTempo() {
     spawnEvents.forEach(event => {
         event.delay *= multiplicadorTempo;
-        // Ajustar velocidade do cubo para compensar o tempo maior
-        // Se o tempo aumenta em X, a velocidade deve diminuir em X para o cubo chegar no tempo certo
         event.speed /= multiplicadorTempo;
     });
 }
@@ -188,31 +137,97 @@ function aplicarMultiplicadorTempo() {
 function spawnCube(letter, speed) {
     const baseCube = allCubes[letter];
     if (!baseCube) return;
-
-    // Clona a geometria
     const geometry = baseCube.geometry.clone();
-
-    // Clona materiais corretamente
-    let newMaterials;
-    if (Array.isArray(baseCube.material)) {
-        newMaterials = baseCube.material.map(mat => mat.clone());
-    } else {
-        newMaterials = baseCube.material.clone();
-    }
-
+    const newMaterials = Array.isArray(baseCube.material)
+        ? baseCube.material.map(m => m.clone())
+        : baseCube.material.clone();
     const cube = new THREE.Mesh(geometry, newMaterials);
     cube.position.copy(baseCube.position);
     cube.userData = { speed, letter, hit: false, opacity: 1.0 };
-
     scene.add(cube);
     activeCubes.push(cube);
+}
+
+/**
+ * Ponto único de entrada para qualquer nota — desktop e mobile.
+ * Chamado DENTRO de um gesto real (pointerdown ou keydown).
+ */
+async function processarNota(key) {
+    const note = keyMap[key];
+    if (!note) return;
+
+    const piano = getPiano();
+    if (!piano) return;
+
+    piano.play(note);
+
+    if (modoAtual !== 'jogar') return;
+
+    let acertou = false;
+    let cuboMaisProximoNaArea = null;
+    let menorDistanciaArea = Infinity;
+
+    for (let i = 0; i < activeCubes.length; i++) {
+        const cube = activeCubes[i];
+        const cubeNote = keyMap[cube.userData.letter];
+        const near = Math.abs(cube.position.z - plane2.position.z) < 1;
+        if (!cube.userData.hit && cubeNote === note && near) {
+            const dist = Math.abs(cube.position.z - plane2.position.z);
+            if (dist < menorDistanciaArea) {
+                menorDistanciaArea = dist;
+                cuboMaisProximoNaArea = cube;
+            }
+        }
+    }
+
+    if (cuboMaisProximoNaArea) {
+        cuboMaisProximoNaArea.userData.hit = true;
+        acertou = true;
+        const letra = cuboMaisProximoNaArea.userData.letter;
+        if (Array.isArray(cuboMaisProximoNaArea.material)) {
+            cuboMaisProximoNaArea.material.forEach((mat, idx) => {
+                if (mat instanceof THREE.MeshStandardMaterial && mat.color) mat.color.set(0x51B79F);
+                if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                    const t = loadedTexturesAlt[letra];
+                    if (t) { mat.map = t; mat.needsUpdate = true; }
+                }
+            });
+        }
+        setTimeout(() => {
+            pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
+            showPointsAnimation(pontosParaAcerto);
+            atualizarPontuacao();
+            scene.remove(cuboMaisProximoNaArea);
+            const idx = activeCubes.indexOf(cuboMaisProximoNaArea);
+            if (idx !== -1) activeCubes.splice(idx, 1);
+        }, 400);
+    }
+
+    if (!acertou) {
+        let cuboMaisProximo = null;
+        let menorDistancia = Infinity;
+        for (let i = 0; i < activeCubes.length; i++) {
+            const cube = activeCubes[i];
+            if (!cube.userData.hit && keyMap[cube.userData.letter] === note) {
+                const dist = Math.abs(cube.position.z - plane2.position.z);
+                if (dist < menorDistancia) { menorDistancia = dist; cuboMaisProximo = cube; }
+            }
+        }
+        if (cuboMaisProximo) {
+            reduzirOpacidadeCubo(cuboMaisProximo);
+        } else {
+            const penalidade = pontosParaAcerto * 0.10;
+            pontuation = Math.max(0, pontuation - penalidade);
+            showPointsAnimation(-penalidade);
+            atualizarPontuacao();
+        }
+    }
 }
 
 function animate() {
     animationId = requestAnimationFrame(animate);
     const elapsedTime = performance.now() - startTime;
 
-    // Spawna cubos
     spawnEvents.forEach(event => {
         if (elapsedTime > event.delay && !event.spawned) {
             spawnCube(event.letter, event.speed);
@@ -220,365 +235,221 @@ function animate() {
         }
     });
 
-    // Atualiza a barra de progresso
     if (startTime && duracaoTotal > 0) {
-        const tempoAtual = performance.now() - startTime;
-        const progresso = Math.min(tempoAtual / duracaoTotal, 1);
+        const progresso = Math.min((performance.now() - startTime) / duracaoTotal, 1);
         progressBar.style.width = (progresso * 100) + "%";
-
-        if (progresso >= 1) {
-            progressContainer.style.display = "none";
-        }
+        if (progresso >= 1) progressContainer.style.display = "none";
     }
 
-    // Atualiza posição dos cubos
     for (let i = activeCubes.length - 1; i >= 0; i--) {
         const cube = activeCubes[i];
         cube.position.z += cube.userData.speed;
-
         const zAlvo = plane2.position.z;
-        const offset = 0.8;
 
-        if (!cube.userData.hit && cube.position.z >= (zAlvo - offset)) {
-            // No autoplay, marca como hit e remove automaticamente
+        if (!cube.userData.hit && cube.position.z >= (zAlvo - 0.8)) {
             if (modoAtual === "autoplay") {
                 cube.userData.hit = true;
-
                 const letra = cube.userData.letter;
-
-                // Muda a cor das outras faces (exceto a face 2 com textura)
                 if (Array.isArray(cube.material)) {
                     cube.material.forEach((mat, idx) => {
-                        if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
-                            mat.color.set(0x51B79F);
-                        }
-
+                        if (mat instanceof THREE.MeshStandardMaterial && mat.color) mat.color.set(0x51B79F);
                         if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
-                            const novaTextura = loadedTexturesAlt[letra];
-                            if (novaTextura) {
-                                mat.map = novaTextura;
-                                mat.needsUpdate = true;
-                            } else {
-                                console.warn(`Textura alternativa não encontrada para: ${letra}`);
-                            }
+                            const t = loadedTexturesAlt[letra];
+                            if (t) { mat.map = t; mat.needsUpdate = true; }
                         }
                     });
                 }
-
-                const note = keyMap[cube.userData.letter];
-                if (piano && note) {
-                    piano.play(note);
-                }
-
-                // Aguarda 400ms antes de remover o cubo
+                const note = keyMap[letra];
+                const piano = getPiano();
+                if (piano && note) piano.play(note);
                 setTimeout(() => {
                     if (scene.children.includes(cube)) scene.remove(cube);
-                    const index = activeCubes.indexOf(cube);
-                    if (index !== -1) activeCubes.splice(index, 1);
+                    const idx = activeCubes.indexOf(cube);
+                    if (idx !== -1) activeCubes.splice(idx, 1);
                 }, 400);
             }
         }
 
-        // Se o cubo passou da área sem ser pressionado no modo jogar
         if (modoAtual === "jogar" && !cube.userData.hit && cube.position.z > (zAlvo + 1.5)) {
             cube.userData.hit = true;
-
-            // Penalidade de -5% do valor de cada acerto
             const penalidade = pontosParaAcerto * 0.05;
             pontuation = Math.max(0, pontuation - penalidade);
             showPointsAnimation(-penalidade);
             atualizarPontuacao();
-
-            // Remove o cubo
             scene.remove(cube);
             activeCubes.splice(i, 1);
         }
     }
 
-
     renderer.render(scene, camera);
 
-    // Finalização da animação
     if (activeCubes.length === 0 && spawnEvents.every(e => e.spawned)) {
         if (!fimTimeout) {
             fimTimeout = setTimeout(() => {
                 cancelAnimationFrame(animationId);
-
-                const canvas = renderer.domElement;
-                canvas.style.display = 'none';
-
+                renderer.domElement.style.display = 'none';
                 const fimDiv = document.getElementById('fimDaCena');
                 const pontuacaoFinal = document.getElementById('pontuacaoFinal');
                 if (fimDiv) {
                     fimDiv.style.display = 'flex';
                     atualizarEstrelas();
-
                     if (modoAtual === "jogar") {
                         pontuacaoFinal.style.display = 'block';
                         animarPontuacaoFinal();
-                        setTimeout(() => {
-                            verificarEAdicionarAoRanking().catch(console.error);
-                        }, 2200);
+                        setTimeout(() => verificarEAdicionarAoRanking().catch(console.error), 2200);
                     } else {
                         pontuacaoFinal.style.display = 'none';
                     }
                 }
-
                 document.getElementById('botoesMusica').style.display = 'none';
                 document.getElementById('pontuacaoContainer').style.display = 'none';
                 document.getElementById('pontuacaoTitle').style.display = 'none';
                 document.getElementById('pontuacao').style.display = 'none';
                 document.getElementById('gameMenu').style.display = 'none';
-
             }, 1000);
         }
     }
 }
 
 function resetarCena() {
-    if (animationId !== null) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-    }
-
-    for (let cube of activeCubes) {
-        scene.remove(cube);
-    }
+    if (animationId !== null) { cancelAnimationFrame(animationId); animationId = null; }
+    for (let cube of activeCubes) scene.remove(cube);
     activeCubes.length = 0;
     spawnEvents.length = 0;
     startTime = null;
     fimTimeout = null;
-
-    // Remove ranking anterior se existir
-    const rankingEntry = document.getElementById('rankingEntry');
-    if (rankingEntry) rankingEntry.remove();
-
-    // Esconde e reseta a tela de fim
+    document.getElementById('rankingEntry')?.remove();
     const fimDiv = document.getElementById('fimDaCena');
     if (fimDiv) fimDiv.style.display = 'none';
 }
 
+// ─── Piano virtual ────────────────────────────────────────────
+
 function criarPianoVirtual() {
     if (!isMobile) return;
-
-    // Layout estilo teclado de celular: linha de números + 3 linhas QWERTY
-    // Apenas as teclas que existem nas partituras são ativas; as demais ficam visíveis mas desabilitadas
-    const teclasPiano = new Set(['a','s','w','d','e','f','t','g','y','h','u','j','k','o','l']);
-
     const linhas = [
         ['1','2','3','4','5','6','7','8','9','0'],
         ['q','w','e','r','t','y','u','i','o','p'],
         ['a','s','d','f','g','h','j','k','l'],
         ['z','x','c','v','b','n','m'],
     ];
-
-    // Remove piano antigo se já existir
     document.getElementById('pianoVirtual')?.remove();
 
     const pianoDiv = document.createElement('div');
     pianoDiv.id = 'pianoVirtual';
     pianoDiv.style.cssText = `
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 6px 4px 14px;
-        background: #1a1a1c;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        padding: 6px 4px 14px; background: #1a1a1c;
         border-top: 1px solid rgba(227,35,202,0.35);
-        z-index: 100;
-        touch-action: none;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
+        z-index: 100; touch-action: none;
+        display: flex; flex-direction: column; gap: 5px;
     `;
 
-    linhas.forEach((linha) => {
+    linhas.forEach(linha => {
         const row = document.createElement('div');
-        row.style.cssText = `
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        `;
-
-        linha.forEach((key) => {
+        row.style.cssText = 'display:flex;justify-content:center;gap:5px;';
+        linha.forEach(key => {
             const btn = document.createElement('button');
-
             btn.textContent = key.toUpperCase();
-            btn.dataset.key = key.toLowerCase();
-
+            btn.dataset.key = key;
             btn.style.cssText = `
-                flex: 1;
-                max-width: 38px;
-                height: 42px;
-                border-radius: 8px;
-                border: none;
-                background: #3a3a3e;
-                color: #ffffff;
-                font-size: 16px;
-                font-weight: 500;
-                font-family: -apple-system, 'SF Pro Text', Helvetica, sans-serif;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 1px 0 0 #000;
-                touch-action: manipulation;
-                user-select: none;
-                -webkit-user-select: none;
-                letter-spacing: 0.5px;
-                transition: background 0.08s;
+                flex:1; max-width:38px; height:42px; border-radius:8px; border:none;
+                background:#3a3a3e; color:#fff; font-size:16px; font-weight:500;
+                font-family:-apple-system,'SF Pro Text',Helvetica,sans-serif;
+                cursor:pointer; display:flex; align-items:center; justify-content:center;
+                box-shadow:0 1px 0 0 #000; touch-action:manipulation;
+                user-select:none; -webkit-user-select:none; letter-spacing:0.5px;
             `;
+            btn.addEventListener('pointerdown',  () => { btn.style.background='#E323CA'; btn.style.transform='scale(0.94)'; });
+            btn.addEventListener('pointerup',    () => { btn.style.background='#3a3a3e'; btn.style.transform='scale(1)'; });
+            btn.addEventListener('pointercancel',() => { btn.style.background='#3a3a3e'; btn.style.transform='scale(1)'; });
 
-                const simularTecla = (e) => {
-                    e.preventDefault();
-
-                    if (audioContext?.state === 'suspended') {
-                        audioContext.resume();
-                    }
-
-                    // Feedback visual estilo tecla pressionada
-                    btn.style.background = '#E323CA';
-                    btn.style.transform = 'scale(0.94)';
-                    setTimeout(() => {
-                        btn.style.background = '#3a3a3e';
-                        btn.style.transform = 'scale(1)';
-                    }, 120);
-
-                    document.dispatchEvent(new KeyboardEvent('keydown', {
-                        key: key.toLowerCase(),
-                        bubbles: true,
-                        cancelable: true
-                    }));
-                };
-
-                btn.addEventListener('touchstart', simularTecla, { passive: false });
-            
+            // ← ponto crítico: áudio desbloqueado dentro do gesto real
+            conectarBotaoMobile(btn, key, processarNota);
 
             row.appendChild(btn);
         });
-
         pianoDiv.appendChild(row);
     });
 
     document.body.appendChild(pianoDiv);
-
-    // Ajusta canvas para não ficar escondido atrás do teclado (altura ~4 linhas)
-    const alturaEstimada = 4 * 47 + 20; // linhas × (tecla + gap) + padding
-    renderer.domElement.style.paddingBottom = `${alturaEstimada}px`;
+    renderer.domElement.style.paddingBottom = `${4 * 47 + 20}px`;
 }
 
 criarPianoVirtual();
 
+// ─── UI helpers ───────────────────────────────────────────────
+
+const canvas         = renderer.domElement;
+const resetar        = document.getElementById("resetarButton");
+const voltar         = document.getElementById("voltarButton");
+const pontuacao      = document.getElementById("pontuacao");
+const progressContainer = document.getElementById("progressContainer");
+const progressBar    = document.getElementById("progressBar");
+const autoplayButton = document.getElementById("autoplayButton");
+const jogarButton    = document.getElementById("jogarButton");
+
+const nomesDasMusicas = {
+    "littlestar": "Twinkle, Twinkle, Little Star - Mozart",
+    "jinglebell": "Jingle Bells - James Lord Pierpont",
+    "elvis":      "Beethoven - Für Elise",
+    "bethoven":   "Beethoven - Ode à Alegria",
+    "tchai":      "Tchaikovsky - Lago dos Cisnes"
+};
+function obterNomeDaMusica(k) { return nomesDasMusicas[k] || "Música"; }
+
 function atualizarPontuacao() {
-    if (pontuacao) {
-        pontuacao.textContent = `000${Math.floor(pontuation)}`;
-    }
-    // Atualizar progress bar de pontuação
-    const pontuacaoBar = document.getElementById("pontuacaoBar");
-    if (pontuacaoBar) {
-        const percentual = (pontuation / PONTUACAO_MAXIMA) * 100;
-        pontuacaoBar.style.width = percentual + "%";
-    }
+    if (pontuacao) pontuacao.textContent = `000${Math.floor(pontuation)}`;
+    const bar = document.getElementById("pontuacaoBar");
+    if (bar) bar.style.width = ((pontuation / PONTUACAO_MAXIMA) * 100) + "%";
 }
 
-// Função para animar a pontuação final
 function animarPontuacaoFinal() {
-    const pontuacaoFinal = document.getElementById('pontuacaoFinal');
-    const pontuacaoMaxima = Math.floor(pontuation);
-    const duracao = 2000; // 2 segundos
+    const el = document.getElementById('pontuacaoFinal');
+    const max = Math.floor(pontuation);
     const inicio = performance.now();
-
-    function animar(agora) {
-        const decorrido = agora - inicio;
-        const progresso = Math.min(decorrido / duracao, 1);
-        const valorAtual = Math.floor(progresso * pontuacaoMaxima);
-
-        pontuacaoFinal.textContent = valorAtual;
-
-        if (progresso < 1) {
-            requestAnimationFrame(animar);
-        }
+    function tick(agora) {
+        const p = Math.min((agora - inicio) / 2000, 1);
+        el.textContent = Math.floor(p * max);
+        if (p < 1) requestAnimationFrame(tick);
     }
-
-    requestAnimationFrame(animar);
+    requestAnimationFrame(tick);
 }
 
-// Função para atualizar as estrelas baseado na pontuação
 function atualizarEstrelas() {
     const estrelas = document.querySelector('.estrelas');
-    const fraseMotivacao = document.getElementById('fraseMotivacao');
-
-    // Não mostra estrelas e frase de motivação em modo autoplay
+    const frase = document.getElementById('fraseMotivacao');
     if (modoAtual === "autoplay") {
         if (estrelas) estrelas.style.display = 'none';
-        if (fraseMotivacao) fraseMotivacao.style.display = 'none';
+        if (frase) frase.style.display = 'none';
         return;
     }
-
-    // Mostra novamente no modo jogar
     if (estrelas) estrelas.style.display = 'block';
-    if (fraseMotivacao) fraseMotivacao.style.display = 'block';
-
-    const estrelasSpans = document.querySelectorAll('.estrelas span');
-    const pontuacaoAtual = Math.floor(pontuation);
-
-    // Determina quantas estrelas mostrar
-    let quantidadeEstrelas = 1;
-    let frase = "Bom trabalho!";
-
-    if (pontuacaoAtual < 700) {
-        quantidadeEstrelas = 1;
-        frase = "Boa tentativa! Continue praticando!";
-    } else if (pontuacaoAtual < 850) {
-        quantidadeEstrelas = 2;
-        frase = "Excelente desempenho! Você está quase lá!";
-    } else {
-        quantidadeEstrelas = 3;
-        frase = "Perfeito! Você é um maestro!";
-    }
-
-    // Atualiza as estrelas: cheias (★) ou vazias (☆)
-    estrelasSpans.forEach((estrela, index) => {
-        if (index < quantidadeEstrelas) {
-            estrela.textContent = '★'; // Estrela cheia
-        } else {
-            estrela.textContent = '☆'; // Estrela vazia
-        }
-    });
-
-    // Atualiza a frase de motivação
-    if (fraseMotivacao) {
-        fraseMotivacao.textContent = frase;
-    }
+    if (frase) frase.style.display = 'block';
+    const pts = Math.floor(pontuation);
+    const qtd = pts < 700 ? 1 : pts < 850 ? 2 : 3;
+    const msg = pts < 700 ? "Boa tentativa! Continue praticando!"
+              : pts < 850 ? "Excelente desempenho! Você está quase lá!"
+              : "Perfeito! Você é um maestro!";
+    document.querySelectorAll('.estrelas span').forEach((s, i) => s.textContent = i < qtd ? '★' : '☆');
+    if (frase) frase.textContent = msg;
 }
 
 function showPointsAnimation(points) {
-    const roundedPoints = Math.round(points);
-    // Não mostra animação se os pontos arredondados forem zero
-    if (roundedPoints === 0) return;
-
-    const pontosDiv = document.createElement('div');
-    pontosDiv.className = `floating-points ${roundedPoints >= 0 ? 'positive' : 'negative'}`;
-    pontosDiv.textContent = roundedPoints >= 0 ? `+${roundedPoints}` : `${roundedPoints}`;
-
-    // Posição aleatória na tela (parte superior)
-    const randomX = Math.random() * (window.innerWidth - 200) + 100;
-    const randomY = window.innerHeight * 0.3 + Math.random() * 200;
-
-    pontosDiv.style.left = randomX + 'px';
-    pontosDiv.style.top = randomY + 'px';
-
-    document.body.appendChild(pontosDiv);
-
-    // Remove o elemento após a animação
-    setTimeout(() => {
-        pontosDiv.remove();
-    }, 2000);
+    const r = Math.round(points);
+    if (r === 0) return;
+    const div = document.createElement('div');
+    div.className = `floating-points ${r >= 0 ? 'positive' : 'negative'}`;
+    div.textContent = r >= 0 ? `+${r}` : `${r}`;
+    div.style.left = (Math.random() * (window.innerWidth - 200) + 100) + 'px';
+    div.style.top  = (window.innerHeight * 0.3 + Math.random() * 200) + 'px';
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2000);
 }
 
 function atualizarOpacidadeCubo(cube) {
     if (Array.isArray(cube.material)) {
-        cube.material.forEach((mat) => {
+        cube.material.forEach(mat => {
             if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshBasicMaterial) {
                 mat.opacity = cube.userData.opacity;
                 mat.transparent = true;
@@ -589,58 +460,40 @@ function atualizarOpacidadeCubo(cube) {
 }
 
 function reduzirOpacidadeCubo(cube) {
-    cube.userData.opacity = Math.max(0, cube.userData.opacity - 1 / 3);
+    cube.userData.opacity = Math.max(0, cube.userData.opacity - 1/3);
     atualizarOpacidadeCubo(cube);
-
-    // Se opacidade chegou a 0, remover cubo
     if (cube.userData.opacity <= 0.05) {
         scene.remove(cube);
-        const index = activeCubes.indexOf(cube);
-        if (index !== -1) activeCubes.splice(index, 1);
+        const idx = activeCubes.indexOf(cube);
+        if (idx !== -1) activeCubes.splice(idx, 1);
     }
 }
 
-const canvas = renderer.domElement;
-const resetar = document.getElementById("resetarButton");
-const voltar = document.getElementById("voltarButton");
-const pontuacao = document.getElementById("pontuacao");
-const gameMenu = document.getElementById("gameMenu");
-const progressContainer = document.getElementById("progressContainer");
-const progressBar = document.getElementById("progressBar");
-const autoplayButton = document.getElementById("autoplayButton");
-const jogarButton = document.getElementById("jogarButton");
+// ─── Inicialização ────────────────────────────────────────────
 
-
-// Mapeamento de nomes de músicas
-const nomesDasMusicas = {
-    "littlestar": "Twinkle, Twinkle, Little Star - Mozart",
-    "jinglebell": "Jingle Bells - James Lord Pierpont",
-    "elvis": "Beethoven - Für Elise",
-    "bethoven": "Bethoven - Ode á Alegria",
-    "tchai": "Tchaikovsky - Lago dos Cisnes"
-};
-
-// Função para obter nome da música
-function obterNomeDaMusica(musicaKey) {
-    return nomesDasMusicas[musicaKey] || "Música";
-}
-
-// Ler música e modo do localStorage
-const musicaArmazenada = localStorage.getItem("musica") || "elvis";
-const modoArmazenado = localStorage.getItem("modo") || "autoplay";
 modoMusica = localStorage.getItem("modoMusica") || "jogador";
-musica = musicaArmazenada;
-
-// Configurar multiplicador de tempo baseado no modo
-// Modo aprendiz: 70% mais lento (multiplicador ~1.43)
-// Modo jogador: velocidade original (multiplicador 1)
+musica     = localStorage.getItem("musica")     || "elvis";
 multiplicadorTempo = modoMusica === "aprendiz" ? 1.428571 : 1;
 
-if (animationId !== null) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
+// ─── Helper: carrega partitura correta ────────────────────────
+
+function carregarPartituraAtual() {
+    if      (musica === "bethoven")  carregarPartituraOdeToJoy();
+    else if (musica === "tchai")     carregarPartituraCisne();
+    else if (musica === "littlestar") carregarPartituraTwinkle();
+    else if (musica === "jinglebell") carregarPartituraJingleBell();
+    else                             carregarPartituraFurElise();
 }
 
+// ─── Helper: inicia áudio e animação ─────────────────────────
+
+async function iniciarJogo() {
+    await garantirAudio();
+    await carregarPiano();
+    animate();
+}
+
+// ─── Botões principais ────────────────────────────────────────
 
 voltar.addEventListener("click", () => {
     modoAtual = null;
@@ -656,12 +509,11 @@ voltar.addEventListener("click", () => {
     window.location.href = "selector.html";
 });
 
-
-autoplayButton.addEventListener("click", () => {
+autoplayButton.addEventListener("click", async () => {
     if (modoAtual === "autoplay") return;
+
     progressBar.style.width = "0%";
     progressContainer.style.display = "flex";
-    // Não mostra pontuação no modo autoplay
     pontuacao.style.display = "none";
     document.getElementById("pontuacaoContainer").style.display = "none";
     document.getElementById("pontuacaoTitle").style.display = "none";
@@ -669,59 +521,24 @@ autoplayButton.addEventListener("click", () => {
     document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
     document.getElementById("nomeDaMusica").style.display = "block";
     document.getElementById("botoesMusica").style.display = "flex";
-
-    // Atualizar estado ativo dos botões
     document.getElementById("botoesAutoplay").classList.add("ativo");
     document.getElementById("botoesJogar").classList.remove("ativo");
-
     canvas.style.display = "inline";
 
     modoAtual = "autoplay";
     pontuation = 0;
     atualizarPontuacao();
     resetarCena();
-    if (musica === "bethoven") {
-        carregarPartituraOdeToJoy();
-    } else if (musica == "tchai") {
-        carregarPartituraCisne();
-    } else if (musica === "littlestar") {
-        carregarPartituraTwinkle();
-    } else if (musica === "jinglebell") {
-        carregarPartituraJingleBell();
-    }
-    else {
-        carregarPartituraFurElise();
-    }
+    removerDesktop();          // autoplay não usa teclado
+    carregarPartituraAtual();
     startTime = performance.now();
-    if (teclaListener) {
-        document.removeEventListener("keydown", teclaListener);
-        teclaListener = null;
-    }
 
-    if (animationId !== null) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-    }
-
-    if (audioContext.state === "suspended") {
-        audioContext.resume();
-    }
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    await iniciarJogo();
 });
 
-
-
-jogarButton.addEventListener("click", () => {
+jogarButton.addEventListener("click", async () => {
     if (modoAtual === "jogar") return;
+
     document.getElementById("gameMenu").style.display = "flex";
     pontuacao.style.display = "block";
     document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
@@ -731,11 +548,7 @@ jogarButton.addEventListener("click", () => {
     progressContainer.style.display = "flex";
     document.getElementById("pontuacaoContainer").style.display = "block";
     document.getElementById("pontuacaoTitle").style.display = "block";
-    document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
-    document.getElementById("nomeDaMusica").style.display = "block";
     document.getElementById("botoesMusica").style.display = "flex";
-
-    // Atualizar estado ativo dos botões
     document.getElementById("botoesJogar").classList.add("ativo");
     document.getElementById("botoesAutoplay").classList.remove("ativo");
 
@@ -743,682 +556,185 @@ jogarButton.addEventListener("click", () => {
     pontuation = 0;
     atualizarPontuacao();
     resetarCena();
-    if (musica === "bethoven") {
-        carregarPartituraOdeToJoy();
-    } else if (musica == "tchai") {
-        carregarPartituraCisne();
-    } else if (musica === "littlestar") {
-        carregarPartituraTwinkle();
-    } else if (musica === "jinglebell") {
-        carregarPartituraJingleBell();
-    }
-    else {
-        carregarPartituraFurElise();
-    }
+    removerDesktop();
+    registrarDesktop(processarNota);  // desktop usa keydown → processarNota
+    carregarPartituraAtual();
     startTime = performance.now();
-    if (animationId !== null) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-    }
 
-    if (teclaListener) {
-        document.removeEventListener("keydown", teclaListener);
-    }
-
-    teclaListener = (e) => {
-        const note = keyMap[e.key];
-        if (!note || !piano) return;
-
-        piano.play(note);
-
-        // Primeiro, procura o cubo mais próximo na área correta
-        let acertou = false;
-        let cuboMaisProximoNaArea = null;
-        let menorDistanciaArea = Infinity;
-
-        for (let i = 0; i < activeCubes.length; i++) {
-            const cube = activeCubes[i];
-            const cubeNote = keyMap[cube.userData.letter];
-            const near = Math.abs(cube.position.z - plane2.position.z) < 1;
-
-            if (!cube.userData.hit && cubeNote === note && near) {
-                const distancia = Math.abs(cube.position.z - plane2.position.z);
-                if (distancia < menorDistanciaArea) {
-                    menorDistanciaArea = distancia;
-                    cuboMaisProximoNaArea = cube;
-                }
-            }
-        }
-
-        if (cuboMaisProximoNaArea) {
-            cuboMaisProximoNaArea.userData.hit = true;
-            acertou = true;
-
-            const letra = cuboMaisProximoNaArea.userData.letter;
-
-            // Muda a cor e textura (igual ao autoplay)
-            if (Array.isArray(cuboMaisProximoNaArea.material)) {
-                cuboMaisProximoNaArea.material.forEach((mat, idx) => {
-                    if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
-                        mat.color.set(0x51B79F);
-                    }
-
-                    if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
-                        const novaTextura = loadedTexturesAlt[letra];
-                        if (novaTextura) {
-                            mat.map = novaTextura;
-                            mat.needsUpdate = true;
-                        } else {
-                            console.warn(`Textura alternativa não encontrada para: ${letra}`);
-                        }
-                    }
-                });
-            }
-
-            // Remove o cubo após a mudança de cor e textura
-            setTimeout(() => {
-                pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
-                showPointsAnimation(pontosParaAcerto);
-                atualizarPontuacao();
-                scene.remove(cuboMaisProximoNaArea);
-                const index = activeCubes.indexOf(cuboMaisProximoNaArea);
-                if (index !== -1) activeCubes.splice(index, 1);
-            }, 400);
-        }
-
-        // Se não acertou na área correta, procura pelo cubo mais próximo com a mesma nota
-        if (!acertou) {
-            let cuboMaisProximo = null;
-            let menorDistancia = Infinity;
-
-            for (let i = 0; i < activeCubes.length; i++) {
-                const cube = activeCubes[i];
-                const cubeNote = keyMap[cube.userData.letter];
-
-                if (!cube.userData.hit && cubeNote === note) {
-                    const distancia = Math.abs(cube.position.z - plane2.position.z);
-                    if (distancia < menorDistancia) {
-                        menorDistancia = distancia;
-                        cuboMaisProximo = cube;
-                    }
-                }
-            }
-
-            if (cuboMaisProximo) {
-                reduzirOpacidadeCubo(cuboMaisProximo);
-            } else {
-                // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
-                const penalidade = pontosParaAcerto * 0.10;
-                pontuation = Math.max(0, pontuation - penalidade);
-                showPointsAnimation(-penalidade);
-                atualizarPontuacao();
-            }
-        }
-    };
-    document.addEventListener("keydown", teclaListener);
-
-    if (audioContext.state === "suspended") {
-        audioContext.resume();
-    }
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    await iniciarJogo();
 });
-resetar.addEventListener("click", () => {
+
+resetar.addEventListener("click", async () => {
     resetarCena();
-
-    if (animationId !== null) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-    }
-
-    if (teclaListener) {
-        document.removeEventListener("keydown", teclaListener);
-        teclaListener = null;
-    }
-
-    if (musica === "bethoven") {
-        carregarPartituraOdeToJoy();
-    } else if (musica === "tchai") {
-        carregarPartituraCisne();
-    } else if (musica === "littlestar") {
-        carregarPartituraTwinkle();
-    } else if (musica === "jinglebell") {
-        carregarPartituraJingleBell();
-    } else {
-        carregarPartituraFurElise();
-    }
-
+    removerDesktop();
+    if (modoAtual === "jogar") registrarDesktop(processarNota);
+    carregarPartituraAtual();
     startTime = performance.now();
-
-    if (modoAtual === "jogar") {
-        teclaListener = (e) => {
-            const note = keyMap[e.key];
-            if (!note || !piano) return;
-
-            piano.play(note);
-
-            // Primeiro, procura um cubo na área correta
-            let acertou = false;
-            for (let i = activeCubes.length - 1; i >= 0; i--) {
-                const cube = activeCubes[i];
-                const cubeNote = keyMap[cube.userData.letter];
-                const near = Math.abs(cube.position.z - plane2.position.z) < 0.4;
-
-                if (!cube.userData.hit && cubeNote === note && near) {
-                    cube.userData.hit = true;
-                    acertou = true;
-
-                    const letra = cube.userData.letter;
-
-                    // Muda a cor e textura (igual ao autoplay)
-                    if (Array.isArray(cube.material)) {
-                        cube.material.forEach((mat, idx) => {
-                            if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
-                                mat.color.set(0x51B79F);
-                            }
-
-                            if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
-                                const novaTextura = loadedTexturesAlt[letra];
-                                if (novaTextura) {
-                                    mat.map = novaTextura;
-                                    mat.needsUpdate = true;
-                                } else {
-                                    console.warn(`Textura alternativa não encontrada para: ${letra}`);
-                                }
-                            }
-                        });
-                    }
-
-                    // Remove o cubo após a mudança de cor e textura
-                    setTimeout(() => {
-                        pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
-                        showPointsAnimation(pontosParaAcerto);
-                        atualizarPontuacao();
-                        scene.remove(cube);
-                        const index = activeCubes.indexOf(cube);
-                        if (index !== -1) activeCubes.splice(index, 1);
-                    }, 400);
-                    break;
-                }
-            }
-
-            // Se não acertou na área correta, procura pelo cubo mais próximo com a mesma nota
-            if (!acertou) {
-                let cuboMaisProximo = null;
-                let menorDistancia = Infinity;
-
-                for (let i = 0; i < activeCubes.length; i++) {
-                    const cube = activeCubes[i];
-                    const cubeNote = keyMap[cube.userData.letter];
-
-                    if (!cube.userData.hit && cubeNote === note) {
-                        const distancia = Math.abs(cube.position.z - plane2.position.z);
-                        if (distancia < menorDistancia) {
-                            menorDistancia = distancia;
-                            cuboMaisProximo = cube;
-                        }
-                    }
-                }
-
-                if (cuboMaisProximo) {
-                    reduzirOpacidadeCubo(cuboMaisProximo);
-                } else {
-                    // Nenhum cubo tem essa nota - penalidade de -10% do valor de cada acerto
-                    const penalidade = pontosParaAcerto * 0.10;
-                    pontuation = Math.max(0, pontuation - penalidade);
-                    showPointsAnimation(-penalidade);
-                    atualizarPontuacao();
-                }
-            }
-        };
-        document.addEventListener("keydown", teclaListener);
-    }
-
-    if (audioContext.state === "suspended") {
-        audioContext.resume();
-    }
-
-    if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
-            piano = loadedPiano;
-            pianoLoaded = true;
-            animate();
-        });
-    } else {
-        animate();
-    }
+    await iniciarJogo();
 });
 
-
-
-
-
-
+// ─── Partituras ───────────────────────────────────────────────
 
 const pitchToKey = {};
-for (const [key, pitch] of Object.entries(keyMap)) {
-    pitchToKey[pitch] = key;
-}
+for (const [key, pitch] of Object.entries(keyMap)) pitchToKey[pitch] = key;
 
-async function carregarPartituraFurElise() {
-    const notes = notasJson;
-
+function carregarNotas(notes) {
     for (const note of notes) {
         const key = pitchToKey[note.pitch];
-        if (!key) {
-            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
-            continue;
-        }
+        if (!key) { console.warn(`⚠️ Sem mapeamento: ${note.pitch}`); continue; }
         addCubeToScene(key, note.start_ms, 0.05);
     }
-
-    // Aplicar multiplicador de tempo para modo aprendiz
     aplicarMultiplicadorTempo();
-
-    // Calcular pontuação por acerto
-    totalNotas = spawnEvents.length;
-    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
-
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
-}
-
-async function carregarPartituraCisne() {
-    const notes = lagoJson;
-
-    for (const note of notes) {
-        const key = pitchToKey[note.pitch];
-        if (!key) {
-            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
-            continue;
-        }
-        addCubeToScene(key, note.start_ms, 0.05);
-    }
-
-    // Aplicar multiplicador de tempo para modo aprendiz
-    aplicarMultiplicadorTempo();
-
-    // Calcular pontuação por acerto
-    totalNotas = spawnEvents.length;
-    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
-
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
-}
-
-async function carregarPartituraTwinkle() {
-    const notes = littlestar;
-
-    for (const note of notes) {
-        const key = pitchToKey[note.pitch];
-        if (!key) {
-            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
-            continue;
-        }
-        addCubeToScene(key, note.start_ms, 0.05);
-    }
-
-    // Aplicar multiplicador de tempo para modo aprendiz
-    aplicarMultiplicadorTempo();
-
     totalNotas = spawnEvents.length;
     pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
     duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
 }
 
-async function carregarPartituraOdeToJoy() {
-    const notes = odeToJoy;
-    for (const note of notes) {
-        const key = pitchToKey[note.pitch];
-        if (!key) {
-            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
-            continue;
-        }
-        addCubeToScene(key, note.start_ms, 0.05);
-    }
+function carregarPartituraFurElise()   { carregarNotas(notasJson);  }
+function carregarPartituraCisne()      { carregarNotas(lagoJson);   }
+function carregarPartituraTwinkle()    { carregarNotas(littlestar); }
+function carregarPartituraOdeToJoy()   { carregarNotas(odeToJoy);   }
+function carregarPartituraJingleBell() { carregarNotas(jinglebell); }
 
-    // Aplicar multiplicador de tempo para modo aprendiz
-    aplicarMultiplicadorTempo();
-
-    totalNotas = spawnEvents.length;
-    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
-}
-
-async function carregarPartituraJingleBell() {
-    const notes = jinglebell;
-
-    for (const note of notes) {
-        const key = pitchToKey[note.pitch];
-        if (!key) {
-            console.warn(`⚠️ Sem mapeamento: ${note.pitch} (${note.start_ms}ms)`);
-            continue;
-        }
-        addCubeToScene(key, note.start_ms, 0.05);
-    }
-
-    // Aplicar multiplicador de tempo para modo aprendiz
-    aplicarMultiplicadorTempo();
-
-    totalNotas = spawnEvents.length;
-    pontosParaAcerto = PONTUACAO_MAXIMA / totalNotas;
-    duracaoTotal = Math.max(...spawnEvents.map(e => e.delay)) + 5000;
-}
-
-
-/// ============================================================
-// SISTEMA DE RANKING — armazenamento global via Supabase
-// ============================================================
+// ─── Ranking ──────────────────────────────────────────────────
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
 
-// Credenciais Supabase carregadas do .env
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL      = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('[Supabase] Variáveis de ambiente faltando. Verifique `.env`:', {
-        SUPABASE_URL: SUPABASE_URL || '<vazio>',
-        SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ? '****' : '<vazio>'
-    });
-}
-
-if (SUPABASE_URL && SUPABASE_URL.includes('/rest/v1')) {
-    console.error('[Supabase] URL inválida. Use a URL base do projeto Supabase sem `/rest/v1` no final.');
-}
-
-if (SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('sb_secret_')) {
-    console.warn('[Supabase] A chave parece ser service_role. Use a ANON KEY no cliente web.');
-}
-
-// Inicializar cliente Supabase
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let rankingCache = null;
 
-function getRankingKey(musicaKey, modoMusica) {
-    return `${musicaKey}_jogar_${modoMusica}`;
-}
+function getRankingKey(musicaKey, modo) { return `${musicaKey}_jogar_${modo}`; }
 
 async function carregarRankingGlobal() {
     if (rankingCache) return rankingCache;
     try {
-        const { data, error } = await supabase
-            .from('rankings')
-            .select('*');
-        
-        if (error) {
-            console.error('Erro ao carregar ranking:', error);
-            return {};
-        }
-
-        // Reorganizar dados da forma esperada
+        const { data, error } = await supabase.from('rankings').select('*');
+        if (error) { console.error('Erro ranking:', error); return {}; }
         rankingCache = {};
-        if (data) {
-            data.forEach(row => {
-                const key = getRankingKey(row.musica, row.modo);
-                if (!rankingCache[key]) {
-                    rankingCache[key] = [];
-                }
-                rankingCache[key].push({
-                    id: row.id,
-                    nome: row.nome,
-                    pontuacao: row.pontuacao,
-                    data: row.data
-                });
-            });
-            // Ordenar cada ranking por pontuação
-            Object.keys(rankingCache).forEach(key => {
-                rankingCache[key].sort((a, b) => b.pontuacao - a.pontuacao);
-            });
-        }
+        data?.forEach(row => {
+            const key = getRankingKey(row.musica, row.modo);
+            if (!rankingCache[key]) rankingCache[key] = [];
+            rankingCache[key].push({ id: row.id, nome: row.nome, pontuacao: row.pontuacao, data: row.data });
+        });
+        Object.keys(rankingCache).forEach(k => rankingCache[k].sort((a,b) => b.pontuacao - a.pontuacao));
         return rankingCache;
-    } catch (err) {
-        console.error('Erro ao carregar ranking global:', err);
-        return {};
-    }
+    } catch (err) { console.error(err); return {}; }
 }
 
 async function salvarRankingGlobal(dados) {
     rankingCache = dados;
     try {
-        // Converter dados de volta para formato de tabela
         const registros = [];
         Object.entries(dados).forEach(([key, lista]) => {
-            const [musica, _, modo] = key.split('_');
+            const [mus, , modo] = key.split('_');
             lista.forEach(item => {
-                const registro = {
-                    musica,
-                    modo,
-                    nome: item.nome,
-                    pontuacao: item.pontuacao,
-                    data: item.data
-                };
-                if (item.id != null) {
-                    registro.id = item.id;
-                }
-                registros.push(registro);
+                const r = { musica: mus, modo, nome: item.nome, pontuacao: item.pontuacao, data: item.data };
+                if (item.id != null) r.id = item.id;
+                registros.push(r);
             });
         });
-
-        const registrosParaInserir = registros.filter(item => item.id == null);
-        const registrosParaAtualizar = registros.filter(item => item.id != null);
-
-        if (registrosParaAtualizar.length > 0) {
-            const { error: updateError } = await supabase
-                .from('rankings')
-                .upsert(registrosParaAtualizar, { onConflict: ['id'] });
-
-            if (updateError) {
-                console.error('Erro ao atualizar ranking no Supabase:', updateError);
-            }
-        }
-
-        if (registrosParaInserir.length > 0) {
-            const { error: insertError } = await supabase
-                .from('rankings')
-                .insert(registrosParaInserir);
-
-            if (insertError) {
-                console.error('Erro ao inserir ranking no Supabase:', insertError);
-            }
-        }
-
-        if (registrosParaAtualizar.length === 0 && registrosParaInserir.length === 0) {
-            console.log('Nenhum registro de ranking para salvar.');
-        } else {
-            console.log(`Ranking salvo no Supabase: ${registrosParaAtualizar.length} atualizados, ${registrosParaInserir.length} inseridos.`);
-        }
-    } catch (err) {
-        console.error('Erro ao salvar ranking global:', err);
-    }
+        const inserir   = registros.filter(r => r.id == null);
+        const atualizar = registros.filter(r => r.id != null);
+        if (atualizar.length) await supabase.from('rankings').upsert(atualizar, { onConflict: ['id'] });
+        if (inserir.length)   await supabase.from('rankings').insert(inserir);
+    } catch (err) { console.error(err); }
 }
 
-async function carregarRanking(musicaKey, modoMusica) {
+async function carregarRanking(musicaKey, modo) {
     const dados = await carregarRankingGlobal();
-    const key = getRankingKey(musicaKey, modoMusica);
-    return dados[key] || [];
+    return dados[getRankingKey(musicaKey, modo)] || [];
 }
 
-async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
+async function inserirNoRanking(nome, pts, musicaKey, modo) {
     const dados = await carregarRankingGlobal();
-    const key = getRankingKey(musicaKey, modoMusica);
+    const key   = getRankingKey(musicaKey, modo);
     const lista = dados[key] || [];
     const nomeLower = nome.toLowerCase();
-
-    const indexExistente = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
-    if (indexExistente !== -1) {
-        if (pontuacaoAtual > lista[indexExistente].pontuacao) {
-            lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
-            lista[indexExistente].data = new Date().toLocaleDateString('pt-BR');
-        }
+    const idx = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
+    if (idx !== -1) {
+        if (pts > lista[idx].pontuacao) { lista[idx].pontuacao = Math.floor(pts); lista[idx].data = new Date().toLocaleDateString('pt-BR'); }
     } else {
-        lista.push({
-            nome: nome.slice(0, MAX_USUARIO_LENGTH).trim(),
-            pontuacao: Math.floor(pontuacaoAtual),
-            data: new Date().toLocaleDateString('pt-BR')
-        });
+        lista.push({ nome: nome.slice(0, MAX_USUARIO_LENGTH).trim(), pontuacao: Math.floor(pts), data: new Date().toLocaleDateString('pt-BR') });
     }
-
-    lista.sort((a, b) => b.pontuacao - a.pontuacao);
+    lista.sort((a,b) => b.pontuacao - a.pontuacao);
     dados[key] = lista.slice(0, MAX_RANKING);
     rankingCache = dados;
-
     await salvarRankingGlobal(dados);
     return dados[key].findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
 }
 
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
-    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
-    const lista = listaJaCarregada || await carregarRanking(musica, modoMusica);
-    const listaDiv = document.getElementById('rankingLista');
-    if (!listaDiv) return;
-
-    if (lista.length === 0) {
-        listaDiv.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>';
-        return;
-    }
-
-    let html = '<ol id="rankingOl">';
-    lista.forEach((entry, i) => {
-        const destaque = entry.nome.toLowerCase() === nomeDestaque.toLowerCase()
-            ? ' ranking-destaque' : '';
-        html += `
-            <li class="ranking-item${destaque}">
-                <span class="ranking-pos">${i + 1}º</span>
-                <span class="ranking-nome">${entry.nome}</span>
-                <span class="ranking-pts">${entry.pontuacao}</span>
-                <span class="ranking-data">${entry.data}</span>
-            </li>`;
-    });
-    html += '</ol>';
-    listaDiv.innerHTML = html;
+    const modo  = localStorage.getItem('modoMusica') || 'jogador';
+    const lista = listaJaCarregada || await carregarRanking(musica, modo);
+    const div   = document.getElementById('rankingLista');
+    if (!div) return;
+    if (!lista.length) { div.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>'; return; }
+    div.innerHTML = '<ol id="rankingOl">' + lista.map((e, i) => `
+        <li class="ranking-item${e.nome.toLowerCase()===nomeDestaque.toLowerCase()?' ranking-destaque':''}">
+            <span class="ranking-pos">${i+1}º</span>
+            <span class="ranking-nome">${e.nome}</span>
+            <span class="ranking-pts">${e.pontuacao}</span>
+            <span class="ranking-data">${e.data}</span>
+        </li>`).join('') + '</ol>';
 }
 
 function criarContainerRanking(msgHtml, incluirFormulario) {
     if (document.getElementById('rankingEntry')) return false;
-    const fimDiv = document.getElementById('fimDaCena');
+    const fimDiv   = document.getElementById('fimDaCena');
     const botoesDiv = document.getElementById('fimDaCena-buttons');
     if (!fimDiv || !botoesDiv) return false;
-
-    const rankingDiv = document.createElement('div');
-    rankingDiv.id = 'rankingEntry';
-    rankingDiv.innerHTML = `
-        <p id="rankingMsg">${msgHtml}</p>
-        ${incluirFormulario ? `
-        <div id="rankingInputWrapper">
-            <input type="text" id="rankingNomeInput" maxlength="${MAX_USUARIO_LENGTH}"
-                placeholder="Seu nome" autocomplete="off" />
+    const div = document.createElement('div');
+    div.id = 'rankingEntry';
+    div.innerHTML = `<p id="rankingMsg">${msgHtml}</p>
+        ${incluirFormulario ? `<div id="rankingInputWrapper">
+            <input type="text" id="rankingNomeInput" maxlength="${MAX_USUARIO_LENGTH}" placeholder="Seu nome" autocomplete="off"/>
             <button id="rankingConfirmarBtn">Confirmar</button>
         </div>` : ''}
-        <div id="rankingLista"><p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Carregando...</p></div>
-    `;
-    fimDiv.insertBefore(rankingDiv, botoesDiv);
+        <div id="rankingLista"><p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Carregando...</p></div>`;
+    fimDiv.insertBefore(div, botoesDiv);
     return true;
 }
 
-async function mostrarRankingFinal(nomeDestaque) {
-    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
-    rankingCache = null;
-    const lista = await carregarRanking(musica, modoMusica);
-    const pos = lista.findIndex(e => e.nome.toLowerCase() === nomeDestaque.toLowerCase());
-    const msg = pos !== -1 ? `🏆 Você entrou no ranking!` : '🏆 Ranking';
-
-    if (!criarContainerRanking(msg, false)) return;
-    await exibirListaRanking(nomeDestaque, lista);
-}
-
 function exibirFormularioRanking(posicao, nomePreenchido = null) {
-    const isEdicao = nomePreenchido !== null;
-    const titulo = isEdicao 
-        ? '✏️ Editar seu nome' 
-        : `🏆 Você entrou no ranking!`;
-    
+    const titulo = nomePreenchido ? '✏️ Editar seu nome' : '🏆 Você entrou no ranking!';
     if (!criarContainerRanking(titulo, true)) return;
-
     const input = document.getElementById('rankingNomeInput');
-    const btn = document.getElementById('rankingConfirmarBtn');
-    
-    // Pré-preencher input se houver nome
-    if (nomePreenchido) {
-        input.value = nomePreenchido;
-    }
-    
-    input.focus();
-    input.select(); // Seleciona todo o texto para facilitar edição
-
-    input.addEventListener('focus', () => {
-        if (teclaListener) document.removeEventListener('keydown', teclaListener);
-    });
-    input.addEventListener('blur', () => {
-        if (teclaListener) document.addEventListener('keydown', teclaListener);
-    });
+    const btn   = document.getElementById('rankingConfirmarBtn');
+    if (nomePreenchido) { input.value = nomePreenchido; }
+    input.focus(); input.select();
 
     async function confirmarNome() {
         const nome = input.value.trim();
-        if (!nome) {
-            input.style.borderColor = 'red';
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = '...';
+        if (!nome) { input.style.borderColor = 'red'; return; }
+        btn.disabled = true; btn.textContent = '...';
         localStorage.setItem('rankingNomeUsuario', nome);
-
-        const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
-        const pos = await inserirNoRanking(nome, pontuation, musica, modoMusica);
-
+        const modo = localStorage.getItem('modoMusica') || 'jogador';
+        const pos  = await inserirNoRanking(nome, pontuation, musica, modo);
         rankingCache = null;
-
         document.getElementById('rankingInputWrapper').style.display = 'none';
         document.getElementById('rankingMsg').textContent = `🏆 Você ficou em ${pos}º lugar!`;
-
-        const listaNova = await carregarRanking(musica, modoMusica);
-        await exibirListaRanking(nome, listaNova);
+        await exibirListaRanking(nome, await carregarRanking(musica, modo));
     }
 
     btn.addEventListener('click', confirmarNome);
-    input.addEventListener('keydown', (e) => {
-        e.stopPropagation();
-        if (e.key === 'Enter') confirmarNome();
-    });
+    input.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') confirmarNome(); });
 }
 
 async function verificarEAdicionarAoRanking() {
     if (modoAtual !== "jogar") return;
-
-    const pontuacaoAtual = Math.floor(pontuation);
-    if (pontuacaoAtual <= 0) return;
-
+    const pts = Math.floor(pontuation);
+    if (pts <= 0) return;
     rankingCache = null;
-
-    const modoMusica = localStorage.getItem('modoMusica') || 'jogador';
-    const nomeArmazenado = localStorage.getItem('rankingNomeUsuario');
-
+    const modo  = localStorage.getItem('modoMusica') || 'jogador';
+    const nome  = localStorage.getItem('rankingNomeUsuario');
     try {
-        const lista = await carregarRanking(musica, modoMusica);
-        const cabe = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
-
-        if (!cabe) return; // Pontuação não entra no ranking
-
-        // Sempre mostrar formulário de edição/entrada
-        // Se houver nome armazenado, pré-preencher para edição
-        // Se não houver, deixar vazio para entrada
-        const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
-        exibirFormularioRanking(posProvisoria, nomeArmazenado);
-
-    } catch (err) {
-        console.error('Erro no ranking:', err);
-    }
+        const lista = await carregarRanking(musica, modo);
+        const cabe  = lista.length < MAX_RANKING || pts > lista[lista.length - 1].pontuacao;
+        if (!cabe) return;
+        exibirFormularioRanking(lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING, nome);
+    } catch (err) { console.error(err); }
 }
-
-
-
-
