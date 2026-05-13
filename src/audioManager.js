@@ -4,7 +4,7 @@ let audioContext = null;
 let piano = null;
 let pianoLoaded = false;
 let pianoLoadingPromise = null;
-function log(msg) {
+window.log = function(msg) {
     console.log(msg);
     const div = document.createElement('div');
     div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:red;color:white;font-size:12px;z-index:9999;padding:4px;word-break:break-all;';

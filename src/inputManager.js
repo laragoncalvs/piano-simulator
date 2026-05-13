@@ -38,14 +38,10 @@ export function removerDesktop() {
 export function conectarBotaoMobile(btn, key, callback) {
     btn.addEventListener('pointerdown', async (e) => {
         e.preventDefault();
-
-        // Este é o ponto crítico: garantirAudio() DENTRO do gesto real de toque.
-        // O iOS Safari só desbloqueia o AudioContext aqui.
+        log('pointerdown: key=' + key);
         await garantirAudio();
-
-        // Garante que o piano foi carregado (pode acontecer na primeira interação)
         await carregarPiano();
-
+        log('chamando callback para key=' + key);
         callback(key.toLowerCase());
     }, { passive: false });
 }
