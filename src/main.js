@@ -56,10 +56,10 @@ function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
 }
 
 function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 // ─── Three.js setup ──────────────────────────────────────────
@@ -71,13 +71,18 @@ scene.background = new THREE.Color(0x0B0912);
 
 const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(
+  85,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000,
+);
 camera.position.set(0, 6, 3);
 camera.lookAt(0, 1, 0);
 if (isMobile) {
-    camera.position.set(0, 5, 4);
-    camera.fov = 95;
-    camera.updateProjectionMatrix();
+  camera.position.set(0, 5, 4);
+  camera.fov = 95;
+  camera.updateProjectionMatrix();
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -108,7 +113,7 @@ lines.forEach((line, i) => {
 });
 
 scene.add(new THREE.AmbientLight(0xffffff, 2));
-const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
+const directionalLight = new THREE.DirectionalLight(0xf5f591, 4);
 directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
 
@@ -124,7 +129,7 @@ const activeCubes = [];
 const spawnEvents = [];
 
 function addCubeToScene(letter, delay, speed) {
-    spawnEvents.push({ letter, delay, speed, spawned: false });
+  spawnEvents.push({ letter, delay, speed, spawned: false });
 }
 
 function aplicarMultiplicadorTempo() {
@@ -225,8 +230,8 @@ async function processarNota(key) {
 }
 
 function animate() {
-    animationId = requestAnimationFrame(animate);
-    const elapsedTime = performance.now() - startTime;
+  animationId = requestAnimationFrame(animate);
+  const elapsedTime = performance.now() - startTime;
 
     spawnEvents.forEach(event => {
         if (elapsedTime > event.delay && !event.spawned) {
@@ -281,7 +286,7 @@ function animate() {
         }
     }
 
-    renderer.render(scene, camera);
+  renderer.render(scene, camera);
 
     if (activeCubes.length === 0 && spawnEvents.every(e => e.spawned)) {
         if (!fimTimeout) {
@@ -496,17 +501,17 @@ async function iniciarJogo() {
 // ─── Botões principais ────────────────────────────────────────
 
 voltar.addEventListener("click", () => {
-    modoAtual = null;
-    progressContainer.style.display = "none";
-    pontuacao.style.display = "none";
-    document.getElementById("pontuacaoContainer").style.display = "none";
-    document.getElementById("gameMenu").style.display = "none";
-    document.getElementById("nomeDaMusica").style.display = "none";
-    document.getElementById("botoesMusica").style.display = "none";
-    document.getElementById("botoesJogar").classList.remove("ativo");
-    document.getElementById("botoesAutoplay").classList.remove("ativo");
-    canvas.style.display = "none";
-    window.location.href = "selector.html";
+  modoAtual = null;
+  progressContainer.style.display = "none";
+  pontuacao.style.display = "none";
+  document.getElementById("pontuacaoContainer").style.display = "none";
+  document.getElementById("gameMenu").style.display = "none";
+  document.getElementById("nomeDaMusica").style.display = "none";
+  document.getElementById("botoesMusica").style.display = "none";
+  document.getElementById("botoesJogar").classList.remove("ativo");
+  document.getElementById("botoesAutoplay").classList.remove("ativo");
+  canvas.style.display = "none";
+  window.location.href = "selector.html";
 });
 
 autoplayButton.addEventListener("click", async () => {
