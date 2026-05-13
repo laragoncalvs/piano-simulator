@@ -27,6 +27,9 @@ async function ensureAudioContext() {
   if (audioContext.state === "suspended") {
     await audioContext.resume();
   }
+  if (audioContext.state !== "running") {
+    console.error("Audio context not running:", audioContext.state);
+  }
   return audioContext;
 }
 
@@ -36,7 +39,7 @@ async function loadPiano() {
     if (pianoLoaded) return piano;
     try {
         console.log('Tentando carregar piano...');
-        piano = await Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 });
+        piano = await Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 1 });
         pianoLoaded = true;
         console.log('Piano carregado com sucesso:', piano);
     } catch (error) {
@@ -512,7 +515,15 @@ function criarPianoVirtual() {
 
       const simularTecla = async (e) => {
         e.preventDefault();
+        console.log("Touch start, loading piano");
         await loadPiano();
+        console.log("Piano loaded, playing note for", key);
+
+        const note = keyMap[key.toLowerCase()];
+        if (piano && note) {
+          console.log("Playing note:", note);
+          piano.play(note);
+        }
 
         // Feedback visual estilo tecla pressionada
         btn.style.background = "#E323CA";
@@ -522,6 +533,7 @@ function criarPianoVirtual() {
           btn.style.transform = "scale(1)";
         }, 120);
 
+        // Simular o keydown para o jogo
         document.dispatchEvent(
           new KeyboardEvent("keydown", {
             key: key.toLowerCase(),
@@ -841,8 +853,12 @@ jogarButton.addEventListener("click", async () => {
 
   teclaListener = (e) => {
     const note = keyMap[e.key];
-    if (!note || !piano) return;
+    if (!note || !piano) {
+      console.log("Note or piano not available", note, piano);
+      return;
+    }
 
+    console.log("Playing note:", note);
     piano.play(note);
 
     // Primeiro, procura o cubo mais próximo na área correta
