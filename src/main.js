@@ -468,6 +468,8 @@ function atualizarPontuacao() {
 }
 
 function animarPontuacaoFinal() {
+    desabilitarTeclado();
+
     const pontuacaoFinal = document.getElementById('pontuacaoFinal');
     const pontuacaoMaxima = Math.floor(pontuation);
     const duracao = 2000;
