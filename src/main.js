@@ -49,9 +49,23 @@ async function loadPiano() {
     return piano;
 }
 
+
+// CORRETO: cria/retoma o contexto de forma síncrona no gesto
 ["touchstart", "touchend", "mousedown", "click"].forEach((evt) => {
-  document.addEventListener(evt, () => loadPiano().catch(console.error));
+  document.addEventListener(evt, () => {
+    // Cria/retoma o contexto SINCRONAMENTE dentro do gesto
+    if (!audioContext) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) audioContext = new AudioCtx();
+    }
+    if (audioContext && audioContext.state === "suspended") {
+      audioContext.resume(); // não precisa de await aqui
+    }
+    // Carrega o piano em segundo plano
+    loadPiano().catch(console.error);
+  });
 });
+
 
 let piano = null;
 let pianoLoaded = false;
@@ -751,7 +765,6 @@ voltar.addEventListener("click", () => {
 
 autoplayButton.addEventListener("click", async () => {
   if (modoAtual === "autoplay") return;
-      await loadPiano(); // aguarda aqui
 
   progressBar.style.width = "0%";
   progressContainer.style.display = "flex";
@@ -796,6 +809,14 @@ autoplayButton.addEventListener("click", async () => {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
+    if (!audioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) audioContext = new AudioCtx();
+  }
+  if (audioContext?.state === "suspended") audioContext.resume();
+
+  // 2. Agora pode usar await normalmente
+  await loadPiano();
 
   loadPiano().catch(console.error);
   animate();
@@ -803,9 +824,7 @@ autoplayButton.addEventListener("click", async () => {
 
 jogarButton.addEventListener("click", async () => {
 
-    diagnosticar();
   if (modoAtual === "jogar") return;
-      await loadPiano(); // aguarda aqui
 
   document.getElementById("gameMenu").style.display = "flex";
   pontuacao.style.display = "block";
@@ -851,6 +870,20 @@ jogarButton.addEventListener("click", async () => {
     document.removeEventListener("keydown", teclaListener);
   }
 
+    if (!audioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) audioContext = new AudioCtx();
+  }
+if (audioContext && audioContext.state === "suspended") {
+  await audioContext.resume();
+}
+if (piano && note) {
+  piano.play(note);
+}
+
+  // 2. Agora pode usar await normalmente
+  await loadPiano();
+
   teclaListener = (e) => {
     const note = keyMap[e.key];
     if (!note || !piano) {
@@ -859,7 +892,8 @@ jogarButton.addEventListener("click", async () => {
     }
 
     console.log("Playing note:", note);
-    piano.play(note);
+// Antes de qualquer piano.play(note):
+
 
     // Primeiro, procura o cubo mais próximo na área correta
     let acertou = false;
@@ -1506,32 +1540,4 @@ async function verificarEAdicionarAoRanking() {
   } catch (err) {
     console.error("Erro no ranking:", err);
   }
-}
-async function diagnosticar() {
-    // Adicione isso no diagnóstico:
-console.log('Chamando loadPiano...');
-const p = await loadPiano();
-console.log('Resultado loadPiano:', p);
-    console.log('=== DIAGNÓSTICO ===');
-    console.log('pianoLoaded:', pianoLoaded);
-    console.log('piano:', piano);
-    console.log('audioContext:', audioContext);
-    console.log('audioContext.state:', audioContext?.state);
-    
-    // Testa se o contexto toca qualquer coisa
-    const ctx = await ensureAudioContext();
-    const buffer = ctx.createBuffer(1, 1, 22050);
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(ctx.destination);
-    source.start(0);
-    console.log('Buffer silencioso tocado, state agora:', ctx.state);
-    
-    // Testa oscillator
-    const osc = ctx.createOscillator();
-    osc.connect(ctx.destination);
-    osc.frequency.value = 440;
-    osc.start();
-    setTimeout(() => osc.stop(), 500);
-    console.log('Oscillator iniciado — você deve ouvir um bip');
 }
