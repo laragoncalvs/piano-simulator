@@ -1,9 +1,19 @@
 // inputManager.js
 // Gerencia input de desktop (keydown) e mobile (pointerdown) sem KeyboardEvent sintético.
 
-import { garantirAudio, carregarPiano } from './audioManager.js';
+import { garantirAudio, carregarPiano, testarBeep } from './audioManager.js';
 
 let desktopHandler = null;
+
+export function conectarBotaoMobile(btn, key, callback) {
+    btn.addEventListener('pointerdown', async (e) => {
+        e.preventDefault();
+        await garantirAudio();
+        testarBeep();             // ← testa com oscilador puro primeiro
+        await carregarPiano();
+        callback(key.toLowerCase());
+    }, { passive: false });
+}
 
 /**
  * Registra o handler de teclado para desktop.
