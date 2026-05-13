@@ -311,6 +311,8 @@ function animate() {
     if (activeCubes.length === 0 && spawnEvents.every(e => e.spawned)) {
         if (!fimTimeout) {
             fimTimeout = setTimeout(() => {
+                desabilitarTeclado();
+
                 cancelAnimationFrame(animationId);
                 const canvas = renderer.domElement;
                 canvas.style.display = 'none';
