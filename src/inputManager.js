@@ -45,13 +45,3 @@ export function removerDesktop() {
  * @param {string} key - a tecla que representa
  * @param {Function} callback - fn(key: string)
  */
-export function conectarBotaoMobile(btn, key, callback) {
-    btn.addEventListener('pointerdown', async (e) => {
-        e.preventDefault();
-        log('pointerdown: key=' + key);
-        await garantirAudio();
-        await carregarPiano();
-        log('chamando callback para key=' + key);
-        callback(key.toLowerCase());
-    }, { passive: false });
-}
