@@ -5,16 +5,16 @@ import { garantirAudio, carregarPiano, testarBeep } from './audioManager.js';
 
 let desktopHandler = null;
 
+
 export function conectarBotaoMobile(btn, key, callback) {
     btn.addEventListener('pointerdown', async (e) => {
         e.preventDefault();
         await garantirAudio();
-        testarBeep();             // ← testa com oscilador puro primeiro
+        testarBeep();
         await carregarPiano();
         callback(key.toLowerCase());
     }, { passive: false });
 }
-
 /**
  * Registra o handler de teclado para desktop.
  * @param {Function} callback - fn(key: string) chamada em cada tecla

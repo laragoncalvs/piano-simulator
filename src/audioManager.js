@@ -4,6 +4,7 @@ let audioContext = null;
 let piano = null;
 let pianoLoaded = false;
 let pianoLoadingPromise = null;
+let audioDesbloqueado = false;
 
 function log(msg) {
     console.log(msg);
@@ -14,40 +15,56 @@ function log(msg) {
     setTimeout(() => div.remove(), 5000);
 }
 
-export async function garantirAudio() {
+function criarContexto() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         log('ctx criado state=' + audioContext.state);
     }
+}
 
-    if (audioContext.state !== 'running') {
-        await audioContext.resume();
-        log('após resume state=' + audioContext.state);
-    }
-
-    // Toca silêncio para desbloquear Safari
+function tocarSilencio() {
+    if (!audioContext) return;
     const buffer = audioContext.createBuffer(1, 1, 22050);
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
     source.connect(audioContext.destination);
     source.start(0);
-
-    return audioContext;
 }
 
-// Testa se o áudio funciona tocando um beep puro via OscillatorNode
-// sem depender do soundfont — se isso funcionar, o contexto está ok
-export function testarBeep() {
-    if (!audioContext) { log('sem contexto pra beep'); return; }
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    osc.frequency.value = 440;
-    gain.gain.value = 0.3;
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.3);
-    log('beep tocado');
+// Chama isso uma vez, no primeiro toque em qualquer lugar da tela
+export function inicializarAudioNoFirstTouch() {
+    const eventos = ['touchstart', 'pointerdown', 'click'];
+
+    async function handler(e) {
+        if (audioDesbloqueado) return;
+
+        criarContexto();
+
+        if (audioContext.state !== 'running') {
+            await audioContext.resume();
+        }
+
+        tocarSilencio();
+        audioDesbloqueado = true;
+        log('audio desbloqueado no first touch, state=' + audioContext.state);
+
+        // Remove os listeners — só precisa acontecer uma vez
+        eventos.forEach(ev => document.removeEventListener(ev, handler));
+
+        // Já começa a carregar o piano em background
+        carregarPiano().catch(err => log('erro pre-carga piano: ' + err));
+    }
+
+    eventos.forEach(ev => document.addEventListener(ev, handler, { once: false, passive: true }));
+}
+
+export async function garantirAudio() {
+    criarContexto();
+    if (audioContext.state !== 'running') {
+        await audioContext.resume();
+        tocarSilencio();
+    }
+    return audioContext;
 }
 
 export async function carregarPiano() {
@@ -68,6 +85,19 @@ export async function carregarPiano() {
     })();
 
     return pianoLoadingPromise;
+}
+
+export function testarBeep() {
+    if (!audioContext) { log('sem contexto'); return; }
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.frequency.value = 440;
+    gain.gain.value = 0.3;
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.5);
+    log('beep disparado');
 }
 
 export function getPiano() {
