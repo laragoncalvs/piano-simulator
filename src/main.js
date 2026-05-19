@@ -119,8 +119,8 @@ lines.forEach((line, i) => {
 });
 
 if(isMobile) {
-  plane2.position.z = 2;
-  plane2.scale.set(1, 0.8, 1);
+  plane2.position.z = 1.75;
+  plane2.scale.set(1, 0.6, 1);
   lines.forEach(line => { line.scale.set(1, 1.8); });
   
 }
