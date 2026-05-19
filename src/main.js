@@ -11,12 +11,19 @@ import jinglebell from './partituras/jinglebell.json';
 import odeToJoy from './partituras/ode.json';
 
 let audioContext = null;
+// Substitua sua função getAudioContext por esta:
 function getAudioContext() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
+    // iOS exige resume() mesmo em contextos recém-criados
+    if (audioContext.state !== 'running') {
+        audioContext.resume();
+    }
     return audioContext;
-}let piano = null;
+}
+
+let piano = null;
 let pianoLoaded = false;
 let modoAtual = null;
 let modoMusica = null;
