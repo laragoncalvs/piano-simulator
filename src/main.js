@@ -10,8 +10,13 @@ import littlestar from './partituras/littlestar.json';
 import jinglebell from './partituras/jinglebell.json';
 import odeToJoy from './partituras/ode.json';
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-let piano = null;
+let audioContext = null;
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}let piano = null;
 let pianoLoaded = false;
 let modoAtual = null;
 let modoMusica = null;
@@ -173,6 +178,8 @@ function spawnCube(letter, speed) {
 function processarTecla(key) {
     const note = keyMap[key];
     if (!note || !piano) return;
+const ctx = getAudioContext();
+if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
 
     piano.play(note);
 
@@ -439,13 +446,9 @@ function criarPianoVirtual() {
                 }, 120);
 
                 // Desbloqueia AudioContext se necessário (gesto real)
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-
-                // Chama lógica diretamente — sem KeyboardEvent sintético
-                processarTecla(key.toLowerCase());
-
+                const ctx = getAudioContext();
+if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
+processarTecla(key.toLowerCase());
             }, { passive: false });
 
             row.appendChild(btn);
@@ -631,10 +634,10 @@ autoplayButton.addEventListener("click", () => {
         cancelAnimationFrame(animationId);
         animationId = null;
     }
-    if (audioContext.state === "suspended") audioContext.resume();
-
+const ctx = getAudioContext();
+if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             animate();
@@ -681,10 +684,10 @@ jogarButton.addEventListener("click", () => {
     };
     document.addEventListener("keydown", teclaListener);
 
-    if (audioContext.state === "suspended") audioContext.resume();
-
+const ctx = getAudioContext();
+if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             animate();
@@ -716,10 +719,10 @@ resetar.addEventListener("click", () => {
         document.addEventListener("keydown", teclaListener);
     }
 
-    if (audioContext.state === "suspended") audioContext.resume();
-
+const ctx = getAudioContext();
+if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(audioContext, "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             animate();
