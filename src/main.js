@@ -78,7 +78,7 @@ camera.lookAt(0, 1, 0);
 const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile) {
     camera.position.set(0, 4.5, 4);
-    camera.fov = 95;
+    camera.fov = 110;
     camera.updateProjectionMatrix();
 }
 
@@ -99,10 +99,7 @@ plane2.rotation.x = -Math.PI / 2;
 plane2.position.z = 3;
 scene.add(plane2);
 
-if(isMobile) {
-  plane2.position.z =0.3;
-  plane2.scale.set(1, 0.8, 1);
-}
+
 
 const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
 const lineMaterial = new THREE.MeshStandardMaterial({
@@ -121,6 +118,12 @@ lines.forEach((line, i) => {
     scene.add(line);
 });
 
+if(isMobile) {
+  plane2.position.z = 2;
+  plane2.scale.set(1, 0.8, 1);
+  lines.forEach(line => { line.scale.set(1, 1.8); });
+  
+}
 scene.add(new THREE.AmbientLight(0xffffff, 2));
 const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
 directionalLight.position.set(0, 10, 0);
@@ -158,7 +161,7 @@ function spawnCube(letter, speed) {
     }
     const cube = new THREE.Mesh(geometry, newMaterials);
     cube.position.copy(baseCube.position);
-    cube.position.x *= scaleMultiplier;
+    cube.position.x *= scaleMultiplier - 0.03;
     cube.userData = { speed, letter, hit: false, opacity: 1.0 };
     if (isMobile) cube.scale.set(0.5, 0.5, 0.5);
     scene.add(cube);
