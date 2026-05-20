@@ -10,7 +10,14 @@ import littlestar from "./partituras/littlestar.json";
 import jinglebell from "./partituras/jinglebell.json";
 import odeToJoy from "./partituras/ode.json";
 
+// ─── ÁUDIO ───────────────────────────────────────────────────
+
 let audioContext = null;
+let piano = null;
+let pianoLoaded = false;
+let audioUnlocked = false;
+let loadingPianoPromise = null;
+
 function getAudioContext() {
   if (!audioContext) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -18,8 +25,41 @@ function getAudioContext() {
   return audioContext;
 }
 
-let piano = null;
-let pianoLoaded = false;
+async function unlockAudio() {
+  const ctx = getAudioContext();
+  if (ctx.state !== "running") {
+    await ctx.resume();
+  }
+  // Som real ultra-curto — garante desbloqueio no Safari moderno
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  gain.gain.value = 0.0001;
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+  oscillator.start(0);
+  oscillator.stop(ctx.currentTime + 0.01);
+  audioUnlocked = true;
+  return ctx;
+}
+
+async function loadPiano() {
+  if (pianoLoaded) return piano;
+  if (loadingPianoPromise) return loadingPianoPromise;
+  const ctx = await unlockAudio();
+  loadingPianoPromise = Soundfont.instrument(ctx, "acoustic_grand_piano", {
+    gain: 3,
+    attack: 0,
+    decay: 0.1,
+    sustain: 0.8,
+    release: 0.5,
+  });
+  piano = await loadingPianoPromise;
+  pianoLoaded = true;
+  return piano;
+}
+
+// ─── ESTADO ──────────────────────────────────────────────────
+
 let modoAtual = null;
 let modoMusica = null;
 let multiplicadorTempo = 1;
@@ -34,6 +74,8 @@ let pontosParaAcerto = 0;
 const PONTUACAO_MAXIMA = 1000;
 let duracaoTotal = 0;
 
+// ─── THREE.JS SETUP ──────────────────────────────────────────
+
 function createAlphaGradientTexture(colorHex, direction = "bottom-to-top") {
   const size = 256;
   const canvas = document.createElement("canvas");
@@ -45,40 +87,13 @@ function createAlphaGradientTexture(colorHex, direction = "bottom-to-top") {
     canvas.height = size;
   }
   const context = canvas.getContext("2d");
-  let x0 = 0,
-    y0 = 0,
-    x1 = 0,
-    y1 = 0;
+  let x0 = 0, y0 = 0, x1 = 0, y1 = 0;
   switch (direction) {
-    case "top-to-bottom":
-      x0 = 0;
-      y0 = 0;
-      x1 = 0;
-      y1 = size;
-      break;
-    case "bottom-to-top":
-      x0 = 0;
-      y0 = size;
-      x1 = 0;
-      y1 = 0;
-      break;
-    case "left-to-right":
-      x0 = 0;
-      y0 = 0;
-      x1 = size;
-      y1 = 0;
-      break;
-    case "right-to-left":
-      x0 = size;
-      y0 = 0;
-      x1 = 0;
-      y1 = 0;
-      break;
-    default:
-      x0 = 0;
-      y0 = size;
-      x1 = 0;
-      y1 = 0;
+    case "top-to-bottom": x0=0;y0=0;x1=0;y1=size; break;
+    case "bottom-to-top": x0=0;y0=size;x1=0;y1=0; break;
+    case "left-to-right": x0=0;y0=0;x1=size;y1=0; break;
+    case "right-to-left": x0=size;y0=0;x1=0;y1=0; break;
+    default: x0=0;y0=size;x1=0;y1=0;
   }
   const gradient = context.createLinearGradient(x0, y0, x1, y1);
   gradient.addColorStop(0, hexToRgba(colorHex, 0.0));
@@ -105,19 +120,11 @@ const gradientTexture2 = createAlphaGradientTexture("#E323CA", "bottom-to-top");
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b0912);
 
-const camera = new THREE.PerspectiveCamera(
-  85,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000,
-);
+const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 6, 3);
 camera.lookAt(0, 1, 0);
 
-const isMobile =
-  /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent,
-  );
+const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 if (isMobile) {
   camera.position.set(0, 4.5, 4);
   camera.fov = 110;
@@ -150,15 +157,10 @@ const lineMaterial = new THREE.MeshStandardMaterial({
   opacity: 0.5,
   depthWrite: false,
 });
-const lines = Array.from(
-  { length: 13 },
-  (_, i) => new THREE.Mesh(lineGeometry, lineMaterial),
-);
+const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
 lines.forEach((line, i) => {
   line.rotation.x = -Math.PI / 2;
-  line.position.x =
-    [0, 1.1, -1.1, 2.2, -2.2, 3.3, -3.3, 4.4, -4.4, 5.5, -5.5, 6.7, -6.7][i] *
-    scaleMultiplier;
+  line.position.x = [0,1.1,-1.1,2.2,-2.2,3.3,-3.3,4.4,-4.4,5.5,-5.5,6.7,-6.7][i] * scaleMultiplier;
   line.position.z = -2.5;
   scene.add(line);
 });
@@ -166,10 +168,9 @@ lines.forEach((line, i) => {
 if (isMobile) {
   plane2.position.z = 1.75;
   plane2.scale.set(1, 0.6, 1);
-  lines.forEach((line) => {
-    line.scale.set(1, 1.8);
-  });
+  lines.forEach((line) => { line.scale.set(1, 1.8); });
 }
+
 scene.add(new THREE.AmbientLight(0xffffff, 2));
 const directionalLight = new THREE.DirectionalLight(0xf5f591, 4);
 directionalLight.position.set(0, 10, 0);
@@ -180,6 +181,9 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// ─── UNLOCK IOS ──────────────────────────────────────────────
+
 mostrarBotaoUnlockIOS();
 
 function mostrarBotaoUnlockIOS() {
@@ -190,41 +194,38 @@ function mostrarBotaoUnlockIOS() {
   btn.textContent = "🔊 Toque para começar";
   btn.style.cssText = `
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #E323CA;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0B0912;
     color: white;
-    padding: 18px 32px;
-    border-radius: 16px;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
-    z-index: 99999;
+    font-family: -apple-system, sans-serif;
+    z-index: 999999;
     cursor: pointer;
+    -webkit-appearance: none;
   `;
 
-  btn.ontouchstart = (e) => {
+  async function iniciarAudio(e) {
     e.preventDefault();
-    const ctx = getAudioContext();
-    const buf = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-    ctx.resume().then(() => {
-      if (!pianoLoaded) {
-        Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 }).then((p) => {
-          piano = p;
-          pianoLoaded = true;
-        });
-      }
+    try {
+      await unlockAudio();
+      await loadPiano(); // carrega o piano já durante o gesto garantido
       btn.remove();
-    });
-  };
+    } catch (err) {
+      console.error("Erro unlock iOS:", err);
+      btn.remove(); // remove mesmo com erro para não travar a tela
+    }
+  }
 
+  btn.addEventListener("touchstart", iniciarAudio, { passive: false });
+  btn.addEventListener("click", iniciarAudio); // fallback para desktop/PWA
   document.body.appendChild(btn);
 }
+
+// ─── CUBES ───────────────────────────────────────────────────
 
 const activeCubes = [];
 const spawnEvents = [];
@@ -259,13 +260,15 @@ function spawnCube(letter, speed) {
   activeCubes.push(cube);
 }
 
-// ─── PROCESSARTECLA — lógica central, chamada pelo mobile E pelo desktop ───
+// ─── PROCESSARTECLA ──────────────────────────────────────────
 
-function processarTecla(key) {
+async function processarTecla(key) {
   const note = keyMap[key];
-  if (!note || !piano) return;
-  const ctx = getAudioContext();
-  if (ctx.state === "suspended" || ctx.state === "interrupted") ctx.resume();
+  if (!note) return;
+
+  // Garante unlock e piano (seguro chamar múltiplas vezes)
+  if (!audioUnlocked) await unlockAudio();
+  await loadPiano();
 
   piano.play(note);
 
@@ -299,10 +302,7 @@ function processarTecla(key) {
         }
         if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
           const novaTextura = loadedTexturesAlt[letra];
-          if (novaTextura) {
-            mat.map = novaTextura;
-            mat.needsUpdate = true;
-          }
+          if (novaTextura) { mat.map = novaTextura; mat.needsUpdate = true; }
         }
       });
     }
@@ -340,6 +340,8 @@ function processarTecla(key) {
   }
 }
 
+// ─── ANIMATE LOOP ─────────────────────────────────────────────
+
 function animate() {
   animationId = requestAnimationFrame(animate);
   const elapsedTime = performance.now() - startTime;
@@ -375,14 +377,8 @@ function animate() {
             }
             if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
               const novaTextura = loadedTexturesAlt[letra];
-              if (novaTextura) {
-                mat.map = novaTextura;
-                mat.needsUpdate = true;
-              } else {
-                console.warn(
-                  `Textura alternativa não encontrada para: ${letra}`,
-                );
-              }
+              if (novaTextura) { mat.map = novaTextura; mat.needsUpdate = true; }
+              else console.warn(`Textura alternativa não encontrada para: ${letra}`);
             }
           });
         }
@@ -396,11 +392,7 @@ function animate() {
       }
     }
 
-    if (
-      modoAtual === "jogar" &&
-      !cube.userData.hit &&
-      cube.position.z > zAlvo + 1.5
-    ) {
+    if (modoAtual === "jogar" && !cube.userData.hit && cube.position.z > zAlvo + 1.5) {
       cube.userData.hit = true;
       const penalidade = pontosParaAcerto * 0.05;
       pontuation = Math.max(0, pontuation - penalidade);
@@ -417,7 +409,6 @@ function animate() {
     if (!fimTimeout) {
       fimTimeout = setTimeout(() => {
         desabilitarTeclado();
-
         cancelAnimationFrame(animationId);
         const canvas = renderer.domElement;
         canvas.style.display = "none";
@@ -429,9 +420,7 @@ function animate() {
           if (modoAtual === "jogar") {
             pontuacaoFinal.style.display = "block";
             animarPontuacaoFinal();
-            setTimeout(() => {
-              verificarEAdicionarAoRanking().catch(console.error);
-            }, 2200);
+            setTimeout(() => { verificarEAdicionarAoRanking().catch(console.error); }, 2200);
           } else {
             pontuacaoFinal.style.display = "none";
           }
@@ -462,22 +451,21 @@ function resetarCena() {
   if (fimDiv) fimDiv.style.display = "none";
 }
 
-// ─── PIANO VIRTUAL — mobile, sem KeyboardEvent sintético ───
+// ─── PIANO VIRTUAL ───────────────────────────────────────────
+
 function desabilitarTeclado() {
   const teclado = document.getElementById("pianoVirtual");
-  if (teclado) {
-    teclado.style.display = "none";
-  }
+  if (teclado) teclado.style.display = "none";
 }
 
 function criarPianoVirtual() {
   if (!isMobile) return;
 
   const linhas = [
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-    ["z", "x", "c", "v", "b", "n", "m"],
+    ["1","2","3","4","5","6","7","8","9","0"],
+    ["q","w","e","r","t","y","u","i","o","p"],
+    ["a","s","d","f","g","h","j","k","l"],
+    ["z","x","c","v","b","n","m"],
   ];
 
   document.getElementById("pianoVirtual")?.remove();
@@ -485,19 +473,19 @@ function criarPianoVirtual() {
   const pianoDiv = document.createElement("div");
   pianoDiv.id = "pianoVirtual";
   pianoDiv.style.cssText = `
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 6px 4px 14px;
-        background: #1a1a1c;
-        border-top: 1px solid rgba(227,35,202,0.35);
-        z-index: 100;
-        touch-action: none;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    `;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 4px 14px;
+    background: #1a1a1c;
+    border-top: 1px solid rgba(227,35,202,0.35);
+    z-index: 100;
+    touch-action: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  `;
 
   linhas.forEach((linha) => {
     const row = document.createElement("div");
@@ -508,47 +496,40 @@ function criarPianoVirtual() {
       btn.textContent = key.toUpperCase();
       btn.dataset.key = key.toLowerCase();
       btn.style.cssText = `
-                flex: 1;
-                max-width: 38px;
-                height: 42px;
-                border-radius: 8px;
-                border: none;
-                background: #3a3a3e;
-                color: #ffffff;
-                font-size: 16px;
-                font-weight: 500;
-                font-family: -apple-system, 'SF Pro Text', Helvetica, sans-serif;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 1px 0 0 #000;
-                touch-action: manipulation;
-                user-select: none;
-                -webkit-user-select: none;
-                letter-spacing: 0.5px;
-            `;
+        flex: 1;
+        max-width: 38px;
+        height: 42px;
+        border-radius: 8px;
+        border: none;
+        background: #3a3a3e;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: -apple-system, 'SF Pro Text', Helvetica, sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 0 0 #000;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        letter-spacing: 0.5px;
+      `;
 
-      btn.addEventListener(
-        "pointerdown",
-        (e) => {
-          e.preventDefault();
+      btn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
 
-          const ctx = getAudioContext();
-          if (ctx.state !== "running") ctx.resume();
+        // Feedback visual
+        btn.style.background = "#E323CA";
+        btn.style.transform = "scale(0.94)";
+        setTimeout(() => {
+          btn.style.background = "#3a3a3e";
+          btn.style.transform = "scale(1)";
+        }, 120);
 
-          // Feedback visual
-          btn.style.background = "#E323CA";
-          btn.style.transform = "scale(0.94)";
-          setTimeout(() => {
-            btn.style.background = "#3a3a3e";
-            btn.style.transform = "scale(1)";
-          }, 120);
-
-          processarTecla(key.toLowerCase());
-        },
-        { passive: false },
-      );
+        processarTecla(key.toLowerCase());
+      }, { passive: false });
 
       row.appendChild(btn);
     });
@@ -561,6 +542,8 @@ function criarPianoVirtual() {
   const alturaEstimada = 4 * 47 + 20;
   renderer.domElement.style.paddingBottom = `${alturaEstimada}px`;
 }
+
+// ─── UI HELPERS ──────────────────────────────────────────────
 
 function atualizarPontuacao() {
   if (pontuacao) {
@@ -575,7 +558,6 @@ function atualizarPontuacao() {
 
 function animarPontuacaoFinal() {
   desabilitarTeclado();
-
   const pontuacaoFinal = document.getElementById("pontuacaoFinal");
   const pontuacaoMaxima = Math.floor(pontuation);
   const duracao = 2000;
@@ -624,8 +606,7 @@ function showPointsAnimation(points) {
   if (roundedPoints === 0) return;
   const pontosDiv = document.createElement("div");
   pontosDiv.className = `floating-points ${roundedPoints >= 0 ? "positive" : "negative"}`;
-  pontosDiv.textContent =
-    roundedPoints >= 0 ? `+${roundedPoints}` : `${roundedPoints}`;
+  pontosDiv.textContent = roundedPoints >= 0 ? `+${roundedPoints}` : `${roundedPoints}`;
   pontosDiv.style.left = Math.random() * (window.innerWidth - 200) + 100 + "px";
   pontosDiv.style.top = window.innerHeight * 0.3 + Math.random() * 200 + "px";
   document.body.appendChild(pontosDiv);
@@ -635,10 +616,7 @@ function showPointsAnimation(points) {
 function atualizarOpacidadeCubo(cube) {
   if (Array.isArray(cube.material)) {
     cube.material.forEach((mat) => {
-      if (
-        mat instanceof THREE.MeshStandardMaterial ||
-        mat instanceof THREE.MeshBasicMaterial
-      ) {
+      if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshBasicMaterial) {
         mat.opacity = cube.userData.opacity;
         mat.transparent = true;
         mat.needsUpdate = true;
@@ -656,6 +634,8 @@ function reduzirOpacidadeCubo(cube) {
     if (index !== -1) activeCubes.splice(index, 1);
   }
 }
+
+// ─── DOM REFS ────────────────────────────────────────────────
 
 const canvas = renderer.domElement;
 const resetar = document.getElementById("resetarButton");
@@ -690,6 +670,8 @@ if (animationId !== null) {
   animationId = null;
 }
 
+// ─── BOTÕES ──────────────────────────────────────────────────
+
 voltar.addEventListener("click", () => {
   modoAtual = null;
   progressContainer.style.display = "none";
@@ -714,8 +696,7 @@ autoplayButton.addEventListener("click", () => {
   document.getElementById("pontuacaoContainer").style.display = "none";
   document.getElementById("pontuacaoTitle").style.display = "none";
   document.getElementById("gameMenu").style.display = "flex";
-  document.getElementById("nomeDaMusica").textContent =
-    obterNomeDaMusica(musica);
+  document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
   document.getElementById("nomeDaMusica").style.display = "block";
   document.getElementById("botoesMusica").style.display = "flex";
   document.getElementById("botoesAutoplay").classList.add("ativo");
@@ -737,30 +718,17 @@ autoplayButton.addEventListener("click", () => {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
-  if (!pianoLoaded) {
-    const ctx = getAudioContext();
-    ctx
-      .resume()
-      .then(() =>
-        Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 }),
-      )
-      .then((loadedPiano) => {
-        piano = loadedPiano;
-        pianoLoaded = true;
-        animate();
-      });
-  } else {
-    animate();
-  }
+
+  loadPiano().then(() => { animate(); });
 });
+
 jogarButton.addEventListener("click", () => {
   if (modoAtual === "jogar") return;
   criarPianoVirtual();
 
   document.getElementById("gameMenu").style.display = "flex";
   pontuacao.style.display = "block";
-  document.getElementById("nomeDaMusica").textContent =
-    obterNomeDaMusica(musica);
+  document.getElementById("nomeDaMusica").textContent = obterNomeDaMusica(musica);
   document.getElementById("nomeDaMusica").style.display = "block";
   canvas.style.display = "inline";
   progressBar.style.width = "0%";
@@ -784,27 +752,13 @@ jogarButton.addEventListener("click", () => {
   }
   if (teclaListener) document.removeEventListener("keydown", teclaListener);
 
-  // Desktop: keydown → processarTecla
   teclaListener = (e) => {
     if (document.activeElement?.tagName === "INPUT") return;
     processarTecla(e.key.toLowerCase());
   };
   document.addEventListener("keydown", teclaListener);
-  if (!pianoLoaded) {
-    const ctx = getAudioContext();
-    ctx
-      .resume()
-      .then(() =>
-        Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 }),
-      )
-      .then((loadedPiano) => {
-        piano = loadedPiano;
-        pianoLoaded = true;
-        animate();
-      });
-  } else {
-    animate();
-  }
+
+  loadPiano().then(() => { animate(); });
 });
 
 resetar.addEventListener("click", () => {
@@ -829,23 +783,10 @@ resetar.addEventListener("click", () => {
     document.addEventListener("keydown", teclaListener);
   }
 
-  if (!pianoLoaded) {
-    const ctx = getAudioContext();
-    ctx
-      .resume()
-      .then(() =>
-        Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 }),
-      )
-      .then((loadedPiano) => {
-        piano = loadedPiano;
-        pianoLoaded = true;
-        animate();
-      });
-  } else {
-    animate();
-  }
+  loadPiano().then(() => { animate(); });
 });
-// ─── Helper partitura ───────────────────────────────────────
+
+// ─── PARTITURAS ──────────────────────────────────────────────
 
 function carregarPartituraAtual() {
   if (musica === "bethoven") carregarPartituraOdeToJoy();
@@ -861,10 +802,7 @@ for (const [key, pitch] of Object.entries(keyMap)) pitchToKey[pitch] = key;
 function carregarNotas(notes) {
   for (const note of notes) {
     const key = pitchToKey[note.pitch];
-    if (!key) {
-      console.warn(`⚠️ Sem mapeamento: ${note.pitch}`);
-      continue;
-    }
+    if (!key) { console.warn(`⚠️ Sem mapeamento: ${note.pitch}`); continue; }
     addCubeToScene(key, note.start_ms, 0.05);
   }
   aplicarMultiplicadorTempo();
@@ -873,23 +811,13 @@ function carregarNotas(notes) {
   duracaoTotal = Math.max(...spawnEvents.map((e) => e.delay)) + 5000;
 }
 
-function carregarPartituraFurElise() {
-  carregarNotas(notasJson);
-}
-function carregarPartituraCisne() {
-  carregarNotas(lagoJson);
-}
-function carregarPartituraTwinkle() {
-  carregarNotas(littlestar);
-}
-function carregarPartituraOdeToJoy() {
-  carregarNotas(odeToJoy);
-}
-function carregarPartituraJingleBell() {
-  carregarNotas(jinglebell);
-}
+function carregarPartituraFurElise()   { carregarNotas(notasJson);  }
+function carregarPartituraCisne()      { carregarNotas(lagoJson);   }
+function carregarPartituraTwinkle()    { carregarNotas(littlestar); }
+function carregarPartituraOdeToJoy()   { carregarNotas(odeToJoy);   }
+function carregarPartituraJingleBell() { carregarNotas(jinglebell); }
 
-// ─── Ranking ─────────────────────────────────────────────────
+// ─── RANKING ─────────────────────────────────────────────────
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
@@ -912,31 +840,20 @@ async function carregarRankingGlobal() {
   if (rankingCache) return rankingCache;
   try {
     const { data, error } = await supabase.from("rankings").select("*");
-    if (error) {
-      console.error("Erro ao carregar ranking:", error);
-      return {};
-    }
+    if (error) { console.error("Erro ao carregar ranking:", error); return {}; }
     rankingCache = {};
     if (data) {
       data.forEach((row) => {
         const key = getRankingKey(row.musica, row.modo);
         if (!rankingCache[key]) rankingCache[key] = [];
-        rankingCache[key].push({
-          id: row.id,
-          nome: row.nome,
-          pontuacao: row.pontuacao,
-          data: row.data,
-        });
+        rankingCache[key].push({ id: row.id, nome: row.nome, pontuacao: row.pontuacao, data: row.data });
       });
       Object.keys(rankingCache).forEach((key) => {
         rankingCache[key].sort((a, b) => b.pontuacao - a.pontuacao);
       });
     }
     return rankingCache;
-  } catch (err) {
-    console.error(err);
-    return {};
-  }
+  } catch (err) { console.error(err); return {}; }
 }
 
 async function salvarRankingGlobal(dados) {
@@ -946,25 +863,16 @@ async function salvarRankingGlobal(dados) {
     Object.entries(dados).forEach(([key, lista]) => {
       const [mus, , modo] = key.split("_");
       lista.forEach((item) => {
-        const r = {
-          musica: mus,
-          modo,
-          nome: item.nome,
-          pontuacao: item.pontuacao,
-          data: item.data,
-        };
+        const r = { musica: mus, modo, nome: item.nome, pontuacao: item.pontuacao, data: item.data };
         if (item.id != null) r.id = item.id;
         registros.push(r);
       });
     });
-    const inserir = registros.filter((r) => r.id == null);
+    const inserir   = registros.filter((r) => r.id == null);
     const atualizar = registros.filter((r) => r.id != null);
-    if (atualizar.length)
-      await supabase.from("rankings").upsert(atualizar, { onConflict: ["id"] });
-    if (inserir.length) await supabase.from("rankings").insert(inserir);
-  } catch (err) {
-    console.error(err);
-  }
+    if (atualizar.length) await supabase.from("rankings").upsert(atualizar, { onConflict: ["id"] });
+    if (inserir.length)   await supabase.from("rankings").insert(inserir);
+  } catch (err) { console.error(err); }
 }
 
 async function carregarRanking(musicaKey, modoMusica) {
@@ -974,12 +882,10 @@ async function carregarRanking(musicaKey, modoMusica) {
 
 async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
   const dados = await carregarRankingGlobal();
-  const key = getRankingKey(musicaKey, modoMusica);
+  const key   = getRankingKey(musicaKey, modoMusica);
   const lista = dados[key] || [];
   const nomeLower = nome.toLowerCase();
-  const indexExistente = lista.findIndex(
-    (e) => e.nome.toLowerCase() === nomeLower,
-  );
+  const indexExistente = lista.findIndex((e) => e.nome.toLowerCase() === nomeLower);
   if (indexExistente !== -1) {
     if (pontuacaoAtual > lista[indexExistente].pontuacao) {
       lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
@@ -1000,27 +906,23 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
 }
 
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
-  const modo = localStorage.getItem("modoMusica") || "jogador";
+  const modo  = localStorage.getItem("modoMusica") || "jogador";
   const lista = listaJaCarregada || (await carregarRanking(musica, modo));
   const listaDiv = document.getElementById("rankingLista");
   if (!listaDiv) return;
   if (lista.length === 0) {
-    listaDiv.innerHTML =
-      '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>';
+    listaDiv.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>';
     return;
   }
   let html = '<ol id="rankingOl">';
   lista.forEach((entry, i) => {
-    const destaque =
-      entry.nome.toLowerCase() === nomeDestaque.toLowerCase()
-        ? " ranking-destaque"
-        : "";
+    const destaque = entry.nome.toLowerCase() === nomeDestaque.toLowerCase() ? " ranking-destaque" : "";
     html += `<li class="ranking-item${destaque}">
-            <span class="ranking-pos">${i + 1}º</span>
-            <span class="ranking-nome">${entry.nome}</span>
-            <span class="ranking-pts">${entry.pontuacao}</span>
-            <span class="ranking-data">${entry.data}</span>
-        </li>`;
+      <span class="ranking-pos">${i + 1}º</span>
+      <span class="ranking-nome">${entry.nome}</span>
+      <span class="ranking-pts">${entry.pontuacao}</span>
+      <span class="ranking-data">${entry.data}</span>
+    </li>`;
   });
   html += "</ol>";
   listaDiv.innerHTML = html;
@@ -1028,72 +930,53 @@ async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
 
 function criarContainerRanking(msgHtml, incluirFormulario) {
   if (document.getElementById("rankingEntry")) return false;
-  const fimDiv = document.getElementById("fimDaCena");
+  const fimDiv    = document.getElementById("fimDaCena");
   const botoesDiv = document.getElementById("fimDaCena-buttons");
   if (!fimDiv || !botoesDiv) return false;
   const rankingDiv = document.createElement("div");
   rankingDiv.id = "rankingEntry";
   rankingDiv.innerHTML = `
-        <p id="rankingMsg">${msgHtml}</p>
-        ${
-          incluirFormulario
-            ? `<div id="rankingInputWrapper">
-            <input type="text" id="rankingNomeInput" maxlength="${MAX_USUARIO_LENGTH}"
-                placeholder="Seu nome" autocomplete="off" />
-            <button id="rankingConfirmarBtn">Confirmar</button>
-        </div>`
-            : ""
-        }
-        <div id="rankingLista"><p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Carregando...</p></div>
-    `;
+    <p id="rankingMsg">${msgHtml}</p>
+    ${incluirFormulario ? `<div id="rankingInputWrapper">
+      <input type="text" id="rankingNomeInput" maxlength="${MAX_USUARIO_LENGTH}"
+        placeholder="Seu nome" autocomplete="off" />
+      <button id="rankingConfirmarBtn">Confirmar</button>
+    </div>` : ""}
+    <div id="rankingLista"><p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Carregando...</p></div>
+  `;
   fimDiv.insertBefore(rankingDiv, botoesDiv);
   return true;
 }
 
 function exibirFormularioRanking(posicao, nomePreenchido = null) {
-  const titulo = nomePreenchido
-    ? "✏️ Editar seu nome"
-    : "🏆 Você entrou no ranking!";
+  const titulo = nomePreenchido ? "✏️ Editar seu nome" : "🏆 Você entrou no ranking!";
   if (!criarContainerRanking(titulo, true)) return;
   const input = document.getElementById("rankingNomeInput");
-  const btn = document.getElementById("rankingConfirmarBtn");
-  if (nomePreenchido) {
-    input.value = nomePreenchido;
-  }
+  const btn   = document.getElementById("rankingConfirmarBtn");
+  if (nomePreenchido) { input.value = nomePreenchido; }
   input.focus();
   input.select();
 
-  input.addEventListener("focus", () => {
-    if (teclaListener) document.removeEventListener("keydown", teclaListener);
-  });
-  input.addEventListener("blur", () => {
-    if (teclaListener) document.addEventListener("keydown", teclaListener);
-  });
+  input.addEventListener("focus", () => { if (teclaListener) document.removeEventListener("keydown", teclaListener); });
+  input.addEventListener("blur",  () => { if (teclaListener) document.addEventListener("keydown", teclaListener); });
 
   async function confirmarNome() {
     const nome = input.value.trim();
-    if (!nome) {
-      input.style.borderColor = "red";
-      return;
-    }
+    if (!nome) { input.style.borderColor = "red"; return; }
     btn.disabled = true;
     btn.textContent = "...";
     localStorage.setItem("rankingNomeUsuario", nome);
     const modo = localStorage.getItem("modoMusica") || "jogador";
-    const pos = await inserirNoRanking(nome, pontuation, musica, modo);
+    const pos  = await inserirNoRanking(nome, pontuation, musica, modo);
     rankingCache = null;
     document.getElementById("rankingInputWrapper").style.display = "none";
-    document.getElementById("rankingMsg").textContent =
-      `🏆 Você ficou em ${pos}º lugar!`;
+    document.getElementById("rankingMsg").textContent = `🏆 Você ficou em ${pos}º lugar!`;
     const listaNova = await carregarRanking(musica, modo);
     await exibirListaRanking(nome, listaNova);
   }
 
   btn.addEventListener("click", confirmarNome);
-  input.addEventListener("keydown", (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter") confirmarNome();
-  });
+  input.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") confirmarNome(); });
 }
 
 async function verificarEAdicionarAoRanking() {
@@ -1105,14 +988,9 @@ async function verificarEAdicionarAoRanking() {
   const nome = localStorage.getItem("rankingNomeUsuario");
   try {
     const lista = await carregarRanking(musica, modo);
-    const cabe =
-      lista.length < MAX_RANKING ||
-      pontuacaoAtual > lista[lista.length - 1].pontuacao;
+    const cabe  = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
     if (!cabe) return;
-    const posProvisoria =
-      lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
+    const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
     exibirFormularioRanking(posProvisoria, nome);
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { console.error(err); }
 }
