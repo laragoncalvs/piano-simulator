@@ -185,52 +185,45 @@ mostrarBotaoUnlockIOS();
 function mostrarBotaoUnlockIOS() {
   if (!isMobile) return;
 
-  const overlay = document.createElement("div");
-  overlay.id = "iosUnlock";
-  overlay.style.cssText = `
-        position: fixed;
-        inset: 0;
-        background: #0B0912;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-    `;
-
   const btn = document.createElement("button");
+  btn.id = "iosUnlock";
   btn.textContent = "🔊 Toque para começar";
   btn.style.cssText = `
-        background: #E323CA;
-        color: white;
-        padding: 18px 32px;
-        border-radius: 16px;
-        border: none;
-        font-size: 18px;
-        font-weight: 600;
-        box-shadow: 0 4px 30px rgba(227,35,202,0.5);
-        font-family: -apple-system, sans-serif;
-        -webkit-appearance: none;
-        cursor: pointer;
-    `;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #E323CA;
+    color: white;
+    padding: 18px 32px;
+    border-radius: 16px;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    z-index: 99999;
+    cursor: pointer;
+  `;
 
-  btn.addEventListener(
-    "touchstart",
-    async (e) => {
-      e.preventDefault();
-      const ctx = getAudioContext();
-      const buffer = ctx.createBuffer(1, 1, 22050);
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(ctx.destination);
-      source.start(0);
-      await ctx.resume();
-      overlay.remove();
-    },
-    { once: true, passive: false },
-  );
+  btn.ontouchstart = (e) => {
+    e.preventDefault();
+    const ctx = getAudioContext();
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    ctx.resume().then(() => {
+      if (!pianoLoaded) {
+        Soundfont.instrument(ctx, "acoustic_grand_piano", { gain: 4 }).then((p) => {
+          piano = p;
+          pianoLoaded = true;
+        });
+      }
+      btn.remove();
+    });
+  };
 
-  overlay.appendChild(btn);
-  document.body.appendChild(overlay);
+  document.body.appendChild(btn);
 }
 
 const activeCubes = [];
