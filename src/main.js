@@ -18,7 +18,6 @@ function getAudioContext() {
     return audioContext;
 }
 
-mostrarBotaoUnlockIOS();
 let piano = null;
 let pianoLoaded = false;
 let modoAtual = null;
@@ -97,22 +96,22 @@ function mostrarBotaoUnlockIOS() {
     btn.id = 'iosUnlock';
     btn.textContent = '🔊 Toque para ativar o som';
     btn.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: #E323CA;
-        color: white;
-        padding: 18px 32px;
-        border-radius: 16px;
-        font-size: 18px;
-        font-weight: 600;
-        z-index: 9999;
-        cursor: pointer;
-        box-shadow: 0 4px 30px rgba(227,35,202,0.5);
-        font-family: -apple-system, sans-serif;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #E323CA;
+    color: white;
+    padding: 18px 32px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    z-index: 9999;
+    cursor: pointer;
+    box-shadow: 0 4px 30px rgba(227,35,202,0.5);
+    font-family: -apple-system, sans-serif;
     `;
-
+    
     btn.addEventListener('pointerdown', async () => {
         const ctx = getAudioContext();
         // buffer silencioso — o que o iOS realmente exige
@@ -124,13 +123,14 @@ function mostrarBotaoUnlockIOS() {
         await ctx.resume();
         btn.remove();
     }, { once: true });
-
+    
     document.body.appendChild(btn);
 }
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+mostrarBotaoUnlockIOS();
 const scaleMultiplier = isMobile ? 0.45 : 1;
 const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 );
 const planeMaterial2 = new THREE.MeshStandardMaterial({
