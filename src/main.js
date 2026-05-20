@@ -90,6 +90,97 @@ if (isMobile) {
 }
 
 function mostrarBotaoUnlockIOS() {
+    if (!isMobile) return; // ou cheque iOS especificamente
+    
+    const btn = document.createElement('div');
+    btn.id = 'iosUnlock';
+    btn.textContent = '🔊 Toque para ativar o som';
+    btn.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #E323CA;
+    color: white;
+    padding: 18px 32px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    z-index: 9999;
+    cursor: pointer;
+    box-shadow: 0 4px 30px rgba(227,35,202,0.5);
+    font-family: -apple-system, sans-serif;
+    `;
+    
+    btn.addEventListener('pointerdown', async () => {
+        const ctx = getAudioContext();
+        // buffer silencioso — o que o iOS realmente exige
+        const buffer = ctx.createBuffer(1, 1, 22050);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(0);
+        await ctx.resume();
+        btn.remove();
+    }, { once: true });
+    
+    document.body.appendChild(btn);
+}
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const scaleMultiplier = isMobile ? 0.45 : 1;
+const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 );
+const planeMaterial2 = new THREE.MeshStandardMaterial({
+    color: 0xE323CA,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5,
+});
+const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
+plane2.rotation.x = -Math.PI / 2;
+plane2.position.z = 3;
+scene.add(plane2);
+
+
+
+const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
+const lineMaterial = new THREE.MeshStandardMaterial({
+    color: 0xE323CA,
+    map: gradientTexture,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5,
+    depthWrite: false
+});
+const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
+lines.forEach((line, i) => {
+    line.rotation.x = -Math.PI / 2;
+    line.position.x = [0,1.1,-1.1,2.2,-2.2,3.3,-3.3,4.4,-4.4,5.5,-5.5,6.7,-6.7][i] * scaleMultiplier;
+    line.position.z = -2.5;
+    scene.add(line);
+});
+
+if(isMobile) {
+    plane2.position.z = 1.75;
+    plane2.scale.set(1, 0.6, 1);
+    lines.forEach(line => { line.scale.set(1, 1.8); });
+    
+}
+scene.add(new THREE.AmbientLight(0xffffff, 2));
+const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
+directionalLight.position.set(0, 10, 0);
+scene.add(directionalLight);
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+mostrarBotaoUnlockIOS();
+
+function mostrarBotaoUnlockIOS() {
     if (!isMobile) return;
 
     const overlay = document.createElement('div');
@@ -135,59 +226,6 @@ function mostrarBotaoUnlockIOS() {
     overlay.appendChild(btn);
     document.body.appendChild(overlay);
 }
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-mostrarBotaoUnlockIOS();
-const scaleMultiplier = isMobile ? 0.45 : 1;
-const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 );
-const planeMaterial2 = new THREE.MeshStandardMaterial({
-    color: 0xE323CA,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.5,
-});
-const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
-plane2.rotation.x = -Math.PI / 2;
-plane2.position.z = 3;
-scene.add(plane2);
-
-
-
-const lineGeometry = new THREE.PlaneGeometry(0.04, 9 * scaleMultiplier);
-const lineMaterial = new THREE.MeshStandardMaterial({
-    color: 0xE323CA,
-    map: gradientTexture,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.5,
-    depthWrite: false
-});
-const lines = Array.from({ length: 13 }, (_, i) => new THREE.Mesh(lineGeometry, lineMaterial));
-lines.forEach((line, i) => {
-    line.rotation.x = -Math.PI / 2;
-    line.position.x = [0,1.1,-1.1,2.2,-2.2,3.3,-3.3,4.4,-4.4,5.5,-5.5,6.7,-6.7][i] * scaleMultiplier;
-    line.position.z = -2.5;
-    scene.add(line);
-});
-
-if(isMobile) {
-  plane2.position.z = 1.75;
-  plane2.scale.set(1, 0.6, 1);
-  lines.forEach(line => { line.scale.set(1, 1.8); });
-  
-}
-scene.add(new THREE.AmbientLight(0xffffff, 2));
-const directionalLight = new THREE.DirectionalLight(0xF5F591, 4);
-directionalLight.position.set(0, 10, 0);
-scene.add(directionalLight);
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
 
 const activeCubes = [];
 const spawnEvents = [];
@@ -332,7 +370,11 @@ function animate() {
                     cube.material.forEach((mat, idx) => {
                         if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
                             mat.color.set(0x51B79F);
-                        }r
+                        }
+                        if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
+                            const novaTextura = loadedTexturesAlt[letra];
+                            if (novaTextura) {
+                                mat.map = novaTextura;
                                 mat.needsUpdate = true;
                             } else {
                                 console.warn(`Textura alternativa não encontrada para: ${letra}`);
