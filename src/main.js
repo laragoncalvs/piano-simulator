@@ -125,9 +125,10 @@ lines.forEach((line, i) => {
 });
 
 if(isMobile) {
-  plane2.position.z = 1.75;
-  plane2.scale.set(1, 0.6, 1);
-  lines.forEach(line => { line.scale.set(1, 1.8); });
+  plane2.position.z = 3.5;
+  plane2.scale.set(1, 0.6);
+  lines.forEach(line => { line.scale.set(1, 2.8);   line.position.z = -2.8
+  });
   
 }
 scene.add(new THREE.AmbientLight(0xffffff, 2));
