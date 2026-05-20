@@ -17,6 +17,8 @@ function getAudioContext() {
     }
     return audioContext;
 }
+
+mostrarBotaoUnlockIOS();
 let piano = null;
 let pianoLoaded = false;
 let modoAtual = null;
