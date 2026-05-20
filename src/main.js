@@ -90,41 +90,50 @@ if (isMobile) {
 }
 
 function mostrarBotaoUnlockIOS() {
-    if (!isMobile) return; // ou cheque iOS especificamente
-    
-    const btn = document.createElement('div');
-    btn.id = 'iosUnlock';
-    btn.textContent = '🔊 Toque para ativar o som';
-    btn.style.cssText = `
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #E323CA;
-    color: white;
-    padding: 18px 32px;
-    border-radius: 16px;
-    font-size: 18px;
-    font-weight: 600;
-    z-index: 9999;
-    cursor: pointer;
-    box-shadow: 0 4px 30px rgba(227,35,202,0.5);
-    font-family: -apple-system, sans-serif;
+    if (!isMobile) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'iosUnlock';
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: #0B0912;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
     `;
-    
-    btn.addEventListener('pointerdown', async () => {
+
+    const btn = document.createElement('button');
+    btn.textContent = '🔊 Toque para começar';
+    btn.style.cssText = `
+        background: #E323CA;
+        color: white;
+        padding: 18px 32px;
+        border-radius: 16px;
+        border: none;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 4px 30px rgba(227,35,202,0.5);
+        font-family: -apple-system, sans-serif;
+        -webkit-appearance: none;
+        cursor: pointer;
+    `;
+
+    btn.addEventListener('touchend', async (e) => {
+        e.preventDefault();
         const ctx = getAudioContext();
-        // buffer silencioso — o que o iOS realmente exige
         const buffer = ctx.createBuffer(1, 1, 22050);
         const source = ctx.createBufferSource();
         source.buffer = buffer;
         source.connect(ctx.destination);
         source.start(0);
         await ctx.resume();
-        btn.remove();
-    }, { once: true });
-    
-    document.body.appendChild(btn);
+        overlay.remove();
+    }, { once: true, passive: false });
+
+    overlay.appendChild(btn);
+    document.body.appendChild(overlay);
 }
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -323,11 +332,7 @@ function animate() {
                     cube.material.forEach((mat, idx) => {
                         if (mat instanceof THREE.MeshStandardMaterial && mat.color) {
                             mat.color.set(0x51B79F);
-                        }
-                        if (idx === 2 && mat instanceof THREE.MeshBasicMaterial) {
-                            const novaTextura = loadedTexturesAlt[letra];
-                            if (novaTextura) {
-                                mat.map = novaTextura;
+                        }r
                                 mat.needsUpdate = true;
                             } else {
                                 console.warn(`Textura alternativa não encontrada para: ${letra}`);
