@@ -270,7 +270,22 @@ async function processarTecla(key) {
   if (!audioUnlocked) await unlockAudio();
   await loadPiano();
 
-  piano.play(note);
+ const ctx = getAudioContext();
+
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+
+osc.type = "sine";
+osc.frequency.value = 440;
+
+gain.gain.value = 0.1;
+
+osc.connect(gain);
+gain.connect(ctx.destination);
+
+osc.start();
+
+osc.stop(ctx.currentTime + 0.2);
 
   if (modoAtual !== "jogar") return;
 
@@ -383,7 +398,24 @@ function animate() {
           });
         }
         const note = keyMap[cube.userData.letter];
-        if (piano && note) piano.play(note);
+        if (piano && note){
+            const ctx = getAudioContext();
+
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+
+osc.type = "sine";
+osc.frequency.value = 440;
+
+gain.gain.value = 0.1;
+
+osc.connect(gain);
+gain.connect(ctx.destination);
+
+osc.start();
+
+osc.stop(ctx.currentTime + 0.2);
+        }
         setTimeout(() => {
           if (scene.children.includes(cube)) scene.remove(cube);
           const index = activeCubes.indexOf(cube);
