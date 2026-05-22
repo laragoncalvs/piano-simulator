@@ -464,7 +464,7 @@
       }
 
       #telaInicial {
-        padding: 20px 15px;
+        padding: 20px 35px;
         margin-top: 5px;
         width: 100%;
         border-radius: 10px;
@@ -477,12 +477,15 @@
 
       #buttons {
         width: 100%;
-        flex-direction: column;
+        flex-direction: row;
+        margin-bottom: 15px;
       }
-
+      
       #buttons button {
         width: 100%;
         font-size: 0.6em;
+        text-align: left;
+        line-height: 2em;
       }
 
       #buttons a {
@@ -494,24 +497,19 @@
       }
 
       #modoContainer {
+        display: flex;
+        flex-direction: row;
         gap: 8px;
       }
 
       .botaoModo {
         width: 100%;
         height: 60px;
-        font-size: 0.5em;
-        padding: 8px;
+        font-size: 1.5em;
       }
 
-      .botaoModo h5 {
-        margin: 2px 0;
-        font-size: 0.5em;
-      }
 
-      .botaoModo small {
-        font-size: 0.3em !important;
-      }
+      
 
       #pianoImg h5 {
         font-size: 0.6rem;
@@ -528,6 +526,11 @@
 
       #rankingModalMusica {
         font-size: 0.45rem;
+      }
+
+      #inicialButtons{
+        flex-direction: row;
+        height: 45px;
       }
 
       #rankingModalModoAtual {
