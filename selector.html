@@ -120,22 +120,19 @@
     }
 
     #area {
-      position: fixed;
-      background-color: #09179b;
-      z-index: 500;
-      height: 100px;
-      width: 283px;
-      opacity: 0.5;
-      margin-left: 349px;
-      transition: margin-left 0.5s ease;
-      transition: width 0.5s ease;
-    }
-
-    #pianoImg {
-      margin-bottom: 10px;
-      z-index: 0;
-    }
-
+  position: absolute;   /* era fixed — isso quebra tudo */
+  background-color: rgba(9, 23, 155, 0.65);
+  top: 0;
+  height: 100%;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: left 0.35s ease, width 0.35s ease;
+}
+#pianoImg {
+  margin-bottom: 10px;
+  z-index: 0;
+  width: 100%;
+}
     a {
       display: inline;
     }
@@ -429,12 +426,7 @@
         display: block;
       }
 
-      #area {
-        width: 100% !important;
-        margin-left: 0 !important;
-        height: 80px;
-      }
-
+   
       #inicialButtons {
         flex-direction: column;
         width: 100%;
@@ -655,6 +647,12 @@
       rankingModal.addEventListener('click', (e) => {
         if (e.target === rankingModal) rankingModal.style.display = 'none';
       });
+const PIANO_W = 722; // largura original da imagem do piano
+
+function setArea(leftPx, widthPx) {
+  area.style.left  = (leftPx  / PIANO_W * 100) + "%";
+  area.style.width = (widthPx / PIANO_W * 100) + "%";
+}
 
 
       // Atualiza o modal sempre que a música selecionada muda — adicione esta linha
@@ -678,8 +676,7 @@
       tchaiMusic.classList.remove("musicaEscolhida");
       jinglebellMusic.classList.add("musicaEscolhida");
 
-      area.style.setProperty("margin-left", "384px", "important");
-      area.style.setProperty("width", "108px", "important");
+setArea(333, 111);
 
       // Event listeners para seleção de modo
       botaoAprendiz.addEventListener("click", () => {
@@ -706,8 +703,7 @@
         littlestarMusic.classList.remove("musicaEscolhida")
         elvisMusic.classList.add("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-        area.style.setProperty("margin-left", "349px", "important");
-        area.style.setProperty("width", "283px", "important");
+        setArea(250, 208);
     if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
@@ -719,8 +715,7 @@
         tchaiMusic.classList.remove("musicaEscolhida");
         littlestarMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-        area.style.setProperty("margin-left", "306px", "important");
-        area.style.setProperty("width", "218px", "important");
+        setArea(208, 181);
     if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
@@ -732,8 +727,7 @@
         elvisMusic.classList.remove("musicaEscolhida");
         littlestarMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-        area.style.setProperty("margin-left", "140px", "important");
-        area.style.setProperty("width", "582px", "important");
+setArea(360, 153);
     if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
@@ -745,8 +739,7 @@
         elvisMusic.classList.remove("musicaEscolhida");
         tchaiMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-        area.style.setProperty("margin-left", "215px", "important");
-        area.style.setProperty("width", "231px", "important");
+setArea(180, 223);
     if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
@@ -757,8 +750,7 @@
         elvisMusic.classList.remove("musicaEscolhida");
         tchaiMusic.classList.remove("musicaEscolhida");
         littlestarMusic.classList.remove("musicaEscolhida");
-        area.style.setProperty("margin-left", "384px", "important");
-        area.style.setProperty("width", "108px", "important");
+setArea(333, 111);
     if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
@@ -879,10 +871,12 @@
     </div>
 
     <div id="pianoImg">
-      <h5>Área do piano que vai ser tocada:</h5>
-      <div id="area"></div>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" />
-    </div>
+  <h5>Área do piano que vai ser tocada:</h5>
+  <div style="position: relative; display: block; width: 100%;">
+    <div id="area"></div>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" style="display: block; width: 100%; height: auto;" />
+  </div>
+</div>
     <button id="rankingButton"> >> VER RANKING ATUAL </button>
 
     <div id="inicialButtons">
