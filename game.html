@@ -21,6 +21,94 @@
       overflow: hidden;
     }
 
+    #gameArea {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 170px);
+      min-height: 320px;
+      overflow: hidden;
+    }
+
+    #gameArea canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+    }
+
+    #gameArea canvas {
+      position: relative;
+      z-index: 10;
+    }
+
+    #pianoGraphic {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 170px;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #pianoGraphic svg {
+      width: min(98%, 2200px);
+      height: 100%;
+      display: block;
+      filter: none;
+      background-color: transparent !important;
+      margin-bottom: 20px;
+    }
+
+    #pianoGraphic rect.white-key {
+      transition: fill 0.12s ease;
+    }
+
+    #pianoGraphic rect.black-key {
+      transition: fill 0.12s ease;
+    }
+
+    #pianoGraphic rect.white-key.active {
+      fill: #64fedd;
+    }
+
+    #pianoGraphic rect.black-key.active {
+      fill: #64fedd;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 860px) {
+      #pianoGraphic {
+        height: 120px;
+        bottom: 220px;
+        z-index: 15;
+      }
+
+      #gameArea {
+        height: calc(100vh - 340px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      #pianoGraphic {
+        height: 90px;
+        bottom: 180px;
+        z-index: 15;
+      }
+
+      #gameArea {
+        height: calc(100vh - 310px);
+      }
+    }
+
     /* Menu de controles no topo */
     #gameMenu {
       position: fixed;
@@ -652,6 +740,7 @@
 
 
 <body>
+  <div id="gameArea"></div>
   <!-- Menu de controles durante o jogo -->
   <div id="gameMenu">
     <button id="resetarButton">Resetar</button>
@@ -693,6 +782,7 @@
     <div id="progressBar"></div>
   </div>
 
+  <div id="pianoGraphic"></div>
 
   <div id="fimDaCena">
     <div class="estrelas">

@@ -32,6 +32,50 @@ let totalNotas = 0;
 let pontosParaAcerto = 0;
 const PONTUACAO_MAXIMA = 1000;
 let duracaoTotal = 0;
+const pianoSvgKeys = {};
+
+function normalizePitch(pitch) {
+    if (!pitch) return pitch;
+    if (pitch.startsWith('B#')) {
+        const octave = Number(pitch.slice(2));
+        return `C${octave + 1}`;
+    }
+    if (pitch.startsWith('E#')) {
+        const octave = Number(pitch.slice(2));
+        return `F${octave}`;
+    }
+    return pitch;
+}
+
+function normalizeKeyForMap(key) {
+    if (!key) return key;
+    const special = {
+        'enter': 'Enter',
+        'shift': 'Shift',
+        '/': '//',
+        '-': '-',
+        '[': '[',
+        ']': ']',
+        '=': '=',
+        ';': ';',
+        ',': ',',
+        '.': '.',
+        "'": "'",
+        'ç': 'ç',
+        '\\': '\\'
+    };
+    const lower = key.toLowerCase();
+    return special[lower] ?? lower;
+}
+
+function highlightPianoKey(pitch) {
+    const normalized = normalizePitch(pitch);
+    const key = pianoSvgKeys[normalized];
+    if (!key) return;
+    key.classList.add('active');
+    if (key.highlightTimeout) clearTimeout(key.highlightTimeout);
+    key.highlightTimeout = setTimeout(() => key.classList.remove('active'), 180);
+}
 
 function createAlphaGradientTexture(colorHex, direction = 'bottom-to-top') {
     const size = 256;
@@ -77,20 +121,34 @@ const gradientTexture2 = createAlphaGradientTexture('#E323CA', "bottom-to-top");
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0B0912);
 
-const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 6, 3);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0,9, 6);
 camera.lookAt(0, 1, 0);
 
 const isMobile = /Mobi|Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const PIANO_HEIGHT = isMobile ? 0 : 170;
 if (isMobile) {
-    camera.position.set(0, 4.5, 4);
-    camera.fov = 110;
+    camera.position.set(0, 7.5, 4);
+    camera.fov = 90;
     camera.updateProjectionMatrix();
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const canvasHeight = Math.max(0, window.innerHeight - PIANO_HEIGHT);
+renderer.setSize(window.innerWidth, canvasHeight);
+renderer.domElement.style.display = 'block';
+renderer.domElement.style.width = '100%';
+renderer.domElement.style.height = '100%';
+renderer.domElement.style.position = 'relative';
+renderer.domElement.style.zIndex = '1';
+const gameArea = document.getElementById('gameArea');
+if (gameArea) {
+    gameArea.appendChild(renderer.domElement);
+} else {
+    document.body.appendChild(renderer.domElement);
+}
+
+criarPianoGrafico();
 
 const scaleMultiplier = isMobile ? 0.45 : 1;
 const planeGeometry2 = new THREE.PlaneGeometry(13.5 * scaleMultiplier, 2 );
@@ -137,9 +195,15 @@ directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
 
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const pianoDiv = document.getElementById('pianoVirtual');
+    const pianoHeight = pianoDiv ? pianoDiv.getBoundingClientRect().height : 0;
+    const height = Math.max(0, window.innerHeight - PIANO_HEIGHT - pianoHeight);
+    camera.aspect = window.innerWidth / Math.max(1, height);
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, height);
+    const gameArea = document.getElementById('gameArea');
+    if (gameArea) gameArea.style.height = height + 'px';
+    renderer.domElement.style.height = height + 'px';
 });
 
 const activeCubes = [];
@@ -178,11 +242,13 @@ function spawnCube(letter, speed) {
 // ─── PROCESSARTECLA — lógica central, chamada pelo mobile E pelo desktop ───
 
 function processarTecla(key) {
-    const note = keyMap[key];
-    if (!note || !piano) return;
-const ctx = getAudioContext();
-if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
-
+    const normalizedKey = normalizeKeyForMap(key);
+    const note = keyMap[normalizedKey];
+    if (!note) return;
+    highlightPianoKey(note);
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
+    if (!piano) return;
     piano.play(note);
 
     if (modoAtual !== 'jogar') return;
@@ -298,6 +364,7 @@ function animate() {
                     });
                 }
                 const note = keyMap[cube.userData.letter];
+                if (note) highlightPianoKey(note);
                 if (piano && note) piano.play(note);
                 setTimeout(() => {
                     if (scene.children.includes(cube)) scene.remove(cube);
@@ -333,6 +400,8 @@ function animate() {
                 if (fimDiv) {
                     fimDiv.style.display = 'flex';
                     atualizarEstrelas();
+                    const pianoGraphic = document.getElementById('pianoGraphic');
+                    if (pianoGraphic) pianoGraphic.style.display = 'none';
                     if (modoAtual === "jogar") {
                         pontuacaoFinal.style.display = 'block';
                         animarPontuacaoFinal();
@@ -367,6 +436,8 @@ function resetarCena() {
     if (rankingEntry) rankingEntry.remove();
     const fimDiv = document.getElementById('fimDaCena');
     if (fimDiv) fimDiv.style.display = 'none';
+    const pianoGraphic = document.getElementById('pianoGraphic');
+    if (pianoGraphic) pianoGraphic.style.display = 'flex';
 }
 
 // ─── PIANO VIRTUAL — mobile, sem KeyboardEvent sintético ───
@@ -399,7 +470,7 @@ function criarPianoVirtual() {
         padding: 6px 4px 14px;
         background: #1a1a1c;
         border-top: 1px solid rgba(227,35,202,0.35);
-        z-index: 100;
+        z-index: 5;
         touch-action: none;
         display: flex;
         flex-direction: column;
@@ -461,10 +532,95 @@ processarTecla(key.toLowerCase());
 
     document.body.appendChild(pianoDiv);
 
-    const alturaEstimada = 4 * 47 + 20;
-    renderer.domElement.style.paddingBottom = `${alturaEstimada}px`;
+    // calcula altura real do teclado após renderização e ajusta canvas / container
+    const alturaEstimada = pianoDiv.getBoundingClientRect().height || (4 * 47 + 20);
+    const newCanvasHeight = Math.max(0, window.innerHeight - alturaEstimada - PIANO_HEIGHT);
+    renderer.setSize(window.innerWidth, newCanvasHeight);
+    const gameArea = document.getElementById('gameArea');
+    if (gameArea) gameArea.style.height = newCanvasHeight + 'px';
+    renderer.domElement.style.height = newCanvasHeight + 'px';
 }
 
+function criarPianoGrafico() {
+    const pianoDiv = document.getElementById('pianoGraphic');
+    if (!pianoDiv) return;
+    pianoDiv.innerHTML = '';
+    Object.keys(pianoSvgKeys).forEach((pitch) => delete pianoSvgKeys[pitch]);
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const width = 1040;
+    const height = 150;
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+
+    const noteOrder = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const whiteNotes = [];
+    let octave = 0;
+    for (let i = 0; whiteNotes.length < 52; i++) {
+        const noteName = noteOrder[i % 7];
+        whiteNotes.push(`${noteName}${octave}`);
+        if (noteName === 'B') octave++;
+    }
+
+    const whiteWidth = width / whiteNotes.length;
+    const blackAfter = { A: true, C: true, D: true, F: true, G: true };
+
+    // criar grupos para controlar a ordem de pintura (brancas primeiro, pretas depois)
+    const whitesGroup = document.createElementNS(svgNS, 'g');
+    const blacksGroup = document.createElementNS(svgNS, 'g');
+    const blackKeys = [];
+
+    for (let i = 0; i < whiteNotes.length; i++) {
+        const note = whiteNotes[i];
+        const whiteKey = document.createElementNS(svgNS, 'rect');
+        whiteKey.setAttribute('x', (i * whiteWidth).toString());
+        whiteKey.setAttribute('y', '0');
+        whiteKey.setAttribute('width', whiteWidth.toString());
+        whiteKey.setAttribute('height', height.toString());
+        whiteKey.setAttribute('fill', '#f8f5ee');
+        whiteKey.setAttribute('stroke', '#b5ae9d');
+        whiteKey.setAttribute('stroke-width', '1');
+        whiteKey.classList.add('white-key');
+        whiteKey.dataset.note = note;
+        whiteKey.dataset.isBlack = 'false';
+        whitesGroup.appendChild(whiteKey);
+        pianoSvgKeys[normalizePitch(note)] = whiteKey;
+
+        const noteName = note.slice(0, -1);
+        const noteOctave = Number(note.slice(-1));
+        if (blackAfter[noteName] && i < whiteNotes.length - 1) {
+            const blackNote = `${noteName}#${noteOctave}`;
+            const blackWidth = whiteWidth * 0.62;
+            const blackKey = document.createElementNS(svgNS, 'rect');
+            blackKey.setAttribute('x', ((i + 1) * whiteWidth - blackWidth / 2).toString());
+            blackKey.setAttribute('y', '0');
+            blackKey.setAttribute('width', blackWidth.toString());
+            blackKey.setAttribute('height', (height * 0.48).toString());
+            blackKey.setAttribute('rx', '4');
+            blackKey.setAttribute('ry', '4');
+            blackKey.setAttribute('fill', '#2a2a2a');
+            blackKey.setAttribute('stroke', '#3a3a3a');
+            blackKey.setAttribute('stroke-width', '1');
+            blackKey.classList.add('black-key');
+            blackKey.dataset.note = blackNote;
+            blackKey.dataset.isBlack = 'true';
+            blackKeys.push({ key: blackKey, pitch: normalizePitch(blackNote) });
+        }
+    }
+
+    // anexa brancas primeiro, depois pretas para garantir sobreposição correta
+    svg.appendChild(whitesGroup);
+    for (const { key, pitch } of blackKeys) {
+        blacksGroup.appendChild(key);
+        pianoSvgKeys[pitch] = key;
+    }
+    svg.appendChild(blacksGroup);
+
+    pianoDiv.appendChild(svg);
+}
 
 function atualizarPontuacao() {
     if (pontuacao) {
@@ -745,7 +901,7 @@ function carregarPartituraAtual() {
 }
 
 const pitchToKey = {};
-for (const [key, pitch] of Object.entries(keyMap)) pitchToKey[pitch] = key;
+for (const [key, pitch] of Object.entries(keyMap)) pitchToKey[normalizePitch(pitch)] = key;
 
 function carregarNotas(notes) {
     for (const note of notes) {
