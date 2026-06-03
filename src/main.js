@@ -400,6 +400,9 @@ function animate() {
                 if (fimDiv) {
                     fimDiv.style.display = 'flex';
                     atualizarEstrelas();
+                    // esconder elementos de cena que podem aparecer atrás do overlay
+                    if (typeof plane2 !== 'undefined' && plane2) plane2.visible = false;
+                    if (typeof lines !== 'undefined' && Array.isArray(lines)) lines.forEach(l => l.visible = false);
                     const pianoGraphic = document.getElementById('pianoGraphic');
                     if (pianoGraphic) pianoGraphic.style.display = 'none';
                     if (modoAtual === "jogar") {
@@ -593,12 +596,12 @@ function criarPianoGrafico() {
         const noteOctave = Number(note.slice(-1));
         if (blackAfter[noteName] && i < whiteNotes.length - 1) {
             const blackNote = `${noteName}#${noteOctave}`;
-            const blackWidth = whiteWidth * 0.62;
+            const blackWidth = whiteWidth * 0.72;
             const blackKey = document.createElementNS(svgNS, 'rect');
             blackKey.setAttribute('x', ((i + 1) * whiteWidth - blackWidth / 2).toString());
             blackKey.setAttribute('y', '0');
             blackKey.setAttribute('width', blackWidth.toString());
-            blackKey.setAttribute('height', (height * 0.48).toString());
+            blackKey.setAttribute('height', (height * 0.58).toString());
             blackKey.setAttribute('rx', '4');
             blackKey.setAttribute('ry', '4');
             blackKey.setAttribute('fill', '#2a2a2a');
