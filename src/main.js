@@ -1006,21 +1006,24 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
         });
     }
     lista.sort((a, b) => b.pontuacao - a.pontuacao);
-    dados[key] = lista.slice(0, MAX_RANKING);
+    // Keep the full list so all players are saved to the cloud.
+    dados[key] = lista;
     rankingCache = dados;
     await salvarRankingGlobal(dados);
-    return dados[key].findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
+    return lista.findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
 }
 
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
     const modo  = localStorage.getItem('modoMusica') || 'jogador';
-    const lista = listaJaCarregada || await carregarRanking(musica, modo);
+    const listaFull = listaJaCarregada || await carregarRanking(musica, modo);
     const listaDiv = document.getElementById('rankingLista');
     if (!listaDiv) return;
-    if (lista.length === 0) {
+    if (listaFull.length === 0) {
         listaDiv.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.5rem;text-align:center;">Nenhuma pontuação ainda.</p>';
         return;
     }
+    // Only show the top MAX_RANKING entries in the UI
+    const lista = listaFull.slice(0, MAX_RANKING);
     let html = '<ol id="rankingOl">';
     lista.forEach((entry, i) => {
         const destaque = entry.nome.toLowerCase() === nomeDestaque.toLowerCase() ? ' ranking-destaque' : '';
