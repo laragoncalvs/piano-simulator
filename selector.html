@@ -17,7 +17,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: #0e0c17 ;
+      background-color: #0e0c17;
       overflow-x: hidden;
     }
 
@@ -26,11 +26,6 @@
     .telaInicial h1 {
       font-size: 1rem;
       font-family: 'Press Start 2P', monospace;
-      text-shadow:
-        -1px -1px 0 #F5873F,
-        1px -1px 0 #F5873F,
-        -1px 1px 0 #B03A74,
-        1px 1px 0 #B03A74;
       display: inline;
       margin: 0 !important;
     }
@@ -38,11 +33,7 @@
     .telaInicial span {
       font-size: 1em;
       font-family: 'Press Start 2P', monospace;
-      text-shadow:
-        -1px -1px 0 #F5873F,
-        1px -1px 0 #F5873F,
-        -1px 1px 0 #B03A74,
-        1px 1px 0 #B03A74;
+      color: #917C8E;
     }
 
     #telaInicial {
@@ -57,8 +48,8 @@
     }
 
     #jogarButton,
-    #autoplayButton {
-      padding: 12px 40px;
+    #autoplayButton, #rankingButton {
+      padding: 15px 40px;
       color: #0e0e0e;
       border-radius: 18px;
       cursor: pointer;
@@ -68,61 +59,72 @@
       border: none;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       font-family: 'Press Start 2P', monospace;
+            background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
+
     }
 
-    #jogarButton {
-      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
-    }
 
-    #autoplayButton {
-      background: linear-gradient(0deg, rgba(245, 135, 63, 1) 50%, rgba(176, 58, 116, 1) 100%);
-    }
 
     #autoplayButton:hover,
-    #jogarButton:hover {
+    #jogarButton:hover, #rankingButton:hover {
       background-color: #555;
       color: white;
     }
-.textoIntermediarios {
-  font-size: 0.7rem;
-  margin-top: 30px;
-  font-family: 'Press Start 2P', monospace;
-  text-align: start;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px; /* espaço entre o texto e a linha */
-}
 
-.textoIntermediarios h5 {
-  margin: 0;
-  font-size: 0.7rem;
-  color: #60596f;
-  font-family: 'Press Start 2P', monospace;
-  width: auto;        /* não ocupa mais 100% */
-  white-space: nowrap; /* evita que o texto quebre linha */
-  flex-shrink: 0;      /* mantém o tamanho natural do texto */
-}
+    .textoIntermediarios {
+      font-size: 0.7rem;
+      margin-top: 30px;
+      font-family: 'Press Start 2P', monospace;
+      text-align: start;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      /* espaço entre o texto e a linha */
+    }
 
-.textoIntermediarios .linha {
-  height: 1px;
-  background-color: #60596f;
-  flex: 1;            /* ocupa todo o espaço restante */
-}
+    .textoIntermediarios h5 {
+      margin: 0;
+      font-size: 0.7rem;
+      color: #ffffff;
+      font-family: 'Press Start 2P', monospace;
+      width: auto;
+      /* não ocupa mais 100% */
+      white-space: nowrap;
+      /* evita que o texto quebre linha */
+      flex-shrink: 0;
+      /* mantém o tamanho natural do texto */
+    }
+
+    .textoIntermediarios .linha {
+      height: 1px;
+      background-color: #ffffff;
+      flex: 1;
+      /* ocupa todo o espaço restante */
+    }
 
     .ativo {
       background-color: transparent !important;
-      border: 2px solid #64fedd !important;
-      color: #64fedd !important;
+      border: 1px solid #E323CA !important;
+      color: #E323CA !important;
       font-weight: bold !important;
       margin-bottom: 12px;
+      background-color: #260C29 !important;
+    }
+
+    .ativo span {
+      color: #E323CA !important;
     }
 
     .musicaEscolhida {
       background-color: transparent !important;
-      color: #09179b !important;
+      color: #E323CA !important;
       text-shadow: none !important;
+      background-color: #260C29 !important;
+      padding: 15px !important;
+      border-radius: 12px !important;
+      border: 1px solid #E323CA !important;
     }
 
     .titulo {
@@ -130,6 +132,7 @@
       font-size: 2.3rem !important;
       text-shadow: none !important;
       color: white;
+
     }
 
     button {
@@ -138,24 +141,69 @@
       cursor: pointer;
     }
 
-    h5 {
-      color: #8a888b
+    .musicaEscolhida h5 {
+      color: #E323CA !important;
+      font-family: 'Press Start 2P', monospace;
+      margin-top: 8px;
+      font-size: 0.7em;
     }
 
+    .musicaEscolhida span {
+      color: #64fedd !important;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1em;
+    }
+     .musicaEscolhida svg {
+      color: #E323CA !important;
+  
+    }
+
+    .musicaEscolhida.text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+ #buttons h1 {
+    
+  
+      font-size: 0.75rem;
+    }
+    #buttons h5 {
+      color: #917C8E;
+      font-family: 'Press Start 2P', monospace;
+      margin-top: 8px;
+      font-size: 0.7em;
+    }
+
+    #buttons div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    #buttons svg {
+      color: #917C8E;
+    }
+
+
+
     #area {
-  position: absolute;   /* era fixed — isso quebra tudo */
-  background-color: rgba(9, 23, 155, 0.65);
-  top: 0;
-  height: 100%;
-  opacity: 0.5;
-  pointer-events: none;
-  transition: left 0.35s ease, width 0.35s ease;
-}
-#pianoImg {
-  margin-bottom: 10px;
-  z-index: 0;
-  width: 100%;
-}
+      position: absolute;
+      /* era fixed — isso quebra tudo */
+      background-color: rgba(28, 231, 187, 0.75);
+      top: 0;
+      height: 100%;
+      opacity: 0.5;
+      pointer-events: none;
+      transition: left 0.35s ease, width 0.35s ease;
+    }
+
+    #pianoImg {
+      margin-bottom: 10px;
+      z-index: 0;
+      width: 100%;
+    }
+
     a {
       display: inline;
     }
@@ -163,7 +211,7 @@
     #buttons {
       display: flex;
       width: 100%;
-      margin-top: 10px;
+
     }
 
     #elvis,
@@ -175,6 +223,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #917C8E;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      background-color: #160519;
     }
 
     #modoContainer {
@@ -186,57 +240,56 @@
     }
 
     .botaoModo {
-      padding: 3px;
+      padding: 15px;
       width: 100%;
       height: 70px;
-      font-size: 0.9em;
-      border: 3px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-family: 'Press Start 2P', monospace;
       background-color: transparent;
-      color: white;
+      color: #917C8E;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .botaoModo,
     h5 {
       margin-bottom: 5px;
       margin-top: 0px;
+      font-size: 0.8rem;
+    }
+
+        .botaoModo,
+    span {
+      font-size: 0.5rem;
     }
 
     .botaoModo:hover {
       transform: scale(1.05);
-      
+
     }
 
-    
+
 
     #inicialButtons {
       display: flex;
       gap: 20px;
       margin-top: 10px;
+      justify-content: space-between;
+      width: 100%;
     }
 
     #inicialButtons button {
       color: #0e0e0e;
     }
 
-    #rankingButton {
-      color: white;
-      font-family: 'Press Start 2P', monospace;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      font-size: 0.6em;
-      letter-spacing: 2px;
-      animation: rankingPiscar 1s infinite;
-      cursor: pointer;
-    }
 
-    #rankingButton:hover {
-      color: #E323CA;
-      animation: none;
-    }
+
+   
 
     @keyframes rankingPiscar {
 
@@ -403,6 +456,7 @@
       #buttons button h1 {
         font-size: clamp(0.7rem, 3vw, 1rem);
         margin: 5px 0;
+
       }
 
       #buttons button span {
@@ -442,7 +496,7 @@
         display: block;
       }
 
-   
+
       #inicialButtons {
         flex-direction: column;
         width: 100%;
@@ -488,7 +542,7 @@
         flex-direction: row;
         margin-bottom: 15px;
       }
-      
+
       #buttons button {
         width: 100%;
         font-size: 0.6em;
@@ -517,7 +571,7 @@
       }
 
 
-      
+
 
       #pianoImg h5 {
         font-size: 0.6rem;
@@ -536,7 +590,7 @@
         font-size: 0.45rem;
       }
 
-      #inicialButtons{
+      #inicialButtons {
         flex-direction: row;
         height: 45px;
       }
@@ -663,12 +717,12 @@
       rankingModal.addEventListener('click', (e) => {
         if (e.target === rankingModal) rankingModal.style.display = 'none';
       });
-const PIANO_W = 722; // largura original da imagem do piano
+      const PIANO_W = 722; // largura original da imagem do piano
 
-function setArea(leftPx, widthPx) {
-  area.style.left  = (leftPx  / PIANO_W * 100) + "%";
-  area.style.width = (widthPx / PIANO_W * 100) + "%";
-}
+      function setArea(leftPx, widthPx) {
+        area.style.left = (leftPx / PIANO_W * 100) + "%";
+        area.style.width = (widthPx / PIANO_W * 100) + "%";
+      }
 
 
       // Atualiza o modal sempre que a música selecionada muda — adicione esta linha
@@ -692,14 +746,14 @@ function setArea(leftPx, widthPx) {
       tchaiMusic.classList.remove("musicaEscolhida");
       jinglebellMusic.classList.add("musicaEscolhida");
 
-setArea(333, 111);
+      setArea(333, 111);
 
       // Event listeners para seleção de modo
       botaoAprendiz.addEventListener("click", () => {
         modo = "aprendiz";
         localStorage.setItem("modoSelecionado", "aprendiz");
         atualizarEstadoBotoesModo();
-            if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       });
 
@@ -707,7 +761,7 @@ setArea(333, 111);
         modo = "jogador";
         localStorage.setItem("modoSelecionado", "jogador");
         atualizarEstadoBotoesModo();
-            if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       });
 
@@ -720,7 +774,7 @@ setArea(333, 111);
         elvisMusic.classList.add("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
         setArea(250, 208);
-    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -732,7 +786,7 @@ setArea(333, 111);
         littlestarMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
         setArea(208, 181);
-    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -743,8 +797,8 @@ setArea(333, 111);
         elvisMusic.classList.remove("musicaEscolhida");
         littlestarMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-setArea(360, 153);
-    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        setArea(360, 153);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -755,8 +809,8 @@ setArea(360, 153);
         elvisMusic.classList.remove("musicaEscolhida");
         tchaiMusic.classList.remove("musicaEscolhida");
         jinglebellMusic.classList.remove("musicaEscolhida");
-setArea(180, 223);
-    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        setArea(180, 223);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
       jinglebellMusic.addEventListener("click", () => {
@@ -766,8 +820,8 @@ setArea(180, 223);
         elvisMusic.classList.remove("musicaEscolhida");
         tchaiMusic.classList.remove("musicaEscolhida");
         littlestarMusic.classList.remove("musicaEscolhida");
-setArea(333, 111);
-    if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
+        setArea(333, 111);
+        if (rankingModal.style.display === 'flex') carregarRankingModal().catch(console.error);
 
       })
 
@@ -832,90 +886,149 @@ setArea(333, 111);
     </div>
 
     <div id="buttons">
-      <button  id="jinglebell">
-        <h1>James Lord Pierpont - Jingle Bells</h1>
-          <div style="display: flex; align-items: center; justify-content: flex-end;">
-        <span>Fácil</span>
-        <a id="playJingleBell" href="https://www.youtube.com/watch?v=nIhs1T7OcZg" target="_blank">
-          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
-        </a>
+      <button id="jinglebell">
+        <div>
+
+          <h1>Jingle Bells</h1>
+          <h5>James Lord Pierpont</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
+          <span>Fácil</span>
+          <a id="playJingleBell" href="https://www.youtube.com/watch?v=nIhs1T7OcZg" target="_blank">
+
+            <svg viewBox="0 0 100 100" width="25" height="25">
+              <path d="M30,25 Q30,15 38.43,20.37
+             L76.57,44.63
+             Q85,50 76.57,55.37
+             L38.43,79.63
+             Q30,85 30,75 Z" fill="currentColor" />
+            </svg>
+
+          </a>
         </div>
       </button>
     </div>
     <div id="buttons">
       <button id="littlestar">
-        <h1>Unknown  - Twinkle, Twinkle, Little Star</h1>
-          <div style="display: flex; align-items: center; justify-content: flex-end;">
-        <span>Fácil</span>
-        <a id="playLittleStar" href="https://www.youtube.com/watch?v=SNeI2PMcRdA" target="_blank">
-          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
-        </a> 
+        <div class="text">
+
+          <h1>Twinkle, Twinkle, Little Star</h1>
+          <h5>Artista desconhecido</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
+          <span>Fácil</span>
+          <a id="playLittleStar" href="https://www.youtube.com/watch?v=SNeI2PMcRdA" target="_blank">
+            
+            <svg viewBox="0 0 100 100" width="25" height="25">
+              <path d="M30,25 Q30,15 38.43,20.37
+             L76.57,44.63
+             Q85,50 76.57,55.37
+             L38.43,79.63
+             Q30,85 30,75 Z" fill="currentColor" />
+            </svg>
+          </a>
         </div>
       </button>
     </div>
     <div id="buttons">
-      <button  id="elvis">
-        <h1>Beethoven - Für Elise</h1>
-         <div style="display: flex; align-items: center; justify-content: flex-end;">
-        <span>Médio</span>
-        <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
-          <img style="width: 20px;margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
-        </a></div>
+      <button id="elvis">
+         <div class="text">
+
+          <h1>Für Elise</h1>
+          <h5>Beethoven</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
+          <span>Médio</span>
+          <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
+            <svg viewBox="0 0 100 100" width="25" height="25">
+              <path d="M30,25 Q30,15 38.43,20.37
+             L76.57,44.63
+             Q85,50 76.57,55.37
+             L38.43,79.63
+             Q30,85 30,75 Z" fill="currentColor" />
+            </svg>
+          </a>
+        </div>
       </button>
     </div>
     <div id="buttons">
-      <button id="bethoven" >
-        <h1>Bethoven - Ode á Alegria</h1>
-        <div style="display: flex; align-items: center; justify-content: flex-end;">
+      <button id="bethoven">
+        <div class="text">
+
+          <h1>Ode á Alegria</h1>
+          <h5>Beethoven</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
 
           <span>Médio</span>
           <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
-          target="_blank">
-          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
-        </a>
-      </div>
+            target="_blank">
+            <svg viewBox="0 0 100 100" width="25" height="25">
+              <path d="M30,25 Q30,15 38.43,20.37
+             L76.57,44.63
+             Q85,50 76.57,55.37
+             L38.43,79.63
+             Q30,85 30,75 Z" fill="currentColor" />
+            </svg>
+          </a>
+        </div>
       </button>
     </div>
     <div id="buttons">
       <button id="tchai">
-        <h1>Tchaikovsky - Lago dos Cisnes</h1>
-                <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <div class="text">
 
-        <span>Difícil</span>
-        <a id="playTchai" href="https://www.youtube.com/watch?v=ntuiP8uj5xo" target="_blank">
-          <img style="width: 20px; margin-left: 5px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-        </a>
-                </div>
+          <h1>Lago dos Cisnes</h1>
+          <h5>Tchaikovsky</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
+
+          <span>Difícil</span>
+          <a id="playTchai" href="https://www.youtube.com/watch?v=ntuiP8uj5xo" target="_blank">
+            <svg viewBox="0 0 100 100" width="25" height="25">
+              <path d="M30,25 Q30,15 38.43,20.37
+             L76.57,44.63
+             Q85,50 76.57,55.37
+             L38.43,79.63
+             Q30,85 30,75 Z" fill="currentColor" />
+            </svg>
+          </a>
+        </div>
       </button>
     </div>
     <div class="textoIntermediarios">
 
-      <h5 >Modo de jogo</h5><div class="linha"></div>
+      <h5>Modo de jogo</h5>
+      <div class="linha"></div>
     </div>
     <div id="modoContainer">
       <button id="botaoAprendiz" class="botaoModo">
-        <h5 style="color: inherit;">APRENDIZ <small style="font-size: 0.8em;">(para treinar)</small></h5>
-        
+        <h5 style="color: inherit;">Aprendiz </h5>
+         <span> para treinar</span>
+
       </button>
       <button id="botaoJogador" class="botaoModo">
-        <h5 style="color: inherit;">JOGADOR <small style="font-size: 0.8em;">(velocidade original)</small></h5>
-        
+        <h5 style="color: inherit;">Jogador </h5>
+         <span>velocidade original</span>
+
       </button>
     </div>
 
     <div id="pianoImg">
-        <div class="textoIntermediarios">
+      <div class="textoIntermediarios">
 
-          <h5>Área do piano que vai ser tocada</h5><div class="linha"></div>
-        </div>
-  <div style="position: relative; display: block; width: 100%;">
-    <div id="area"></div>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" style="display: block; width: 100%; height: auto; margin-top: 20px;" />
-  </div>
-</div>
-    <button id="rankingButton"> >> VER RANKING ATUAL </button>
-
+        <h5>Área do piano que vai ser tocada</h5>
+        <div class="linha"></div>
+      </div>
+      <div style="position: relative; display: block; width: 100%;">
+        <div id="area"></div>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC"
+          style="display: block; width: 100%; height: auto; margin-top: 20px;" />
+      </div>
+    </div>
+    
     <div id="inicialButtons">
+      <button id="rankingButton"> VER RANKING ATUAL </button>
       <button id="jogarButton">JOGAR</button>
       <button id="autoplayButton">AUTOPLAY</button>
     </div>
