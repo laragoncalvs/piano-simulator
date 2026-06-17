@@ -25,6 +25,8 @@ let multiplicadorTempo = 1;
 let teclaListener = null;
 let animationId = null;
 let startTime = null;
+let pauseStartTime = null;
+let pausedTimeOffset = 0;
 let fimTimeout = null;
 let musica = null;
 let pontuation = 0;
@@ -319,9 +321,9 @@ function processarTecla(key) {
     }
 }
 
-function animate() {
-    animationId = requestAnimationFrame(animate);
-    const elapsedTime = performance.now() - startTime;
+function render() {
+    animationId = requestAnimationFrame(render);
+    const elapsedTime = performance.now() - startTime - pausedTimeOffset;
 
     spawnEvents.forEach(event => {
         if (elapsedTime > event.delay && !event.spawned) {
@@ -331,7 +333,7 @@ function animate() {
     });
 
     if (startTime && duracaoTotal > 0) {
-        const tempoAtual = performance.now() - startTime;
+        const tempoAtual = elapsedTime;
         const progresso = Math.min(tempoAtual / duracaoTotal, 1);
         progressBar.style.width = (progresso * 100) + "%";
         if (progresso >= 1) progressContainer.style.display = "none";
@@ -393,6 +395,7 @@ function animate() {
                 desabilitarTeclado();
 
                 cancelAnimationFrame(animationId);
+                animationId = null;
                 const canvas = renderer.domElement;
                 canvas.style.display = 'none';
                 const fimDiv = document.getElementById('fimDaCena');
@@ -425,6 +428,34 @@ function animate() {
     }
 }
 
+window.addEventListener('pagehide', () => {
+    if (animationId !== null) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+});
+window.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (animationId !== null) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        if (startTime !== null && pauseStartTime === null) {
+            pauseStartTime = performance.now();
+        }
+        return;
+    }
+
+    if (pauseStartTime !== null) {
+        pausedTimeOffset += performance.now() - pauseStartTime;
+        pauseStartTime = null;
+    }
+
+    if (animationId === null && startTime !== null && (modoAtual === 'autoplay' || modoAtual === 'jogar')) {
+        render();
+    }
+});
+
 function resetarCena() {
     if (animationId !== null) {
         cancelAnimationFrame(animationId);
@@ -434,6 +465,8 @@ function resetarCena() {
     activeCubes.length = 0;
     spawnEvents.length = 0;
     startTime = null;
+    pauseStartTime = null;
+    pausedTimeOffset = 0;
     fimTimeout = null;
     const rankingEntry = document.getElementById('rankingEntry');
     if (rankingEntry) rankingEntry.remove();
@@ -785,7 +818,8 @@ autoplayButton.addEventListener("click", () => {
     atualizarPontuacao();
     resetarCena();
     carregarPartituraAtual();
-    startTime = performance.now();
+    pauseStartTime = null;
+    pausedTimeOffset = 0;
 
     if (teclaListener) {
         document.removeEventListener("keydown", teclaListener);
@@ -801,10 +835,12 @@ if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
         Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
-            animate();
+            startTime = performance.now();
+            render();
         });
     } else {
-        animate();
+        startTime = performance.now();
+        render();
     }
 });
 
@@ -830,7 +866,8 @@ jogarButton.addEventListener("click", () => {
     atualizarPontuacao();
     resetarCena();
     carregarPartituraAtual();
-    startTime = performance.now();
+    pauseStartTime = null;
+    pausedTimeOffset = 0;
 
     if (animationId !== null) {
         cancelAnimationFrame(animationId);
@@ -851,10 +888,12 @@ if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
         Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
-            animate();
+            startTime = performance.now();
+            render();
         });
     } else {
-        animate();
+        startTime = performance.now();
+        render();
     }
 });
 
@@ -870,7 +909,8 @@ resetar.addEventListener("click", () => {
     }
 
     carregarPartituraAtual();
-    startTime = performance.now();
+    pauseStartTime = null;
+    pausedTimeOffset = 0;
 
     if (modoAtual === "jogar") {
         teclaListener = (e) => {
@@ -886,10 +926,12 @@ if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
         Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
-            animate();
+            startTime = performance.now();
+            render();
         });
     } else {
-        animate();
+        startTime = performance.now();
+        render();
     }
 });
 
@@ -953,7 +995,7 @@ async function carregarRankingGlobal() {
             data.forEach(row => {
                 const key = getRankingKey(row.musica, row.modo);
                 if (!rankingCache[key]) rankingCache[key] = [];
-                rankingCache[key].push({ id: row.id, nome: row.nome, pontuacao: row.pontuacao, data: row.data });
+                rankingCache[key].push({ id: row.id, nome: row.nome, pontuacao: row.pontuacao, data: row.data, dispositivo_movel: row.dispositivo_movel ?? false });
             });
             Object.keys(rankingCache).forEach(key => {
                 rankingCache[key].sort((a, b) => b.pontuacao - a.pontuacao);
@@ -970,7 +1012,7 @@ async function salvarRankingGlobal(dados) {
         Object.entries(dados).forEach(([key, lista]) => {
             const [mus, , modo] = key.split('_');
             lista.forEach(item => {
-                const r = { musica: mus, modo, nome: item.nome, pontuacao: item.pontuacao, data: item.data };
+                const r = { musica: mus, modo, nome: item.nome, pontuacao: item.pontuacao, data: item.data, dispositivo_movel: item.dispositivo_movel ?? false };
                 if (item.id != null) r.id = item.id;
                 registros.push(r);
             });
@@ -991,18 +1033,21 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
     const dados = await carregarRankingGlobal();
     const key   = getRankingKey(musicaKey, modoMusica);
     const lista = dados[key] || [];
-    const nomeLower = nome.toLowerCase();
-    const indexExistente = lista.findIndex(e => e.nome.toLowerCase() === nomeLower);
+    const nomeTrimmed = nome.trim().slice(0, MAX_USUARIO_LENGTH);
+    const nomeLower = nomeTrimmed.toLowerCase();
+    const indexExistente = nomeLower ? lista.findIndex(e => e.nome.toLowerCase() === nomeLower) : -1;
     if (indexExistente !== -1) {
         if (pontuacaoAtual > lista[indexExistente].pontuacao) {
             lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
             lista[indexExistente].data = new Date().toLocaleDateString('pt-BR');
+            lista[indexExistente].dispositivo_movel = isMobile;
         }
     } else {
         lista.push({
-            nome: nome.slice(0, MAX_USUARIO_LENGTH).trim(),
+            nome: nomeTrimmed,
             pontuacao: Math.floor(pontuacaoAtual),
-            data: new Date().toLocaleDateString('pt-BR')
+            data: new Date().toLocaleDateString('pt-BR'),
+            dispositivo_movel: isMobile
         });
     }
     lista.sort((a, b) => b.pontuacao - a.pontuacao);
@@ -1106,8 +1151,12 @@ async function verificarEAdicionarAoRanking() {
     try {
         const lista = await carregarRanking(musica, modo);
         const cabe  = lista.length < MAX_RANKING || pontuacaoAtual > lista[lista.length - 1].pontuacao;
-        if (!cabe) return;
-        const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
-        exibirFormularioRanking(posProvisoria, nome);
+        if (cabe) {
+            const posProvisoria = lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
+            exibirFormularioRanking(posProvisoria, nome);
+            return;
+        }
+        await inserirNoRanking('', pontuacaoAtual, musica, modo);
+        rankingCache = null;
     } catch (err) { console.error(err); }
 }
