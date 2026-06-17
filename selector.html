@@ -17,7 +17,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: #0B0912;
+      background-color: #0e0c17 ;
       overflow-x: hidden;
     }
 
@@ -53,7 +53,7 @@
       background-color: rgba(0, 0, 0, 0.3);
       padding: 50px;
       border-radius: 20px;
-      width: 60%;
+      width: 50%;
     }
 
     #jogarButton,
@@ -83,10 +83,33 @@
       background-color: #555;
       color: white;
     }
+.textoIntermediarios {
+  font-size: 0.7rem;
+  margin-top: 30px;
+  font-family: 'Press Start 2P', monospace;
+  text-align: start;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px; /* espaço entre o texto e a linha */
+}
 
-    #elvis {
-      margin-top: 15px;
-    }
+.textoIntermediarios h5 {
+  margin: 0;
+  font-size: 0.7rem;
+  color: #60596f;
+  font-family: 'Press Start 2P', monospace;
+  width: auto;        /* não ocupa mais 100% */
+  white-space: nowrap; /* evita que o texto quebre linha */
+  flex-shrink: 0;      /* mantém o tamanho natural do texto */
+}
+
+.textoIntermediarios .linha {
+  height: 1px;
+  background-color: #60596f;
+  flex: 1;            /* ocupa todo o espaço restante */
+}
 
     .ativo {
       background-color: transparent !important;
@@ -104,7 +127,7 @@
 
     .titulo {
       font-family: 'Press Start 2P', monospace;
-      font-size: 2.5rem !important;
+      font-size: 2.3rem !important;
       text-shadow: none !important;
       color: white;
     }
@@ -139,7 +162,6 @@
 
     #buttons {
       display: flex;
-      align-items: center;
       width: 100%;
       margin-top: 10px;
     }
@@ -159,14 +181,13 @@
       display: flex;
       gap: 15px;
       margin-top: 20px;
-      margin-bottom: 30px;
       justify-content: center;
       width: 100%;
     }
 
     .botaoModo {
-      padding: 5px;
-      width: 200px;
+      padding: 3px;
+      width: 100%;
       height: 70px;
       font-size: 0.9em;
       border: 3px solid rgba(255, 255, 255, 0.3);
@@ -186,15 +207,10 @@
 
     .botaoModo:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(245, 135, 63, 0.5);
+      
     }
 
-    .botaoModo.ativo {
-      color: white;
-      border-color: #F5873F;
-      text-shadow: none;
-      box-shadow: 0 0 20px #F5873F;
-    }
+    
 
     #inicialButtons {
       display: flex;
@@ -813,68 +829,88 @@ setArea(333, 111);
   <div id="telaInicial" class="telaInicial">
     <div id="titulo" style="margin-bottom: 20px;">
       <h1 class="titulo">SELECIONE UMA MÚSICA</h1><br>
-      <h5 style="margin-top: 10px;">Depois pressione jogar ou autoplay para uma demonstração</h5>
     </div>
 
     <div id="buttons">
-      <button style="margin: 0px 10px;" id="jinglebell">
-        <h1>Jingle Bells - James Lord Pierpont</h1><span>Fácil</span>
+      <button  id="jinglebell">
+        <h1>James Lord Pierpont - Jingle Bells</h1>
+          <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <span>Fácil</span>
+        <a id="playJingleBell" href="https://www.youtube.com/watch?v=nIhs1T7OcZg" target="_blank">
+          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
+        </a>
+        </div>
       </button>
-      <a id="playJingleBell" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank">
-        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-      </a>
     </div>
     <div id="buttons">
-      <button style="margin: 0px 10px;" id="littlestar">
-        <h1>Mozart - Twinkle, Twinkle, Little Star</h1><span>Fácil</span>
+      <button id="littlestar">
+        <h1>Unknown  - Twinkle, Twinkle, Little Star</h1>
+          <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <span>Fácil</span>
+        <a id="playLittleStar" href="https://www.youtube.com/watch?v=SNeI2PMcRdA" target="_blank">
+          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
+        </a> 
+        </div>
       </button>
-      <a id="playLittleStar" href="https://www.youtube.com/watch?v=A3tqsoFUF0w" target="_blank">
-        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-      </a>
     </div>
     <div id="buttons">
-      <button style="margin: 0px 10px;" id="elvis">
-        <h1>Beethoven - Für Elise</h1><span>Médio</span>
+      <button  id="elvis">
+        <h1>Beethoven - Für Elise</h1>
+         <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <span>Médio</span>
+        <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
+          <img style="width: 20px;margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
+        </a></div>
       </button>
-      <a id="playElvis" href="https://www.youtube.com/watch?v=wfF0zHeU3Zs" target="_blank">
-        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-      </a>
     </div>
     <div id="buttons">
-      <button style="margin: 0px 10px;" id="bethoven">
-        <h1>Bethoven - Ode á Alegria</h1><span>Médio</span>
-      </button>
-      <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
-        target="_blank">
-        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-      </a>
-    </div>
-    <div id="buttons">
-      <button style="margin: 0px 10px;" id="tchai">
-        <h1>Tchaikovsky - Lago dos Cisnes</h1><span>Díficil</span>
-      </button>
-      <a id="playTchai" href="https://www.youtube.com/watch?v=YYWxcFVv_oM" target="_blank">
-        <img style="width: 20px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
-      </a>
-    </div>
+      <button id="bethoven" >
+        <h1>Bethoven - Ode á Alegria</h1>
+        <div style="display: flex; align-items: center; justify-content: flex-end;">
 
-    <h5 style="margin-top: 10px;">Agora escolha um modo de jogo</h5>
+          <span>Médio</span>
+          <a id="playBethoven" href="https://www.youtube.com/watch?v=yIi72FRnZp8&pp=ygUNb2RlIGEgYWxlZ3JpYQ%3D%3D"
+          target="_blank">
+          <img style="width: 20px; margin-left: 5px" src="/piano-simulator/assets/play-D1yz_HIV.png">
+        </a>
+      </div>
+      </button>
+    </div>
+    <div id="buttons">
+      <button id="tchai">
+        <h1>Tchaikovsky - Lago dos Cisnes</h1>
+                <div style="display: flex; align-items: center; justify-content: flex-end;">
+
+        <span>Difícil</span>
+        <a id="playTchai" href="https://www.youtube.com/watch?v=ntuiP8uj5xo" target="_blank">
+          <img style="width: 20px; margin-left: 5px;" src="/piano-simulator/assets/play-D1yz_HIV.png">
+        </a>
+                </div>
+      </button>
+    </div>
+    <div class="textoIntermediarios">
+
+      <h5 >Modo de jogo</h5><div class="linha"></div>
+    </div>
     <div id="modoContainer">
       <button id="botaoAprendiz" class="botaoModo">
-        <h5 style="color: inherit;">APRENDIZ</h5>
-        <small style="font-size: 0.6em;">para treinar!</small>
+        <h5 style="color: inherit;">APRENDIZ <small style="font-size: 0.8em;">(para treinar)</small></h5>
+        
       </button>
       <button id="botaoJogador" class="botaoModo">
-        <h5 style="color: inherit;">JOGADOR</h5>
-        <small style="font-size: 0.6em;">velocidade original!</small>
+        <h5 style="color: inherit;">JOGADOR <small style="font-size: 0.8em;">(velocidade original)</small></h5>
+        
       </button>
     </div>
 
     <div id="pianoImg">
-  <h5>Área do piano que vai ser tocada:</h5>
+        <div class="textoIntermediarios">
+
+          <h5>Área do piano que vai ser tocada</h5><div class="linha"></div>
+        </div>
   <div style="position: relative; display: block; width: 100%;">
     <div id="area"></div>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" style="display: block; width: 100%; height: auto;" />
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABkCAYAAAB+UVSPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQVSURBVHgB7dnNbRpdGIbh409fFyzYUwAdsKcDWJsO2EMFZo87YE8HsKcD6nB0kJASC8P8kIcsrktyIkUzceblnRPd8ttwOPwqAAAAAf/XX06n048XnM/nMplMSlPb7baMx+OH1+12u3I4HMp6vf7xmuPxWGazWWmq/l3T6fSPP1sul5fv1cRgMCj7/f7uNdd53JvZ1Wg0Kk0tFovL11XbZ/997vV563N3ufcn9ZlXq9Xd69rMuro1wzYzq5/1vf2pNpvN5TN7dF3fmfV59vl8fnkXmmiyo9fdebSj9TOts2ni1qz/1p7V9+D7e/xd35l13bO25+H39/qWJjv6jLPw2XvW9CzsO7M+e9b23vrM9dnv+RfPwmftWZU8C7/v2avOwr7/7zgLH2uyo9cZPvMsvDXrV+3ZK8/C+v7Xr6aanoX1ezy67pa6d/8VAACAEAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQMzbcDj8Op1OpYvlclnG43GZTqelrd1uVw6HQ1mv16WtzWZz+X2xWJQuJpNJWa1Wl397W+fz+XJ/l5nVe+fzednv96WLPs9dP6uqy7yrPjOrz/z+/t7p3uPxWGazWem6o3Vmde5dnrvPjlZ1ZtvttgwGg9LWaDS63JueWd8dfcae1f3ucqb03bOPj4/y+flZ2qr31ufu81533VFnYbezsL6Tr5hZ3x191Z45C9tzFrbXZ2avPAtfuWevPgv7vNd+AgIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACBGgAAAADECBAAAiBEgAABAjAABAABiBAgAABAjQAAAgBgBAgAAxAgQAAAgRoAAAAAxAgQAAIgRIAAAQIwAAQAAYgQIAAAQI0AAAIAYAQIAAMQIEAAAIEaAAAAAMQIEAACIESAAAECMAAEAAGIECAAAECNAAACAGAECAADECBAAACDmbTgcfhUAAICAX6Wk8+soV8IDAAAAAElFTkSuQmCC" style="display: block; width: 100%; height: auto; margin-top: 20px;" />
   </div>
 </div>
     <button id="rankingButton"> >> VER RANKING ATUAL </button>
