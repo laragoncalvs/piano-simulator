@@ -10,6 +10,7 @@ export default defineConfig({
         game: resolve(__dirname, 'game.html'),
         selector: resolve(__dirname, 'selector.html'),
         tempos: resolve(__dirname, 'tempos.html'),
+        demonstracao: resolve(__dirname, 'video-demonstracao.html'),
       },
     },
   },
