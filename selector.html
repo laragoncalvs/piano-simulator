@@ -438,28 +438,28 @@
       }
 
       #telaInicial {
-        padding: 30px 20px;
+        padding: 24px 16px;
         margin-top: 10px;
-        width: 95%;
+        width: calc(100vw - 24px);
       }
 
-      #buttons {
+      .buttons {
         flex-direction: column;
         gap: 8px;
       }
 
-      #buttons button {
+      .buttons button {
         width: 100%;
         font-size: clamp(0.6em, 2vw, 0.8em);
       }
 
-      #buttons button h1 {
+      .buttons button h1 {
         font-size: clamp(0.7rem, 3vw, 1rem);
         margin: 5px 0;
 
       }
 
-      #buttons button span {
+      .buttons button span {
         font-size: clamp(0.5rem, 2vw, 0.8rem);
       }
 
@@ -517,6 +517,55 @@
       h5 {
         font-size: clamp(0.5rem, 2vw, 1rem);
       }
+
+      .titulo {
+    font-size: 1rem !important;
+    line-height: 1.5;
+  }
+
+  #jinglebell h1,
+  #littlestar h1,
+  #elvis h1,
+  #bethoven h1,
+  #tchai h1 {
+    font-size: 0.5rem !important;
+    line-height: 1.7;
+  }
+
+  #jinglebell h5,
+  #littlestar h5,
+  #elvis h5,
+  #bethoven h5,
+  #tchai h5 {
+    font-size: 0.38rem !important;
+    line-height: 1.5;
+  }
+
+  #jinglebell span,
+  #littlestar span,
+  #elvis span,
+  #bethoven span,
+  #tchai span {
+    font-size: 0.35rem !important;
+  }
+
+  .botaoModo h5 {
+    font-size: 0.45rem !important;
+  }
+
+  .botaoModo span {
+    font-size: 0.3rem !important;
+  }
+
+  #jogarButton,
+  #autoplayButton,
+  #rankingButton {
+    font-size: 0.45rem;
+  }
+
+  .textoIntermediarios h5 {
+    font-size: 0.45rem;
+  }
     }
 
     @media (max-width: 480px) {
@@ -524,50 +573,57 @@
         width: 100vw;
         padding: 0;
       }
-
+#rankingButton {
+        font-size: clamp(0.5em, 2vw, 0.6em);
+        margin: 0;
+      }
       #telaInicial {
-        padding: 20px 35px;
+        padding: 18px 12px;
         margin-top: 5px;
-        width: 100%;
+        width: calc(100vw - 16px);
         border-radius: 10px;
       }
 
       .titulo {
-        font-size: clamp(1rem, 4vw, 1.5rem);
+        font-size: clamp(0.8rem, 4vw, 1.5rem);
         word-break: break-word;
       }
 
-      #buttons {
+      .buttons {
         width: 100%;
-        flex-direction: row;
-        margin-bottom: 15px;
+        flex-direction: column;
+        margin-bottom: 10px;
       }
 
-      #buttons button {
+      .buttons button {
         width: 100%;
-        font-size: 0.6em;
+        font-size: 0.5rem;
         text-align: left;
-        line-height: 2em;
+        line-height: 1.5;
+        padding: 12px;
       }
 
-      #buttons a {
+      .buttons a {
         width: 30px;
       }
 
-      #buttons a img {
+   
+
+      .buttons a img {
         width: 15px;
       }
 
       #modoContainer {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 8px;
       }
 
       .botaoModo {
         width: 100%;
-        height: 60px;
-        font-size: 1.5em;
+        min-height: 56px;
+        height: auto;
+        font-size: 0.8rem;
       }
 
 
@@ -591,8 +647,13 @@
       }
 
       #inicialButtons {
-        flex-direction: row;
-        height: 45px;
+        flex-direction: column;
+        height: auto;
+      }
+
+      #inicialButtons button {
+        flex: 1 1 auto;
+        width: 100%;
       }
 
       #rankingModalModoAtual {
@@ -738,7 +799,6 @@
       // Inicializar estado dos botões de modo
       atualizarEstadoBotoesModo();
 
-      // Inicializar a primeira música (elvis) como selecionada
       musica = "jinglebell";
       littlestarMusic.classList.remove("musicaEscolhida");
       elvisMusic.classList.remove("musicaEscolhida");
@@ -884,13 +944,12 @@
     <div id="titulo" style="margin-bottom: 20px;">
       <h1 class="titulo">SELECIONE UMA MÚSICA</h1><br>
     </div>
-
-    <div id="buttons">
+<div id="buttons">
       <button id="jinglebell">
         <div>
 
-          <h1>Jingle Bells</h1>
-          <h5>James Lord Pierpont</h5>
+          <h1>Jingle Bell Rock</h1>
+          <h5>Bobby Helms</h5>
         </div>
         <div style="display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 25px;">
           <span>Fácil</span>
@@ -908,6 +967,7 @@
         </div>
       </button>
     </div>
+    
     <div id="buttons">
       <button id="littlestar">
         <div class="text">
@@ -930,6 +990,7 @@
         </div>
       </button>
     </div>
+    
     <div id="buttons">
       <button id="elvis">
          <div class="text">
