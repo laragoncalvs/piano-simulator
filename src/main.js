@@ -17,6 +17,8 @@ function getAudioContext() {
     }
     return audioContext;
 }
+const pitchToKey = {};
+
 let piano = null;
 let pianoLoaded = false;
 let modoAtual = null;
@@ -69,7 +71,17 @@ function normalizeKeyForMap(key) {
     const lower = key.toLowerCase();
     return special[lower] ?? lower;
 }
+const colisoes = [];
 
+for (const [key, pitch] of Object.entries(keyMap)) {
+    const norm = normalizePitch(pitch); // mesma função do projeto
+    if (pitchToKey[norm] !== undefined) {
+        colisoes.push({ pitch: norm, teclas: [pitchToKey[norm], key] });
+    }
+    pitchToKey[norm] = key;
+}
+
+console.log(colisoes);
 function highlightPianoKey(pitch) {
     const normalized = normalizePitch(pitch);
     const key = pianoSvgKeys[normalized];
@@ -748,7 +760,8 @@ function reduzirOpacidadeCubo(cube) {
         if (index !== -1) activeCubes.splice(index, 1);
     }
 }
-
+console.log(pitchToKey["C4"]); // deveria imprimir "a"
+console.log(allCubes["a"]); // se vier undefined, achamos o problema
 const canvas = renderer.domElement;
 const resetar = document.getElementById("resetarButton");
 const voltar = document.getElementById("voltarButton");
@@ -760,8 +773,8 @@ const autoplayButton = document.getElementById("autoplayButton");
 const jogarButton = document.getElementById("jogarButton");
 
 const nomesDasMusicas = {
-    "littlestar": "Twinkle, Twinkle, Little Star - Mozart",
-    "jinglebell": "Jingle Bells - James Lord Pierpont",
+    "littlestar": "Twinkle, Twinkle, Little Star - Unknown artist",
+    "jinglebell": "Jingle Bell Rock - Bobby Helms",
     "elvis": "Beethoven - Für Elise",
     "bethoven": "Bethoven - Ode á Alegria",
     "tchai": "Tchaikovsky - Lago dos Cisnes"
@@ -832,7 +845,7 @@ autoplayButton.addEventListener("click", () => {
 const ctx = getAudioContext();
 if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 1.5 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             startTime = performance.now();
@@ -885,7 +898,8 @@ jogarButton.addEventListener("click", () => {
 const ctx = getAudioContext();
 if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 1.5
+         }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             startTime = performance.now();
@@ -923,7 +937,7 @@ resetar.addEventListener("click", () => {
 const ctx = getAudioContext();
 if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume();
     if (!pianoLoaded) {
-        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 4 }).then((loadedPiano) => {
+        Soundfont.instrument(getAudioContext(), "acoustic_grand_piano", { gain: 1.5 }).then((loadedPiano) => {
             piano = loadedPiano;
             pianoLoaded = true;
             startTime = performance.now();
@@ -945,7 +959,6 @@ function carregarPartituraAtual() {
     else                              carregarPartituraFurElise();
 }
 
-const pitchToKey = {};
 for (const [key, pitch] of Object.entries(keyMap)) pitchToKey[normalizePitch(pitch)] = key;
 
 function carregarNotas(notes) {
@@ -967,6 +980,15 @@ function carregarPartituraOdeToJoy()   { carregarNotas(odeToJoy);   }
 function carregarPartituraJingleBell() { carregarNotas(jinglebell); }
 
 // ─── Ranking ─────────────────────────────────────────────────
+
+function obterIdentificadorUnico() {
+    let id = localStorage.getItem('deviceId');
+    if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem('deviceId', id);
+    }
+    return id;
+}
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
@@ -993,10 +1015,17 @@ async function carregarRankingGlobal() {
         rankingCache = {};
         if (data) {
             data.forEach(row => {
-                const key = getRankingKey(row.musica, row.modo);
-                if (!rankingCache[key]) rankingCache[key] = [];
-                rankingCache[key].push({ id: row.id, nome: row.nome, pontuacao: row.pontuacao, data: row.data, dispositivo_movel: row.dispositivo_movel ?? false });
-            });
+    const key = getRankingKey(row.musica, row.modo);
+    if (!rankingCache[key]) rankingCache[key] = [];
+    rankingCache[key].push({
+        id: row.id,
+        nome: row.nome,
+        pontuacao: row.pontuacao,
+        data: row.data,
+        dispositivo_movel: row.dispositivo_movel ?? false,
+        device_id: row.device_id ?? null // ← novo
+    });
+});
             Object.keys(rankingCache).forEach(key => {
                 rankingCache[key].sort((a, b) => b.pontuacao - a.pontuacao);
             });
@@ -1012,7 +1041,15 @@ async function salvarRankingGlobal(dados) {
         Object.entries(dados).forEach(([key, lista]) => {
             const [mus, , modo] = key.split('_');
             lista.forEach(item => {
-                const r = { musica: mus, modo, nome: item.nome, pontuacao: item.pontuacao, data: item.data, dispositivo_movel: item.dispositivo_movel ?? false };
+                const r = {
+                    musica: mus,
+                    modo,
+                    nome: item.nome,
+                    pontuacao: item.pontuacao,
+                    data: item.data,
+                    dispositivo_movel: item.dispositivo_movel ?? false,
+                    device_id: item.device_id ?? null // ← novo
+                };
                 if (item.id != null) r.id = item.id;
                 registros.push(r);
             });
@@ -1035,29 +1072,30 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
     const lista = dados[key] || [];
     const nomeTrimmed = nome.trim().slice(0, MAX_USUARIO_LENGTH);
     const nomeLower = nomeTrimmed.toLowerCase();
+    const deviceId = obterIdentificadorUnico();
     const indexExistente = nomeLower ? lista.findIndex(e => e.nome.toLowerCase() === nomeLower) : -1;
     if (indexExistente !== -1) {
         if (pontuacaoAtual > lista[indexExistente].pontuacao) {
             lista[indexExistente].pontuacao = Math.floor(pontuacaoAtual);
             lista[indexExistente].data = new Date().toLocaleDateString('pt-BR');
             lista[indexExistente].dispositivo_movel = isMobile;
+            lista[indexExistente].device_id = deviceId; // ← novo
         }
     } else {
         lista.push({
             nome: nomeTrimmed,
             pontuacao: Math.floor(pontuacaoAtual),
             data: new Date().toLocaleDateString('pt-BR'),
-            dispositivo_movel: isMobile
+            dispositivo_movel: isMobile,
+            device_id: deviceId // ← novo
         });
     }
     lista.sort((a, b) => b.pontuacao - a.pontuacao);
-    // Keep the full list so all players are saved to the cloud.
     dados[key] = lista;
     rankingCache = dados;
     await salvarRankingGlobal(dados);
     return lista.findIndex(e => e.nome.toLowerCase() === nomeLower) + 1;
 }
-
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
     const modo  = localStorage.getItem('modoMusica') || 'jogador';
     const listaFull = listaJaCarregada || await carregarRanking(musica, modo);
