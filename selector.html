@@ -753,15 +753,19 @@
           rankingModalVazio.style.display = 'none';
           rankingModalLista.style.display = 'block';
           lista.forEach((entry, i) => {
-            const li = document.createElement('li');
-            const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`;
-            li.innerHTML = `
-                <span class="rm-pos">${medalha}</span>
-                <span class="rm-nome">${entry.nome}</span>
-                <span class="rm-pts">${entry.pontuacao}</span>
-                <span class="rm-data">${entry.data}</span>
-            `;
-            rankingModalLista.appendChild(li);
+            if (i >= 10) return;
+
+              const li = document.createElement('li');
+              const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`;
+              li.innerHTML = `
+              <span class="rm-pos">${medalha}</span>
+              <span class="rm-nome">${entry.nome}</span>
+              <span class="rm-pts">${entry.pontuacao}</span>
+              <span class="rm-data">${entry.data}</span>
+              `;
+              rankingModalLista.appendChild(li);
+            
+            
           });
         }
       }
