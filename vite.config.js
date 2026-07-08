@@ -11,6 +11,7 @@ export default defineConfig({
         selector: resolve(__dirname, 'selector.html'),
         tempos: resolve(__dirname, 'tempos.html'),
         demonstracao: resolve(__dirname, 'video-demonstracao.html'),
+        results: resolve(__dirname, 'results.html'),
       },
     },
   },
