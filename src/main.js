@@ -261,6 +261,7 @@ window.addEventListener("resize", () => {
 
 const activeCubes = [];
 const spawnEvents = [];
+const VELOCIDADE_CUBO = 0.1;
 
 function addCubeToScene(letter, delay, speed) {
   spawnEvents.push({ letter, delay, speed, spawned: false });
@@ -988,6 +989,12 @@ function mostrarFormularioNomeJogador(callback) {
   const btn = document.getElementById("nomeJogadorConfirmarBtn");
   if (!modal || !input || !btn) return callback();
 
+  if (animationId !== null) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+  resetarCena();
+
   const nomeAtual = (localStorage.getItem("rankingNomeUsuario") || "").trim();
   if (nomeAtual) {
     localStorage.setItem("rankingNomeUsuario", nomeAtual.slice(0, MAX_USUARIO_LENGTH));
@@ -1095,7 +1102,7 @@ function carregarNotas(notes) {
       console.warn(`⚠️ Sem mapeamento: ${note.pitch}`);
       continue;
     }
-    addCubeToScene(key, note.start_ms, 0.05);
+    addCubeToScene(key, note.start_ms, VELOCIDADE_CUBO);
   }
   aplicarMultiplicadorTempo();
   totalNotas = spawnEvents.length;
