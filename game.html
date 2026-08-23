@@ -791,6 +791,15 @@
 
   <div id="pianoGraphic"></div>
 
+  <div id="nomeJogadorModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#1a1a1c; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:24px 22px; width:min(90vw, 360px); box-shadow:0 18px 40px rgba(0,0,0,0.45); text-align:center;">
+      <h3 style="margin:0 0 12px; font-size:1.1rem; color:#fff;">Antes de começar</h3>
+      <p style="margin:0 0 16px; color:rgba(255,255,255,0.75); font-size:0.85rem;">Digite seu nome para registrar a sua pontuação.</p>
+      <input id="nomeJogadorInput" type="text" maxlength="15" autocomplete="off" placeholder="Seu nome" style="width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,0.2); border-radius:10px; background:rgba(255,255,255,0.04); color:#fff; padding:12px 14px; font-size:1rem; margin-bottom:12px;" />
+      <button id="nomeJogadorConfirmarBtn" style="width:100%; padding:12px; border:none; border-radius:10px; background:#E323CA; color:#fff; font-weight:700; cursor:pointer;">Iniciar fase</button>
+    </div>
+  </div>
+
   <div id="fimDaCena">
     <div class="estrelas">
       <span>&#9733;</span>
@@ -804,11 +813,6 @@
       <button onclick="window.location.href='selector.html'">Voltar</button>
     </div>
   </div>
-
-
-
-
-
 
   <script type="module" src="/src/main.js">
   </script>

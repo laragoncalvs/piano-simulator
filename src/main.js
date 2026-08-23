@@ -928,8 +928,7 @@ autoplayButton.addEventListener("click", () => {
   }
 });
 
-jogarButton.addEventListener("click", () => {
-  if (modoAtual === "jogar") return;
+function iniciarPartidaJogo() {
   criarPianoVirtual();
 
   document.getElementById("gameMenu").style.display = "flex";
@@ -960,7 +959,6 @@ jogarButton.addEventListener("click", () => {
   }
   if (teclaListener) document.removeEventListener("keydown", teclaListener);
 
-  // Desktop: keydown → processarTecla
   teclaListener = (e) => {
     if (document.activeElement?.tagName === "INPUT") return;
     processarTecla(e.key.toLowerCase());
@@ -982,6 +980,59 @@ jogarButton.addEventListener("click", () => {
     startTime = performance.now();
     render();
   }
+}
+
+function mostrarFormularioNomeJogador(callback) {
+  const modal = document.getElementById("nomeJogadorModal");
+  const input = document.getElementById("nomeJogadorInput");
+  const btn = document.getElementById("nomeJogadorConfirmarBtn");
+  if (!modal || !input || !btn) return callback();
+
+  const nomeAtual = (localStorage.getItem("rankingNomeUsuario") || "").trim();
+  if (nomeAtual) {
+    localStorage.setItem("rankingNomeUsuario", nomeAtual.slice(0, MAX_USUARIO_LENGTH));
+    callback(nomeAtual);
+    return;
+  }
+
+  modal.style.display = "flex";
+  input.value = "";
+  input.style.borderColor = "";
+  input.focus();
+  input.select();
+
+  const confirmar = () => {
+    const nome = input.value.trim();
+    if (!nome) {
+      input.style.borderColor = "red";
+      return;
+    }
+    const nomeFormatado = nome.slice(0, MAX_USUARIO_LENGTH);
+    localStorage.setItem("rankingNomeUsuario", nomeFormatado);
+    modal.style.display = "none";
+    callback(nomeFormatado);
+  };
+
+  btn.onclick = confirmar;
+  input.onkeydown = (event) => {
+    if (event.key === "Enter") confirmar();
+  };
+}
+
+jogarButton.addEventListener("click", () => {
+  if (modoAtual === "jogar") return;
+
+  const iniciar = () => {
+    iniciarPartidaJogo();
+  };
+
+  const nomeSalvo = (localStorage.getItem("rankingNomeUsuario") || "").trim();
+  if (!nomeSalvo) {
+    mostrarFormularioNomeJogador(iniciar);
+    return;
+  }
+
+  iniciar();
 });
 
 resetar.addEventListener("click", () => {
@@ -1165,10 +1216,12 @@ async function carregarRanking(musicaKey, modoMusica) {
 }
 
 async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
+  const nomeTrimmed = (nome || "").trim().slice(0, MAX_USUARIO_LENGTH);
+  if (!nomeTrimmed) return null;
+
   const dados = await carregarRankingGlobal();
   const key = getRankingKey(musicaKey, modoMusica);
   const lista = dados[key] || [];
-  const nomeTrimmed = nome.trim().slice(0, MAX_USUARIO_LENGTH);
   const nomeLower = nomeTrimmed.toLowerCase();
   const deviceId = obterIdentificadorUnico();
 
@@ -1250,74 +1303,45 @@ function criarContainerRanking(msgHtml, incluirFormulario) {
 }
 
 function exibirFormularioRanking(posicao, nomePreenchido = null) {
-  const titulo = nomePreenchido
-    ? "✏️ Editar seu nome"
-    : "🏆 Você entrou no ranking!";
-  if (!criarContainerRanking(titulo, true)) return;
-  const input = document.getElementById("rankingNomeInput");
-  const btn = document.getElementById("rankingConfirmarBtn");
-  if (nomePreenchido) {
-    input.value = nomePreenchido;
-  }
-  input.focus();
-  input.select();
+  const titulo = "🏆 Você entrou no ranking!";
+  if (!criarContainerRanking(titulo, false)) return;
 
-  input.addEventListener("focus", () => {
-    if (teclaListener) document.removeEventListener("keydown", teclaListener);
-  });
-  input.addEventListener("blur", () => {
-    if (teclaListener) document.addEventListener("keydown", teclaListener);
-  });
-
-  async function confirmarNome() {
-    const nome = input.value.trim();
-    if (!nome) {
-      input.style.borderColor = "red";
-      return;
-    }
-    btn.disabled = true;
-    btn.textContent = "...";
-    localStorage.setItem("rankingNomeUsuario", nome);
-    const modo = localStorage.getItem("modoMusica") || "jogador";
-
-    const pos = await inserirNoRanking(nome, pontuation, musica, modo);
-    // rankingCache já foi limpo dentro de inserirNoRanking
-
-    document.getElementById("rankingInputWrapper").style.display = "none";
-    document.getElementById("rankingMsg").textContent =
-      `🏆 Você ficou em ${pos}º lugar!`;
-
-    // carrega a lista atualizada (cache já foi resetado)
-    const listaNova = await carregarRanking(musica, modo);
-    await exibirListaRanking(nome, listaNova);
+  const msg = document.getElementById("rankingMsg");
+  if (msg) {
+    msg.textContent = `🏆 Você ficou em ${posicao}º lugar!`;
   }
 
-  btn.addEventListener("click", confirmarNome);
-  input.addEventListener("keydown", (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter") confirmarNome();
-  });
+  const modo = localStorage.getItem("modoMusica") || "jogador";
+  carregarRanking(musica, modo)
+    .then((listaNova) => exibirListaRanking(nomePreenchido || "", listaNova))
+    .catch(console.error);
 }
 
 async function verificarEAdicionarAoRanking() {
   if (modoAtual !== "jogar") return;
   const pontuacaoAtual = Math.floor(pontuation);
   if (pontuacaoAtual <= 0) return;
+
+  const nome = (localStorage.getItem("rankingNomeUsuario") || "").trim();
+  if (!nome) return;
+
   rankingCache = null;
   const modo = localStorage.getItem("modoMusica") || "jogador";
-  const nome = localStorage.getItem("rankingNomeUsuario");
   try {
     const lista = await carregarRanking(musica, modo);
     const cabe =
       lista.length < MAX_RANKING ||
       pontuacaoAtual > lista[lista.length - 1].pontuacao;
-    if (cabe) {
-      const posProvisoria =
-        lista.length < MAX_RANKING ? lista.length + 1 : MAX_RANKING;
-      exibirFormularioRanking(posProvisoria, nome);
+
+    if (!cabe) {
+      rankingCache = null;
       return;
     }
-    await inserirNoRanking("", pontuacaoAtual, musica, modo);
+
+    const pos = await inserirNoRanking(nome, pontuacaoAtual, musica, modo);
+    const listaNova = await carregarRanking(musica, modo);
+    exibirFormularioRanking(pos, nome);
+    await exibirListaRanking(nome, listaNova);
     rankingCache = null;
   } catch (err) {
     console.error(err);
