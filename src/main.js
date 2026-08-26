@@ -784,10 +784,10 @@ function atualizarEstrelas() {
   let frase = "Bom trabalho!";
   if (pontuacaoAtual < 700) {
     quantidadeEstrelas = 1;
-    frase = "Boa tentativa! Continue praticando!";
+    frase = "Boa tentativa. Continue praticando!";
   } else if (pontuacaoAtual < 850) {
     quantidadeEstrelas = 2;
-    frase = "Excelente desempenho! Você está quase lá!";
+    frase = "Excelente desempenho. Você está quase lá!";
   } else {
     quantidadeEstrelas = 3;
     frase = "Perfeito! Você é um maestro!";
@@ -835,8 +835,8 @@ function reduzirOpacidadeCubo(cube) {
     if (index !== -1) activeCubes.splice(index, 1);
   }
 }
-console.log(pitchToKey["C4"]); // deveria imprimir "a"
-console.log(allCubes["a"]); // se vier undefined, achamos o problema
+console.log(pitchToKey["C4"]); 
+console.log(allCubes["a"]); 
 const canvas = renderer.domElement;
 const resetar = document.getElementById("resetarButton");
 const voltar = document.getElementById("voltarButton");
