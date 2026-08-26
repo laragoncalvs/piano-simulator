@@ -1160,6 +1160,10 @@ function getRankingKey(musicaKey, modoMusica) {
   return `${musicaKey}_jogar_${modoMusica}`;
 }
 
+function obterDataHoje() {
+  return new Date().toLocaleDateString("pt-BR");
+}
+
 async function carregarRankingGlobal() {
   if (rankingCache) return rankingCache;
   try {
@@ -1171,6 +1175,7 @@ async function carregarRankingGlobal() {
     rankingCache = {};
     if (data) {
       data.forEach((row) => {
+        if (row.data !== obterDataHoje()) return;
         const key = getRankingKey(row.musica, row.modo);
         if (!rankingCache[key]) rankingCache[key] = [];
         rankingCache[key].push({
@@ -1263,7 +1268,7 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
   );
 }
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
-  const listaFull = [];
+  const listaFull = listaJaCarregada || [];
   const listaDiv = document.getElementById("rankingLista");
   if (!listaDiv) return;
   if (listaFull.length === 0) {

@@ -719,6 +719,7 @@
           const url = new URL(`${SUPABASE_URL}/rest/v1/rankings`);
           url.searchParams.append('musica', `eq.${musica}`);
           url.searchParams.append('modo', `eq.${modo}`);
+          url.searchParams.append('data', `eq.${new Date().toLocaleDateString('pt-BR')}`);
           url.searchParams.append('order', 'pontuacao.desc');
 
           const response = await fetch(url.toString(), {
@@ -739,8 +740,6 @@
           console.error('Erro ao carregar ranking modal:', err);
           lista = [];
         }
-
-        lista = [];
 
         rankingModalMusica.textContent = nomesMusicas[musica] || musica;
         document.getElementById('rankingModalModoAtual').textContent =
