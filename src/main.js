@@ -1145,6 +1145,7 @@ function obterIdentificadorUnico() {
 
 const MAX_USUARIO_LENGTH = 15;
 const MAX_RANKING = 10;
+const DATA_INICIAL_RANKING = "26/08/2026";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -1160,8 +1161,10 @@ function getRankingKey(musicaKey, modoMusica) {
   return `${musicaKey}_jogar_${modoMusica}`;
 }
 
-function obterDataHoje() {
-  return new Date().toLocaleDateString("pt-BR");
+function obterChaveData(data) {
+  const [dia, mes, ano] = String(data || "").split("/");
+  if (!dia || !mes || !ano) return "";
+  return `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
 }
 
 async function carregarRankingGlobal() {
@@ -1173,9 +1176,10 @@ async function carregarRankingGlobal() {
       return {};
     }
     rankingCache = {};
+    const dataMinima = obterChaveData(DATA_INICIAL_RANKING);
     if (data) {
       data.forEach((row) => {
-        if (row.data !== obterDataHoje()) return;
+        if (obterChaveData(row.data) < dataMinima) return;
         const key = getRankingKey(row.musica, row.modo);
         if (!rankingCache[key]) rankingCache[key] = [];
         rankingCache[key].push({
