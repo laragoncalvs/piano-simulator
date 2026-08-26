@@ -32,6 +32,7 @@ let pausedTimeOffset = 0;
 let fimTimeout = null;
 let musica = null;
 let pontuation = 0;
+let sessaoJogo = 0;
 let totalNotas = 0;
 let pontosParaAcerto = 0;
 const PONTUACAO_MAXIMA = 1000;
@@ -342,7 +343,9 @@ function processarTecla(key) {
         }
       });
     }
+    const sessaoAtual = sessaoJogo;
     setTimeout(() => {
+      if (sessaoAtual !== sessaoJogo) return;
       pontuation = Math.min(PONTUACAO_MAXIMA, pontuation + pontosParaAcerto);
       showPointsAnimation(pontosParaAcerto);
       atualizarPontuacao();
@@ -523,6 +526,9 @@ window.addEventListener("visibilitychange", () => {
 });
 
 function resetarCena() {
+  sessaoJogo += 1;
+  pontuation = 0;
+  atualizarPontuacao();
   if (animationId !== null) {
     cancelAnimationFrame(animationId);
     animationId = null;
@@ -1257,8 +1263,7 @@ async function inserirNoRanking(nome, pontuacaoAtual, musicaKey, modoMusica) {
   );
 }
 async function exibirListaRanking(nomeDestaque, listaJaCarregada = null) {
-  const modo = localStorage.getItem("modoMusica") || "jogador";
-  const listaFull = listaJaCarregada || (await carregarRanking(musica, modo));
+  const listaFull = [];
   const listaDiv = document.getElementById("rankingLista");
   if (!listaDiv) return;
   if (listaFull.length === 0) {
