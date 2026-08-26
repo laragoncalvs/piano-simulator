@@ -208,6 +208,12 @@
       });
     }
 
+    function converterData(data) {
+      const [dia, mes, ano] = String(data || '').split('/');
+      if (!dia || !mes || !ano) return 0;
+      return Date.UTC(Number(ano), Number(mes) - 1, Number(dia));
+    }
+
     function ordenar(rows) {
       return [...rows].sort((a, b) => {
         let va = a[sortKey];
@@ -216,6 +222,9 @@
         if (sortKey === 'pontuacao') {
           va = Number(va);
           vb = Number(vb);
+        } else if (sortKey === 'data') {
+          va = converterData(va);
+          vb = converterData(vb);
         } else if (sortKey === 'dispositivo_movel') {
           va = va ? 1 : 0;
           vb = vb ? 1 : 0;

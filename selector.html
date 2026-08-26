@@ -740,7 +740,14 @@
           lista = [];
         }
 
-        lista = [];
+        const [diaMinimo, mesMinimo, anoMinimo] = '26/08/2026'.split('/');
+        const dataMinima = new Date(Number(anoMinimo), Number(mesMinimo) - 1, Number(diaMinimo));
+        lista = lista.filter((entry) => {
+          const [dia, mes, ano] = String(entry.data || '').split('/');
+          if (!dia || !mes || !ano) return false;
+          const dataEntrada = new Date(Number(ano), Number(mes) - 1, Number(dia));
+          return dataEntrada >= dataMinima;
+        });
 
         rankingModalMusica.textContent = nomesMusicas[musica] || musica;
         document.getElementById('rankingModalModoAtual').textContent =
