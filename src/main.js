@@ -1202,6 +1202,7 @@ async function carregarRankingGlobal() {
   }
 }
 
+
 async function salvarRankingGlobal(dados) {
   rankingCache = dados;
   try {
