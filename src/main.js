@@ -1318,11 +1318,6 @@ function exibirFormularioRanking(posicao, nomePreenchido = null) {
   const titulo = "🏆 Você entrou no ranking!";
   if (!criarContainerRanking(titulo, false)) return;
 
-  const msg = document.getElementById("rankingMsg");
-  if (msg) {
-    msg.textContent = `🏆 Você ficou em ${posicao}º lugar!`;
-  }
-
   const modo = localStorage.getItem("modoMusica") || "jogador";
   carregarRanking(musica, modo)
     .then((listaNova) => exibirListaRanking(nomePreenchido || "", listaNova))
