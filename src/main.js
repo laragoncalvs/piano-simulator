@@ -1315,8 +1315,7 @@ function criarContainerRanking(msgHtml, incluirFormulario) {
 }
 
 function exibirFormularioRanking(posicao, nomePreenchido = null) {
-  const titulo = "🏆 Você entrou no ranking!";
-  if (!criarContainerRanking(titulo, false)) return;
+  if (!criarContainerRanking("", false)) return;
 
   const modo = localStorage.getItem("modoMusica") || "jogador";
   carregarRanking(musica, modo)
